@@ -46,7 +46,7 @@ final class CategoryCollectionViewCell: UICollectionViewCell {
 // MARK: - Extension for essential methods
 extension CategoryCollectionViewCell: EssentialCellHeaderMethods {
     func setViewFoundation() {
-        self.backgroundColor = .white
+        self.backgroundColor = .clear
     }
     
     func initializeObjects() {

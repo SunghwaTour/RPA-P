@@ -19,7 +19,7 @@ final class SelectEstimateViewController: UIViewController {
     
     lazy var dateLabel: UILabel = {
         let label = UILabel()
-        label.text = "2024.06.19"
+        label.text = SupportingMethods.shared.convertDate(intoString: Date(), "yyyy.MM.dd")
         label.textColor = .useRGB(red: 167, green: 167, blue: 167)
         label.font = .useFont(ofSize: 14, weight: .Medium)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -120,6 +120,14 @@ final class SelectEstimateViewController: UIViewController {
         label.textColor = .useRGB(red: 91, green: 91, blue: 91)
         label.translatesAutoresizingMaskIntoConstraints = false
         
+        if self.kindsOfEstimate == .oneWay {
+            label.isHidden = true
+            
+        } else {
+            label.isHidden = false
+            
+        }
+        
         return label
     }()
     
@@ -129,6 +137,14 @@ final class SelectEstimateViewController: UIViewController {
         label.font = .useFont(ofSize: 11, weight: .Regular)
         label.textColor = .useRGB(red: 91, green: 91, blue: 91)
         label.translatesAutoresizingMaskIntoConstraints = false
+        
+        if self.kindsOfEstimate == .oneWay {
+            label.isHidden = true
+            
+        } else {
+            label.isHidden = false
+            
+        }
         
         return label
     }()
@@ -213,19 +229,33 @@ final class SelectEstimateViewController: UIViewController {
         return tableView
     }()
     
+    var estimate: Estimate
+    var virtualEstimate: VirtualEstimate?
+    var kindsOfEstimate: KindsOfEstimate
     var allCategoryList: [Category] = [.general, .honor, .full, .partial]
-    var estimateList: [Estimate] = []
+    var virtualEstimateList: [VirtualEstimate] = []
     
     var selectedCategoryList: [Category] = []
     var selectedIndexForTableView: Int?
     
-    var fullData: [Estimate] = [
-        Estimate(no: 1, category: [.full, .honor], price: "900,000"),
-        Estimate(no: 2, category: [.full, .general], price: "800,000"),
-        Estimate(no: 3, category: [.partial, .honor], price: "300,000"),
-        Estimate(no: 4, category: [.full, .honor], price: "700,000"),
-        Estimate(no: 5, category: [.partial, .general], price: "1,200,000"),
+    var fullData: [VirtualEstimate] = [
+        VirtualEstimate(no: 1, category: [.full, .honor], price: "900,000"),
+        VirtualEstimate(no: 2, category: [.full, .general], price: "800,000"),
+        VirtualEstimate(no: 3, category: [.partial, .honor], price: "300,000"),
+        VirtualEstimate(no: 4, category: [.full, .honor], price: "700,000"),
+        VirtualEstimate(no: 5, category: [.partial, .general], price: "1,200,000"),
     ]
+    
+    init(estimate: Estimate) {
+        self.estimate = estimate
+        self.kindsOfEstimate = estimate.kindsOfEstimate
+        
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -263,7 +293,13 @@ extension SelectEstimateViewController: EssentialViewMethods {
     }
     
     func initializeObjects() {
+        self.departureAddressLabel.text = self.estimate.departure.name
+        self.departureDateLabel.text = self.estimate.departureDate.date
+        self.departureTimeLabel.text = self.estimate.departureDate.time
         
+        self.arrivalAddressLabel.text = self.estimate.return.name
+        self.arrivalDateLabel.text = self.estimate.returnDate.date
+        self.arrivalTimeLabel.text = self.estimate.returnDate.time
     }
     
     func setDelegates() {
@@ -458,7 +494,7 @@ extension SelectEstimateViewController: EssentialViewMethods {
     }
     
     func setInitialData() {
-        self.estimateList = self.fullData
+        self.virtualEstimateList = self.fullData
         
         DispatchQueue.main.async {
             self.tableView.reloadData()
@@ -481,7 +517,9 @@ extension SelectEstimateViewController {
     }
     
     @objc func reservationButton(_ sender: UIButton) {
-        let vc = PaymentViewController()
+        self.estimate.virtualEstimate = self.virtualEstimate
+        
+        let vc = PaymentViewController(estimate: self.estimate)
         
         self.navigationController?.pushViewController(vc, animated: true)
     }
@@ -555,20 +593,20 @@ extension SelectEstimateViewController: UICollectionViewDelegateFlowLayout, UICo
             
         }
         
-        self.estimateList = []
+        self.virtualEstimateList = []
         if self.selectedCategoryList.isEmpty {
-            self.estimateList = self.fullData
+            self.virtualEstimateList = self.fullData
             
         } else {
             for data in self.fullData {
                 if data.category.contains(category) {
-                    if self.estimateList.isEmpty {
-                        self.estimateList.append(data)
+                    if self.virtualEstimateList.isEmpty {
+                        self.virtualEstimateList.append(data)
                         
                     } else {
-                        for item in self.estimateList {
+                        for item in self.virtualEstimateList {
                             if data.no != item.no {
-                                self.estimateList.append(data)
+                                self.virtualEstimateList.append(data)
                                 break
                                 
                             }
@@ -593,14 +631,14 @@ extension SelectEstimateViewController: UICollectionViewDelegateFlowLayout, UICo
 // MARK: - Extension for UITableViewDelegate, UITableViewDataSource {
 extension SelectEstimateViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.estimateList.count
+        return self.virtualEstimateList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SelectEstimateTableViewCell", for: indexPath) as! SelectEstimateTableViewCell
-        let estimate = self.estimateList[indexPath.row]
+        let virtualEstimate = self.virtualEstimateList[indexPath.row]
         
-        cell.setCell(estimate: estimate)
+        cell.setCell(virtualEstimate: virtualEstimate)
         
         cell.estimateBaseView.backgroundColor = self.selectedIndexForTableView == indexPath.row ? .useRGB(red: 255, green: 248, blue: 248) : .white
         
@@ -609,6 +647,7 @@ extension SelectEstimateViewController: UITableViewDelegate, UITableViewDataSour
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.selectedIndexForTableView = self.selectedIndexForTableView == indexPath.row ? nil : indexPath.row
+        self.virtualEstimate = self.virtualEstimateList[indexPath.row]
         
         self.tableView.reloadData()
         

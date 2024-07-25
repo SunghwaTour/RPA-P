@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreLocation
 
 final class EstimateViewController: UIViewController {
     
@@ -93,6 +94,23 @@ final class EstimateViewController: UIViewController {
         return button
     }()
     
+    lazy var addressTableView: UITableView = {
+        let tableView = UITableView()
+        tableView.isHidden = true
+        tableView.backgroundColor = .white
+        tableView.bounces = false
+        tableView.keyboardDismissMode = .onDrag
+        tableView.showsVerticalScrollIndicator = false
+        tableView.register(AddressSearchTableViewCell.self, forCellReuseIdentifier: "AddressSearchTableViewCell")
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.sectionHeaderTopPadding = 0
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return tableView
+    }()
+    
     lazy var departureView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
@@ -119,6 +137,7 @@ final class EstimateViewController: UIViewController {
         textField.textColor = .useRGB(red: 38, green: 38, blue: 38)
         textField.font = .useFont(ofSize: 14, weight: .Medium)
         textField.borderStyle = .none
+        textField.returnKeyType = .search
         textField.addLeftPadding()
         textField.backgroundColor = .clear
         textField.delegate = self
@@ -160,6 +179,7 @@ final class EstimateViewController: UIViewController {
         let textField = UITextField()
         textField.textColor = .useRGB(red: 38, green: 38, blue: 38)
         textField.font = .useFont(ofSize: 14, weight: .Medium)
+        textField.returnKeyType = .search
         textField.borderStyle = .none
         textField.addLeftPadding()
         textField.backgroundColor = .clear
@@ -249,6 +269,7 @@ final class EstimateViewController: UIViewController {
         let textField = UITextField()
         textField.textColor = .useRGB(red: 38, green: 38, blue: 38)
         textField.font = .useFont(ofSize: 14, weight: .Medium)
+        textField.returnKeyType = .search
         textField.borderStyle = .none
         textField.addLeftPadding()
         textField.backgroundColor = .clear
@@ -509,8 +530,28 @@ final class EstimateViewController: UIViewController {
     var stopoverLabelTopAnchorConstraint: NSLayoutConstraint!
     var dateAndTimeStackViewHeightAnchorConstraint: NSLayoutConstraint!
     var numberLabelTopAnchorConstraint: NSLayoutConstraint!
+    var addressTableViewTopAnchorConstraint: NSLayoutConstraint!
     
     var undecidedStatus: Bool = false
+    var kindsOfEstimate: KindsOfEstimate = .roundTrip
+    var estimateAddresses: [String: EstimateAddress] = [
+        "departure": EstimateAddress(),
+        "return": EstimateAddress(),
+        "stopover": EstimateAddress(),
+    ]
+    
+    let mainModel = MainModel()
+    var selectedAddressIndex: Int? {
+        didSet {
+            guard oldValue != self.selectedAddressIndex else {
+                return
+            }
+            
+            self.addressTableView.reloadData()
+        }
+    }
+    
+    var isEditingView: UIView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -536,6 +577,7 @@ final class EstimateViewController: UIViewController {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.view.endEditing(true)
+        self.addressTableView.isHidden = true
         
     }
     
@@ -585,6 +627,7 @@ extension EstimateViewController: EssentialViewMethods {
             self.nextButton,
             self.estimateDetailButton,
             self.shuttleContentView,
+            self.addressTableView,
         ], to: self.contentView)
         
         SupportingMethods.shared.addSubviews([
@@ -694,6 +737,15 @@ extension EstimateViewController: EssentialViewMethods {
             self.departureView.topAnchor.constraint(equalTo: self.kindsOfEstimateStackView.bottomAnchor, constant: 20),
             self.departureView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -16),
             self.departureView.heightAnchor.constraint(equalToConstant: 48)
+        ])
+        
+        // addressTableView
+        self.addressTableViewTopAnchorConstraint = self.addressTableView.topAnchor.constraint(equalTo: self.departureView.bottomAnchor, constant: 4)
+        NSLayoutConstraint.activate([
+            self.addressTableView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor),
+            self.addressTableView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor),
+            self.addressTableViewTopAnchorConstraint,
+            self.addressTableView.heightAnchor.constraint(equalToConstant: 166),
         ])
         
         // departureLabel
@@ -959,13 +1011,32 @@ extension EstimateViewController: EssentialViewMethods {
 
 // MARK: - Extension for methods added
 extension EstimateViewController {
-    
+    func setAddressTableView(view: UIView) {
+        self.isEditingView = view
+        self.mainModel.initializeModel()
+        self.selectedAddressIndex = nil
+        
+        self.addressTableView.reloadData()
+        
+        NSLayoutConstraint.deactivate([
+            self.addressTableViewTopAnchorConstraint
+        ])
+            self.addressTableViewTopAnchorConstraint = self.addressTableView.topAnchor.constraint(equalTo: view.bottomAnchor, constant: 4)
+        
+        NSLayoutConstraint.activate([
+            self.addressTableViewTopAnchorConstraint
+        ])
+        
+        self.addressTableView.isHidden = false
+    }
 }
 
 // MARK: - Extension for selector methods
 extension EstimateViewController {
     @objc func roundTripButton(_ sender: UIButton) {
+        self.kindsOfEstimate = .roundTrip
         self.view.endEditing(true)
+        self.addressTableView.isHidden = true
         
         self.shuttleContentView.isHidden = true
         
@@ -986,7 +1057,9 @@ extension EstimateViewController {
     }
     
     @objc func oneWayButton(_ sender: UIButton) {
+        self.kindsOfEstimate = .oneWay
         self.view.endEditing(true)
+        self.addressTableView.isHidden = true
         
         self.shuttleContentView.isHidden = true
         
@@ -1006,7 +1079,9 @@ extension EstimateViewController {
     }
     
     @objc func shuttleButton(_ sender: UIButton) {
+        self.kindsOfEstimate = .shuttle
         self.view.endEditing(true)
+        self.addressTableView.isHidden = true
         
         self.shuttleContentView.isHidden = false
         
@@ -1187,8 +1262,18 @@ extension EstimateViewController {
     
     @objc func nextButton(_ sender: UIButton) {
         print("nextButton")
-        let vc = SelectEstimateViewController()
-                
+        let deparutre = CLLocationCoordinate2D(latitude: Double(self.estimateAddresses["departure"]!.latitude)!, longitude: Double(self.estimateAddresses["departure"]!.longitude)!)
+        let `return` = CLLocationCoordinate2D(latitude: Double(self.estimateAddresses["return"]!.latitude)!, longitude: Double(self.estimateAddresses["return"]!.longitude)!)
+        print(SupportingMethods.shared.calculateDistance(departure: deparutre, return: `return`) / 1000)
+        print(self.estimateAddresses)
+        let departureDateAndTime = EstimateTime(date: self.departureDateLabel.text!, time: self.departureTimeLabel.text!)
+        let returnDateAndTime = EstimateTime(date: self.arrivalDateLabel.text!, time: self.arrivalTimeLabel.text!)
+        
+        let estimate: Estimate =
+        Estimate(kindsOfEstimate: self.kindsOfEstimate, departure: self.estimateAddresses["departure"]!, return: self.estimateAddresses["return"]!, stopover: self.estimateAddresses["stopover"]!, departureDate: departureDateAndTime, returnDate: returnDateAndTime, number: self.numberTextField.text == "미정" ? nil: Int(self.numberTextField.text ?? "0")!)
+        
+        let vc = SelectEstimateViewController(estimate: estimate)
+
         self.navigationController?.pushViewController(vc, animated: true)
         
     }
@@ -1201,8 +1286,42 @@ extension EstimateViewController {
 
 // MARK: - Extension for UITextFieldDelegate
 extension EstimateViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        guard let text = textField.text, text.trimmingCharacters(in: .whitespacesAndNewlines) != "" else {
+            return true
+        }
+        
+        self.mainModel.initializeModel()
+        
+        self.mainModel.searchAddressWithText(text) {
+            self.addressTableView.reloadData()
+            
+            if self.mainModel.searchedAddress.address.isEmpty {
+                self.addressTableView.isHidden = true
+                
+            } else {
+                self.addressTableView.isHidden = false
+            }
+            
+        } failure: { errorMessage in
+            self.addressTableView.reloadData()
+            
+            if self.mainModel.searchedAddress.address.isEmpty {
+                self.addressTableView.isHidden = true
+                
+            } else {
+                self.addressTableView.isHidden = false
+            }
+        }
+        
+        return true
+    }
+    
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         if textField == self.departureTextField {
+            
+            self.setAddressTableView(view: self.departureView)
+            
             UIView.transition(with: self.view, duration: 0.1) {
                 self.departureView.layer.borderColor = UIColor.useRGB(red: 255, green: 232, blue: 232).cgColor
                 
@@ -1216,6 +1335,9 @@ extension EstimateViewController: UITextFieldDelegate {
             }
             
         } else if textField == self.arrivalTextField {
+            
+            self.setAddressTableView(view: self.arrivalView)
+            
             UIView.transition(with: self.view, duration: 0.1) {
                 self.arrivalView.layer.borderColor = UIColor.useRGB(red: 255, green: 232, blue: 232).cgColor
 //
@@ -1229,6 +1351,9 @@ extension EstimateViewController: UITextFieldDelegate {
             }
             
         } else if textField == self.stopoverTextField {
+            
+            self.setAddressTableView(view: self.stopoverView)
+            
             UIView.transition(with: self.view, duration: 0.1) {
                 self.stopoverView.layer.borderColor = UIColor.useRGB(red: 255, green: 232, blue: 232).cgColor
                 
@@ -1335,5 +1460,69 @@ extension EstimateViewController: UITextFieldDelegate {
 //            self.loginButton.isEnabled = false
 //
 //        }
+    }
+}
+
+extension EstimateViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.mainModel.searchedAddress.address.count
+        
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "AddressSearchTableViewCell", for: indexPath) as! AddressSearchTableViewCell
+        
+        cell.setCell(placeName: self.mainModel.searchedAddress.address[indexPath.row].placeName ?? self.mainModel.searchedAddress.address[indexPath.row].roadAddress ?? self.mainModel.searchedAddress.address[indexPath.row].jibeonAddress ?? "알 수 없음",
+                     address: self.mainModel.searchedAddress.address[indexPath.row].roadAddress ?? self.mainModel.searchedAddress.address[indexPath.row].jibeonAddress ?? "알 수 없음",
+                     isSelected: self.selectedAddressIndex == indexPath.row)
+        
+        if indexPath.row == self.mainModel.searchedAddress.address.count - 1 && !self.mainModel.searchedAddress.isAddressEnd {
+            self.mainModel.searchAddressWithText(self.departureTextField.text!) {
+                tableView.reloadData()
+                
+                if self.mainModel.searchedAddress.address.isEmpty {
+                    self.addressTableView.isHidden = true
+                    
+                } else {
+                    self.addressTableView.isHidden = false
+                }
+                
+            } failure: { errorMessage in
+                
+            }
+        }
+        
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.selectedAddressIndex = indexPath.row
+        
+        self.view.endEditing(true)
+        self.addressTableView.isHidden = true
+        
+        if self.isEditingView == self.departureView {
+            self.estimateAddresses["departure"]?.name = self.mainModel.searchedAddress.address[indexPath.row].placeName ?? self.mainModel.searchedAddress.address[indexPath.row].roadAddress ?? self.mainModel.searchedAddress.address[indexPath.row].jibeonAddress ?? "알 수 없음"
+            self.estimateAddresses["departure"]?.latitude = self.mainModel.searchedAddress.address[indexPath.row].latitude
+            self.estimateAddresses["departure"]?.longitude = self.mainModel.searchedAddress.address[indexPath.row].longitude
+            
+            self.departureTextField.text = self.mainModel.searchedAddress.address[indexPath.row].placeName ?? self.mainModel.searchedAddress.address[indexPath.row].roadAddress ?? self.mainModel.searchedAddress.address[indexPath.row].jibeonAddress ?? "알 수 없음"
+            
+        } else if self.isEditingView == self.arrivalView {
+            self.estimateAddresses["return"]?.name = self.mainModel.searchedAddress.address[indexPath.row].placeName ?? self.mainModel.searchedAddress.address[indexPath.row].roadAddress ?? self.mainModel.searchedAddress.address[indexPath.row].jibeonAddress ?? "알 수 없음"
+            self.estimateAddresses["return"]?.latitude = self.mainModel.searchedAddress.address[indexPath.row].latitude
+            self.estimateAddresses["return"]?.longitude = self.mainModel.searchedAddress.address[indexPath.row].longitude
+            
+            self.arrivalTextField.text = self.mainModel.searchedAddress.address[indexPath.row].placeName ?? self.mainModel.searchedAddress.address[indexPath.row].roadAddress ?? self.mainModel.searchedAddress.address[indexPath.row].jibeonAddress ?? "알 수 없음"
+            
+        } else {
+            self.estimateAddresses["stopover"]?.name = self.mainModel.searchedAddress.address[indexPath.row].placeName ?? self.mainModel.searchedAddress.address[indexPath.row].roadAddress ?? self.mainModel.searchedAddress.address[indexPath.row].jibeonAddress ?? "알 수 없음"
+            self.estimateAddresses["stopover"]?.latitude = self.mainModel.searchedAddress.address[indexPath.row].latitude
+            self.estimateAddresses["stopover"]?.longitude = self.mainModel.searchedAddress.address[indexPath.row].longitude
+            
+            self.stopoverTextField.text = self.mainModel.searchedAddress.address[indexPath.row].placeName ?? self.mainModel.searchedAddress.address[indexPath.row].roadAddress ?? self.mainModel.searchedAddress.address[indexPath.row].jibeonAddress ?? "알 수 없음"
+            
+        }
+        
     }
 }

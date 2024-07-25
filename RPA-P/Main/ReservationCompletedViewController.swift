@@ -40,7 +40,7 @@ final class ReservationCompletedViewController: UIViewController {
     
     lazy var priceLabel: UILabel = {
         let label = UILabel()
-        label.text = "1,000,000 원"
+        label.text = "\(self.estimate.virtualEstimate?.price ?? "0") 원"
         label.font = .useFont(ofSize: 32, weight: .Bold)
         label.textColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.87)
         label.asFontColor(targetString: "원", font: .useFont(ofSize: 18, weight: .Regular), color: .useRGB(red: 0, green: 0, blue: 0))
@@ -92,7 +92,7 @@ final class ReservationCompletedViewController: UIViewController {
     
     lazy var kindsOfEstimateButton: UIButton = {
         let button = UIButton()
-        button.setTitle("편도", for: .normal)
+        button.setTitle(self.estimate.kindsOfEstimate.rawValue, for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = .useFont(ofSize: 14, weight: .Medium)
         button.backgroundColor = .useRGB(red: 255, green: 142, blue: 142)
@@ -105,7 +105,7 @@ final class ReservationCompletedViewController: UIViewController {
     
     lazy var departureAddressLabel: UILabel = {
         let label = UILabel()
-        label.text = "출발지 주소"
+        label.text = self.estimate.departure.name
         label.textColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.87)
         label.font = .useFont(ofSize: 16, weight: .Medium)
         label.numberOfLines = 2
@@ -118,7 +118,7 @@ final class ReservationCompletedViewController: UIViewController {
     
     lazy var departureDateAndTimeLabel: UILabel = {
         let label = UILabel()
-        label.text = "2024.06.17 06:30 AM"
+        label.text = "\(self.estimate.departureDate.date) \(self.estimate.departureDate.time)"
         label.textColor = .useRGB(red: 255, green: 142, blue: 142)
         label.font = .useFont(ofSize: 12, weight: .Medium)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -138,7 +138,7 @@ final class ReservationCompletedViewController: UIViewController {
     
     lazy var arrivalAddressLabel: UILabel = {
         let label = UILabel()
-        label.text = "도착지 주소"
+        label.text = self.estimate.return.name
         label.textColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.87)
         label.font = .useFont(ofSize: 16, weight: .Medium)
         label.numberOfLines = 0
@@ -151,7 +151,7 @@ final class ReservationCompletedViewController: UIViewController {
     
     lazy var arrivalDateAndTimeLabel: UILabel = {
         let label = UILabel()
-        label.text = "2024.06.17 06:30 PM"
+        label.text = "\(self.estimate.returnDate.date) \(self.estimate.returnDate.time)"
         label.textColor = .useRGB(red: 255, green: 142, blue: 142)
         label.font = .useFont(ofSize: 12, weight: .Medium)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -266,7 +266,20 @@ final class ReservationCompletedViewController: UIViewController {
     
     var heightAnchorContraint: NSLayoutConstraint!
     
+    var estimate: Estimate
     var moreInfoList: [String] = ["25명", "현금", "기사 전체 동행", "28인승", "1대", "우등"]
+    
+    init(estimate: Estimate) {
+        self.estimate = estimate
+        
+        super.init(nibName: nil, bundle: nil)
+        
+        self.modalPresentationStyle = .fullScreen
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -589,6 +602,7 @@ extension ReservationCompletedViewController {
     @objc func findOtherEstimateButton(_ sender: UIButton) {
         print("findOtherEstimateButton")
         
+        self.dismiss(animated: true)
     }
     
     @objc func accountCopyButton(_ sender: UIButton) {

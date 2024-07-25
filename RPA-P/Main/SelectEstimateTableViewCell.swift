@@ -40,7 +40,7 @@ final class SelectEstimateTableViewCell: UITableViewCell {
         flowLayout.scrollDirection = .horizontal
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = .clear
         collectionView.register(CategoryCollectionViewCell.self, forCellWithReuseIdentifier: "CategoryCollectionViewCell")
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
@@ -144,11 +144,11 @@ extension SelectEstimateTableViewCell {
 
 // MARK: - Extension for methods added
 extension SelectEstimateTableViewCell {
-    func setCell(estimate: Estimate) {
-        self.priceLabel.text = "\(estimate.price) 원"
+    func setCell(virtualEstimate: VirtualEstimate) {
+        self.priceLabel.text = "\(virtualEstimate.price) 원"
         self.priceLabel.asFontColor(targetString: "원", font: .useFont(ofSize: 14, weight: .Medium), color: .useRGB(red: 115, green: 115, blue: 115))
         
-        self.allCategoryList = estimate.category
+        self.allCategoryList = virtualEstimate.category
         DispatchQueue.main.async {
             self.collectionView.reloadData()
             

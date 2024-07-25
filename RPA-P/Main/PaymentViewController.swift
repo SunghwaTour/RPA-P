@@ -30,7 +30,7 @@ final class PaymentViewController: UIViewController {
     
     lazy var priceLabel: UILabel = {
         let label = UILabel()
-        label.text = "원"
+        label.text = "\(estimate.virtualEstimate?.price ?? "0")원"
         label.font = .useFont(ofSize: 32, weight: .Bold)
         label.textColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.87)
         label.textAlignment = .center
@@ -73,7 +73,7 @@ final class PaymentViewController: UIViewController {
     
     lazy var departureAddressLabel: UILabel = {
         let label = UILabel()
-        label.text = "출발지 주소"
+        label.text = self.estimate.departure.name
         label.font = .useFont(ofSize: 14, weight: .Medium)
         label.textColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.87)
         label.adjustsFontSizeToFitWidth = true
@@ -81,7 +81,7 @@ final class PaymentViewController: UIViewController {
         
         label.setContentHuggingPriority(.defaultLow, for: .horizontal)
         label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-
+        
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -89,7 +89,8 @@ final class PaymentViewController: UIViewController {
     
     lazy var departureDateLabel: UILabel = {
         let label = UILabel()
-        label.text = "2024.06.19 (수)"
+        // FIXME: 날짜 부분 로직 넣기
+        label.text = "\(self.estimate.departureDate.date) (수)"
         label.font = .useFont(ofSize: 11, weight: .Regular)
         label.textColor = .useRGB(red: 91, green: 91, blue: 91)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -99,7 +100,7 @@ final class PaymentViewController: UIViewController {
     
     lazy var departureTimeLabel: UILabel = {
         let label = UILabel()
-        label.text = "06:30 AM"
+        label.text = "\(self.estimate.departureDate.time)"
         label.font = .useFont(ofSize: 11, weight: .Regular)
         label.textColor = .useRGB(red: 91, green: 91, blue: 91)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -122,7 +123,7 @@ final class PaymentViewController: UIViewController {
     
     lazy var arrivalAddressLabel: UILabel = {
         let label = UILabel()
-        label.text = "도착지 주소"
+        label.text = self.estimate.return.name
         label.font = .useFont(ofSize: 14, weight: .Medium)
         label.textColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.87)
         label.adjustsFontSizeToFitWidth = true
@@ -137,7 +138,7 @@ final class PaymentViewController: UIViewController {
     
     lazy var arrivalDateLabel: UILabel = {
         let label = UILabel()
-        label.text = "2024.06.19 (수)"
+        label.text = "\(self.estimate.returnDate.date) (수)"
         label.font = .useFont(ofSize: 11, weight: .Regular)
         label.textColor = .useRGB(red: 91, green: 91, blue: 91)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -147,7 +148,7 @@ final class PaymentViewController: UIViewController {
     
     lazy var arrivalTimeLabel: UILabel = {
         let label = UILabel()
-        label.text = "06:30 PM"
+        label.text = self.estimate.returnDate.time
         label.font = .useFont(ofSize: 11, weight: .Regular)
         label.textColor = .useRGB(red: 91, green: 91, blue: 91)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -375,8 +376,19 @@ final class PaymentViewController: UIViewController {
     var numberLabelTopAnchorConstraint: NSLayoutConstraint!
     var authenticationNumberLabelTopAnchorConstraint: NSLayoutConstraint!
     
+    var estimate: Estimate
     var paymentMethodList: [String] = ["만나서 현금결제", "만나서 카드결제", "계좌이체"]
     var selectedIndex: Int? = nil
+    
+    init(estimate: Estimate) {
+        self.estimate = estimate
+        
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -827,9 +839,18 @@ extension PaymentViewController {
     @objc func doneButton(_ sender: UIButton) {
         print("doneButton")
         self.view.endEditing(true)
-        let vc = ReservationCompletedViewController()
+        let vc = ReservationCompletedViewController(estimate: self.estimate)
         
-        self.navigationController?.pushViewController(vc, animated: true)
+        self.present(vc, animated: true) {
+            guard let viewControllerStack = self.navigationController?.viewControllers else { return }
+            for viewController in viewControllerStack {
+                if let mainView = viewController as? MainViewController {
+                    
+                    self.navigationController?.popToViewController(mainView, animated: true)
+                }
+                
+            }
+        }
     }
 }
 

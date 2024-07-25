@@ -1,20 +1,30 @@
 PODS:
   - Alamofire (5.9.1)
   - FSCalendar (2.8.4)
+  - Realm (10.52.2):
+    - Realm/Headers (= 10.52.2)
+  - Realm/Headers (10.52.2)
+  - RealmSwift (10.52.2):
+    - Realm (= 10.52.2)
 
 DEPENDENCIES:
   - Alamofire
   - FSCalendar
+  - RealmSwift
 
 SPEC REPOS:
   trunk:
     - Alamofire
     - FSCalendar
+    - Realm
+    - RealmSwift
 
 SPEC CHECKSUMS:
   Alamofire: f36a35757af4587d8e4f4bfa223ad10be2422b8c
   FSCalendar: 2d1d0d9398f12d439f55c1fe0f01525b151b8260
+  Realm: e44eb7d20fe469fe1179894fd356727b8fbe61c2
+  RealmSwift: 7aacbd3101158f7d54c930bcfcfaafadbd376ffc
 
-PODFILE CHECKSUM: 7c6bef0f4d59413e924e13ba153ffe36d969c83b
+PODFILE CHECKSUM: a7f4f276653d7f5d284b12df39d061cac4b65bbf
 
-COCOAPODS: 1.13.0
+COCOAPODS: 1.15.2

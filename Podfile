@@ -8,4 +8,5 @@ target 'RPA-P' do
   # Pods for RPA-P
   pod 'Alamofire'
   pod 'FSCalendar'
+  pod 'RealmSwift'
 end

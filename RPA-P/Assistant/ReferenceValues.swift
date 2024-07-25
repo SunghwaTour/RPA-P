@@ -62,6 +62,9 @@ struct ReferenceValues {
     // FIXME: 서버와 약속에 따라서 String 바꿔주기
     static let expiredConditionMessage: String = "다른 기기에서 로그인 되었습니다."
     
+    // MARK: 카카오 키
+    static let kakaoAuthKey = "KakaoAK 97fea36c4c0c18e6d16275c777f969f2"
+    
 }
 
 // MARK: - Extension of referenceValues

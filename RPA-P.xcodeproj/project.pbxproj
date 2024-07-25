@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		05437B452C52210700963271 /* AddressSearchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05437B442C52210700963271 /* AddressSearchTableViewCell.swift */; };
 		2D0F91FB2C4841CB0014A87D /* EstimateConfirmationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D0F91FA2C4841CB0014A87D /* EstimateConfirmationViewController.swift */; };
 		2D0F91FD2C48F4200014A87D /* EstimateDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D0F91FC2C48F4200014A87D /* EstimateDetailTableViewCell.swift */; };
 		2D0F91FF2C48FD480014A87D /* ReservationAnnouncementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D0F91FE2C48FD480014A87D /* ReservationAnnouncementViewController.swift */; };
@@ -37,6 +38,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		05437B442C52210700963271 /* AddressSearchTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressSearchTableViewCell.swift; sourceTree = "<group>"; };
 		245F003AC91AF64A072E5738 /* Pods-RPA-P.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RPA-P.debug.xcconfig"; path = "Target Support Files/Pods-RPA-P/Pods-RPA-P.debug.xcconfig"; sourceTree = "<group>"; };
 		295C48971F4628F6AD3FE7AF /* Pods-RPA-P.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RPA-P.release.xcconfig"; path = "Target Support Files/Pods-RPA-P/Pods-RPA-P.release.xcconfig"; sourceTree = "<group>"; };
 		2D0F91FA2C4841CB0014A87D /* EstimateConfirmationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EstimateConfirmationViewController.swift; sourceTree = "<group>"; };
@@ -140,6 +142,7 @@
 				2DCC4EA22C46671E0035FD24 /* Models */,
 				2D46F5AB2C3E448100C711E2 /* MainViewController.swift */,
 				2DA8211A2C41491A000EF1D9 /* EstimateViewController.swift */,
+				05437B442C52210700963271 /* AddressSearchTableViewCell.swift */,
 				2D6882912C49095700F9A9CD /* CalendarViewController.swift */,
 				2DA8211E2C415172000EF1D9 /* ViewPagerCollectionViewCell.swift */,
 				2DA8211C2C414967000EF1D9 /* EstimateDetailViewController.swift */,
@@ -318,6 +321,7 @@
 				2DDE4B572C4258DD00CA644F /* SelectEstimateViewController.swift in Sources */,
 				2D46F5882C3DAF6F00C711E2 /* AppDelegate.swift in Sources */,
 				2D835A472C465D7000DF9054 /* CategoryCollectionViewCell.swift in Sources */,
+				05437B452C52210700963271 /* AddressSearchTableViewCell.swift in Sources */,
 				2D0F91FD2C48F4200014A87D /* EstimateDetailTableViewCell.swift in Sources */,
 				2DCC4EA42C46672D0035FD24 /* MainModel.swift in Sources */,
 				2DCC4EA82C47B84A0035FD24 /* CheckPaymentViewController.swift in Sources */,
