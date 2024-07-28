@@ -62,6 +62,8 @@ final class CalendarViewController: UIViewController {
         calendar.appearance.headerTitleFont = .useFont(ofSize: 16, weight: .Bold)
         calendar.appearance.selectionColor = .useRGB(red: 184, green: 0, blue: 0)
         
+        calendar.allowsMultipleSelection = false
+        
         // 오늘 날짜 관련 설정
         calendar.appearance.todayColor = .clear
         calendar.appearance.titleTodayColor = .black
@@ -78,7 +80,6 @@ final class CalendarViewController: UIViewController {
         // 헤더의 폰트 정렬 설정
         // .center & .left & .justified & .natural & .right
         calendar.appearance.headerTitleAlignment = .center
-        
         
         // 헤더 높이 설정
         calendar.headerHeight = 45
@@ -174,7 +175,7 @@ final class CalendarViewController: UIViewController {
     }
     
     var way: SelectDateWay = .depart
-    var selectedDate: Date = Date()
+    var selectedDate: Date = Date(timeIntervalSinceNow: 86400 * 3)
     var preselectedDate: Date
     var departDate: Date?
     
@@ -387,7 +388,7 @@ extension CalendarViewController {
                 print("isPeak: \(self.selectedDate.isPeak())")
                 print("isWeekday: \(self.selectedDate.isWeekday())")
                 
-                NotificationCenter.default.post(name: Notification.Name("SelectedDate"), object: nil, userInfo: ["date": date, "time": time, "way": self.way, "isPeak": self.selectedDate.isPeak(), "isWeekday": self.selectedDate.isWeekday()])
+                NotificationCenter.default.post(name: Notification.Name("SelectedDate"), object: nil, userInfo: ["date": date, "time": time, "way": self.way])
             }
         }
         
@@ -406,7 +407,7 @@ extension CalendarViewController: FSCalendarDelegate, FSCalendarDataSource, FSCa
     }
     
     func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleDefaultColorFor date: Date) -> UIColor? {
-        if SupportingMethods.shared.determineIfEqualToOrLaterThanTargetDate(self.way == .depart ? Date() : self.departDate!, forOneDate: date) {
+        if SupportingMethods.shared.determineIfEqualToOrLaterThanTargetDate(self.way == .depart ? Date(timeIntervalSinceNow: 86400 * 3) : self.departDate!, forOneDate: date) {
             return .black
             
         } else {
@@ -416,25 +417,26 @@ extension CalendarViewController: FSCalendarDelegate, FSCalendarDataSource, FSCa
         
     }
     
-    // 날짜 밑 문자열 표시
-    func calendar(_ calendar: FSCalendar, subtitleFor date: Date) -> String? {
-        var subTitle: String?
-        let index = Int(SupportingMethods.shared.convertDate(intoString: date, "dd"))! - 1
-        
-        return subTitle
-        
-    }
-    
     // 날짜 선택 시
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
-        if SupportingMethods.shared.determineIfEqualToOrLaterThanTargetDate(self.way == .depart ? Date() : self.departDate!, forOneDate: date) {
+//        let currentMonth = SupportingMethods.shared.convertDate(intoString: calendar.currentPage, "MM")
+//        let selectedMonth = SupportingMethods.shared.convertDate(intoString: date, "MM")
+//        if selectedMonth < currentMonth {
+//            calendar.select(date, scrollToDate: true)
+//            calendar.select(self.preselectedDate)
+//            
+//        }
+        
+        if SupportingMethods.shared.determineIfEqualToOrLaterThanTargetDate(self.way == .depart ? Date(timeIntervalSinceNow: 86400 * 3) : self.departDate!, forOneDate: date) {
             self.selectedDate = date
             
         } else {
             SupportingMethods.shared.showAlertNoti(title: "해당 날짜는 선택할 수 없습니다.")
-            calendar.select(self.preselectedDate)
+            self.calendar.select(self.preselectedDate)
+            self.calendar.reloadData()
             
         }
         
     }
+    
 }

@@ -340,7 +340,7 @@ final class EstimateViewController: UIViewController {
     
     lazy var departureDateLabel: UILabel = {
         let label = UILabel()
-        label.text = SupportingMethods.shared.convertDate(intoString: Date(), "yyyy.MM.dd")
+        label.text = SupportingMethods.shared.convertDate(intoString: Date(timeIntervalSinceNow: 86400 * 3), "yyyy.MM.dd")
         label.textColor = .useRGB(red: 167, green: 167, blue: 167)
         label.font = .useFont(ofSize: 16, weight: .Regular)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -388,7 +388,7 @@ final class EstimateViewController: UIViewController {
     
     lazy var arrivalDateLabel: UILabel = {
         let label = UILabel()
-        label.text = SupportingMethods.shared.convertDate(intoString: Date(), "yyyy.MM.dd")
+        label.text = SupportingMethods.shared.convertDate(intoString: Date(timeIntervalSinceNow: 86400 * 3), "yyyy.MM.dd")
         label.textColor = .useRGB(red: 167, green: 167, blue: 167)
         label.font = .useFont(ofSize: 16, weight: .Regular)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -539,8 +539,6 @@ final class EstimateViewController: UIViewController {
         "return": EstimateAddress(),
         "stopover": EstimateAddress(),
     ]
-    var priceWhenPeak: Int = Date().isPeak() ? 200000 : 0
-    var priceWhenWeekday: Int = Date().isWeekday() ? 150000 : 0
     
     let mainModel = MainModel()
     var selectedAddressIndex: Int? {
@@ -1088,11 +1086,11 @@ extension EstimateViewController {
         self.numberLabelTopAnchorConstraint.constant = 13.5
         
         // 가는 날 & 오는 날
-        self.departureDateLabel.text = SupportingMethods.shared.convertDate(intoString: Date(), "yyyy.MM.dd")
-        self.arrivalDateLabel.text = SupportingMethods.shared.convertDate(intoString: Date() + 1, "yyyy.MM.dd")
+        self.departureDateLabel.text = SupportingMethods.shared.convertDate(intoString: Date(timeIntervalSinceNow: 86400 * 3), "yyyy.MM.dd")
+        self.arrivalDateLabel.text = SupportingMethods.shared.convertDate(intoString: Date(timeIntervalSinceNow: 86400 * 4), "yyyy.MM.dd")
         
-        self.departureTimeLabel.text = SupportingMethods.shared.convertDate(intoString: Date(), "HH:mm a")
-        self.arrivalTimeLabel.text = SupportingMethods.shared.convertDate(intoString: Date() + 1, "HH:mm a")
+        self.departureTimeLabel.text = SupportingMethods.shared.convertDate(intoString: Date(timeIntervalSinceNow: 86400 * 3), "HH:mm a")
+        self.arrivalTimeLabel.text = SupportingMethods.shared.convertDate(intoString: Date(timeIntervalSinceNow: 86400 * 4), "HH:mm a")
     }
 }
 
@@ -1258,9 +1256,6 @@ extension EstimateViewController {
         guard let date = notification.userInfo?["date"] as? String else { return }
         guard let time = notification.userInfo?["time"] as? String else { return }
         
-        guard let isPeak = notification.userInfo?["isPeak"] as? Bool else { return }
-        guard let isWeekday = notification.userInfo?["isWeekday"] as? Bool else { return }
-        
         switch way {
         case .depart:
             self.departureDateLabel.text = date
@@ -1279,9 +1274,6 @@ extension EstimateViewController {
             self.arrivalTimeLabel.text = time
             
         }
-        
-        self.priceWhenPeak = isPeak ? 200000 : 0
-        self.priceWhenWeekday = isWeekday ? 150000 : 0
         
     }
     
@@ -1346,8 +1338,13 @@ extension EstimateViewController {
         
         var virtualPrice = 0
         let distance = Int(SupportingMethods.shared.calculateDistance(estimateAddresses: self.estimateAddresses, kindsOfEstimate: self.kindsOfEstimate) / 1000)
-        var priceWhenWeekday = self.priceWhenWeekday
-        var priceWhenPeak = self.priceWhenPeak
+        
+        let isPeak = SupportingMethods.shared.convertString(intoDate: self.departureDateLabel.text!, "yyyy.MM.dd").isPeak() || SupportingMethods.shared.convertString(intoDate: self.arrivalDateLabel.text!, "yyyy.MM.dd").isPeak()
+        
+        let isWeekday = SupportingMethods.shared.convertString(intoDate: self.departureDateLabel.text!, "yyyy.MM.dd").isWeekday() || SupportingMethods.shared.convertString(intoDate: self.arrivalDateLabel.text!, "yyyy.MM.dd").isWeekday()
+        
+        var priceWhenWeekday = isWeekday ? 150000 : 0
+        let priceWhenPeak = isPeak ? 200000 : 0
         
         if distance != 0 {
             if self.kindsOfEstimate == .roundTrip {
@@ -1360,7 +1357,6 @@ extension EstimateViewController {
                 virtualPrice = SupportingMethods.shared.caculateVirtualBasicPrice(distance: distance, kindsOfEstimate: self.kindsOfEstimate) + priceWhenPeak + priceWhenWeekday + ReferenceValues.pricePerOneNight * howManyNights
                 
             } else {
-                priceWhenPeak = SupportingMethods.shared.convertString(intoDate: self.departureDateLabel.text!, "yyyy.MM.dd").isPeak() ? 200000 : 0
                 virtualPrice = SupportingMethods.shared.caculateVirtualBasicPrice(distance: distance, kindsOfEstimate: self.kindsOfEstimate) + priceWhenPeak + priceWhenWeekday
                 
             }

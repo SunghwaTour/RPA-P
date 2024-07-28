@@ -41,6 +41,7 @@ final class EstimateDetailViewController: UIViewController {
     }()
     
     var estimateList: [Estimate] = []
+    var tempEstimate: Estimate?
     
     init() {
         
@@ -163,6 +164,8 @@ extension EstimateDetailViewController {
 // MARK: - Extension for selector methods
 extension EstimateDetailViewController {    
     @objc func reservationConfirmButton(_ notification: Notification) {
+        guard let estimate = notification.userInfo?["estimate"] as? Estimate else { return }
+        self.tempEstimate = estimate
         let vc = EstimateConfirmationViewController()
         
         self.present(vc, animated: true)
@@ -176,7 +179,7 @@ extension EstimateDetailViewController {
     
     @objc func estimateConfirm(_ notificatoin: Notification) {
         print("estimateConfirm")
-        let vc = ReservationAnnouncementViewController()
+        let vc = ReservationAnnouncementViewController(estimate: self.tempEstimate!)
         
         self.present(vc, animated: true)
     }
