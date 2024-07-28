@@ -63,7 +63,7 @@ struct ReferenceValues {
     static let expiredConditionMessage: String = "다른 기기에서 로그인 되었습니다."
     
     // MARK: 카카오 키
-    static let kakaoAuthKey = "KakaoAK 97fea36c4c0c18e6d16275c777f969f2"
+    static let kakaoAuthKey = "KakaoAK a9ae68eace6999d4b0d87a0424f20836"
     
     // MARK: Basic Price
     static let basicPrice = 692000
