@@ -38,7 +38,7 @@ final class ReservationAnnouncementViewController: UIViewController {
     
     lazy var priceLabel: UILabel = {
         let label = UILabel()
-        label.text = "92,000 원"
+        label.text = "\(self.estimate.virtualEstimate?.price.withCommaString ?? "0") 원"
         label.textColor = .useRGB(red: 184, green: 0, blue: 0)
         label.font = .useFont(ofSize: 20, weight: .Medium)
         label.asFontColor(targetString: "원", font: .useFont(ofSize: 14, weight: .Regular), color: .useRGB(red: 184, green: 0, blue: 0))
@@ -81,7 +81,7 @@ final class ReservationAnnouncementViewController: UIViewController {
     
     lazy var accountLabel: UILabel = {
         let label = UILabel()
-        label.text = "국민 0000-00000-00000"
+        label.text = "기업은행 331-011771-01-011"
         label.textColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.87)
         label.font = .useFont(ofSize: 16, weight: .Medium)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -102,7 +102,9 @@ final class ReservationAnnouncementViewController: UIViewController {
         return button
     }()
     
-    init() {
+    init(estimate: Estimate) {
+        self.estimate = estimate
+        
         super.init(nibName: nil , bundle: nil)
         
         self.modalPresentationStyle = .fullScreen
@@ -111,6 +113,8 @@ final class ReservationAnnouncementViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    var estimate: Estimate
     
     override func viewDidLoad() {
         super.viewDidLoad()

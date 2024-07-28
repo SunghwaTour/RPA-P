@@ -229,6 +229,7 @@ final class EstimateDetailTableViewCell: UITableViewCell {
     }()
     
     var moreInfoList: [String] = []
+    var estimate: Estimate?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -455,6 +456,7 @@ extension EstimateDetailTableViewCell {
 // MARK: - Extension for methods added
 extension EstimateDetailTableViewCell {
     func setCell(estimate: Estimate) {
+        self.estimate = estimate
         self.kindsOfEstimateButton.setTitle(estimate.kindsOfEstimate.rawValue, for: .normal)
         
         let distance = Int(SupportingMethods.shared.calculateDistance(departure: estimate.departure, return: estimate.return, kindsOfEstimate: estimate.kindsOfEstimate)) / 1000
@@ -518,7 +520,8 @@ extension EstimateDetailTableViewCell {
     }
     
     @objc func reservationConfirmButton(_ sender: UIButton) {
-        NotificationCenter.default.post(name: Notification.Name("RservationConfirmation"), object: nil)
+        guard let estimate = self.estimate else { return }
+        NotificationCenter.default.post(name: Notification.Name("RservationConfirmation"), object: nil, userInfo: ["estimate": estimate])
         
     }
 }

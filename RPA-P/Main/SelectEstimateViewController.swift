@@ -530,6 +530,10 @@ extension SelectEstimateViewController {
     }
     
     @objc func reservationButton(_ sender: UIButton) {
+        guard let selectedIndexForTableView = self.selectedIndexForTableView else {
+            SupportingMethods.shared.showAlertNoti(title: "견적을 선택해주세요.")
+            return
+        }
         self.estimate.virtualEstimate = self.virtualEstimate
         
         let vc = PaymentViewController(estimate: self.estimate)

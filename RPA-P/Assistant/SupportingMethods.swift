@@ -1488,7 +1488,7 @@ extension Date {
     }
     
     func isPeak() -> Bool {
-        let peakList = [4,5,8,9,10]
+        let peakList = [4,5,9,10]
         let month = Int(SupportingMethods.shared.convertDate(intoString: self, "M"))!
         
         if peakList.contains(month) {
