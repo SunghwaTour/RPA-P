@@ -464,7 +464,17 @@ extension EstimateDetailTableViewCell {
         self.arrivalAddressLabel.text = estimate.return.name
         
         self.departureDateAndTimeLabel.text = "\(estimate.departureDate.date) \(estimate.departureDate.time)"
-        self.arrivalDateAndTimeLabel.text = "\(estimate.returnDate.date) \(estimate.returnDate.time)"
+        
+        if estimate.kindsOfEstimate == .oneWay {
+            self.arrivalDateAndTimeTitleLabel.isHidden = true
+            self.arrivalDateAndTimeLabel.isHidden = true
+            
+        } else {
+            self.arrivalDateAndTimeTitleLabel.isHidden = false
+            self.arrivalDateAndTimeLabel.text = "\(estimate.returnDate.date) \(estimate.returnDate.time)"
+            
+        }
+        
         
         self.priceLabel.text = "\(estimate.virtualEstimate?.price.withCommaString ?? "0") 원"
         

@@ -216,7 +216,7 @@ final class ReservationCompletedViewController: UIViewController {
     
     lazy var accountLabel: UILabel = {
         let label = UILabel()
-        label.text = "국민 0000-00000-00000"
+        label.text = "기업은행 331-011771-01-011"
         label.textColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.87)
         label.font = .useFont(ofSize: 16, weight: .Medium)
         label.translatesAutoresizingMaskIntoConstraints = false

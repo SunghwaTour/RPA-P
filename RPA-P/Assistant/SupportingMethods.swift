@@ -501,7 +501,6 @@ extension SupportingMethods {
     
     // MARK: Distance And Virtual Price
     func calculateDistance(departure: EstimateAddress, `return`: EstimateAddress, kindsOfEstimate: KindsOfEstimate) -> CLLocationDistance {
-        let kindOfEstimate = kindsOfEstimate
         let departure = CLLocationCoordinate2D(latitude: Double(departure.latitude)!, longitude: Double(departure.longitude)!)
         let `return` = CLLocationCoordinate2D(latitude: Double(`return`.latitude)!, longitude: Double(`return`.longitude)!)
         
@@ -512,8 +511,10 @@ extension SupportingMethods {
     }
     
     func calculateDistance(estimateAddresses: [String: EstimateAddress], kindsOfEstimate: KindsOfEstimate) -> CLLocationDistance {
-        let kindOfEstimate = kindsOfEstimate
-        let departure = CLLocationCoordinate2D(latitude: Double(estimateAddresses["departure"]!.latitude)!, longitude: Double(estimateAddresses["departure"]!.longitude)!)
+        guard let latitude = Double(estimateAddresses["departure"]!.latitude) else { return 0 }
+        guard let longitude = Double(estimateAddresses["departure"]!.longitude) else { return 0 }
+        
+        let departure = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
         
         let `return` = CLLocationCoordinate2D(latitude: Double(estimateAddresses["return"]!.latitude)!, longitude: Double(estimateAddresses["return"]!.longitude)!)
         
@@ -543,12 +544,24 @@ extension SupportingMethods {
         
         var totalPrice: Int = ReferenceValues.basicPrice + waitingTimePrice
         
-        if distance > 200 {
+        if distance <= 100 {
+            totalPrice = 500000 + waitingTimePrice
+            
+        } else if distance <= 200 {
+            totalPrice = ReferenceValues.basicPrice + waitingTimePrice
+            
+        } else {
             totalPrice += distance < 400 ?
             (distance - 200) * pricePerKM.rawValue :
             200 * PricePerKM.lessThan400.rawValue + (distance - 400) * pricePerKM.rawValue
             
         }
+//        if distance > 200 {
+//            totalPrice += distance < 400 ?
+//            (distance - 200) * pricePerKM.rawValue :
+//            200 * PricePerKM.lessThan400.rawValue + (distance - 400) * pricePerKM.rawValue
+//            
+//        }
         
         return Int(Double(totalPrice) * (distance < 400 ? kindsOfEstimate.discountRate : 1.0))
     }

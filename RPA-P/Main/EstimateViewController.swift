@@ -340,7 +340,7 @@ final class EstimateViewController: UIViewController {
     
     lazy var departureDateLabel: UILabel = {
         let label = UILabel()
-        label.text = "2024.06.19"
+        label.text = SupportingMethods.shared.convertDate(intoString: Date(), "yyyy.MM.dd")
         label.textColor = .useRGB(red: 167, green: 167, blue: 167)
         label.font = .useFont(ofSize: 16, weight: .Regular)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -388,7 +388,7 @@ final class EstimateViewController: UIViewController {
     
     lazy var arrivalDateLabel: UILabel = {
         let label = UILabel()
-        label.text = "2024.06.19"
+        label.text = SupportingMethods.shared.convertDate(intoString: Date(), "yyyy.MM.dd")
         label.textColor = .useRGB(red: 167, green: 167, blue: 167)
         label.font = .useFont(ofSize: 16, weight: .Regular)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -1242,13 +1242,13 @@ extension EstimateViewController {
     }
     
     @objc func departureDateAndTimeButton(_ sender: UIButton) {
-        let vc = CalendarViewController(way: .depart)
+        let vc = CalendarViewController(way: .depart, preselectedDate: self.departureDateLabel.text!)
         
         self.present(vc, animated: true)
     }
     
     @objc func arrivalDateAndTimeButton(_ sender: UIButton) {
-        let vc = CalendarViewController(way: .return)
+        let vc = CalendarViewController(way: .return, preselectedDate: self.arrivalDateLabel.text!, departDate: self.departureDateLabel.text!)
         
         self.present(vc, animated: true)
     }
@@ -1265,6 +1265,14 @@ extension EstimateViewController {
         case .depart:
             self.departureDateLabel.text = date
             self.departureTimeLabel.text = time
+            
+            let departureDate = SupportingMethods.shared.convertString(intoDate: date, "yyyy.MM.dd")
+            let returnDate = SupportingMethods.shared.convertString(intoDate: self.arrivalDateLabel.text!, "yyyy.MM.dd")
+            
+            if !SupportingMethods.shared.determineIfEqualToOrLaterThanTargetDate(departureDate, forOneDate: returnDate) {
+                self.arrivalDateLabel.text = date
+                
+            }
             
         case .return:
             self.arrivalDateLabel.text = date
@@ -1335,40 +1343,48 @@ extension EstimateViewController {
     
     @objc func nextButton(_ sender: UIButton) {
         print("nextButton")
+        
         var virtualPrice = 0
         let distance = Int(SupportingMethods.shared.calculateDistance(estimateAddresses: self.estimateAddresses, kindsOfEstimate: self.kindsOfEstimate) / 1000)
         var priceWhenWeekday = self.priceWhenWeekday
         var priceWhenPeak = self.priceWhenPeak
         
-        if self.kindsOfEstimate == .roundTrip {
-            let howManyNights = SupportingMethods.shared.calculateHowManyNights(departureDate: self.departureDateLabel.text!, returnDate: self.arrivalDateLabel.text!)
-            
-            if howManyNights >= 6 {
-                priceWhenWeekday = 150000
+        if distance != 0 {
+            if self.kindsOfEstimate == .roundTrip {
+                let howManyNights = SupportingMethods.shared.calculateHowManyNights(departureDate: self.departureDateLabel.text!, returnDate: self.arrivalDateLabel.text!)
+                
+                if howManyNights >= 6 {
+                    priceWhenWeekday = 150000
+                }
+                
+                virtualPrice = SupportingMethods.shared.caculateVirtualBasicPrice(distance: distance, kindsOfEstimate: self.kindsOfEstimate) + priceWhenPeak + priceWhenWeekday + ReferenceValues.pricePerOneNight * howManyNights
+                
+            } else {
+                priceWhenPeak = SupportingMethods.shared.convertString(intoDate: self.departureDateLabel.text!, "yyyy.MM.dd").isPeak() ? 200000 : 0
+                virtualPrice = SupportingMethods.shared.caculateVirtualBasicPrice(distance: distance, kindsOfEstimate: self.kindsOfEstimate) + priceWhenPeak + priceWhenWeekday
+                
             }
             
-            virtualPrice = SupportingMethods.shared.caculateVirtualBasicPrice(distance: distance, kindsOfEstimate: self.kindsOfEstimate) + priceWhenPeak + priceWhenWeekday + ReferenceValues.pricePerOneNight * howManyNights
+            print(self.estimateAddresses)
+            
+            let departureDateAndTime = EstimateTime(date: self.departureDateLabel.text!, time: self.departureTimeLabel.text!)
+            let returnDateAndTime = EstimateTime(date: self.arrivalDateLabel.text!, time: self.arrivalTimeLabel.text!)
+            
+            let estimate: Estimate =
+            Estimate(kindsOfEstimate: self.kindsOfEstimate, departure: self.estimateAddresses["departure"]!, return: self.estimateAddresses["return"]!, stopover: self.estimateAddresses["stopover"]!, departureDate: departureDateAndTime, returnDate: returnDateAndTime, number: self.numberTextField.text == "미정" ? nil: Int(self.numberTextField.text ?? "0") ?? nil)
+            
+            print("distance: \(distance)\nprice: \(SupportingMethods.shared.caculateVirtualBasicPrice(distance: distance, kindsOfEstimate: self.kindsOfEstimate))")
+            print("virtualPrice: \(virtualPrice)")
+            
+            let vc = SelectEstimateViewController(estimate: estimate, virtualPrice: virtualPrice)
+
+            self.navigationController?.pushViewController(vc, animated: true)
+            NotificationCenter.default.post(name: Notification.Name("MoveEstimateDetail"), object: nil)
             
         } else {
-            priceWhenPeak = SupportingMethods.shared.convertString(intoDate: self.departureDateLabel.text!, "yyyy.MM.dd").isPeak() ? 200000 : 0
-            virtualPrice = SupportingMethods.shared.caculateVirtualBasicPrice(distance: distance, kindsOfEstimate: self.kindsOfEstimate) + priceWhenPeak + priceWhenWeekday
+            SupportingMethods.shared.showAlertNoti(title: "주소를 입력해주세요.")
             
         }
-        
-        print(self.estimateAddresses)
-        
-        let departureDateAndTime = EstimateTime(date: self.departureDateLabel.text!, time: self.departureTimeLabel.text!)
-        let returnDateAndTime = EstimateTime(date: self.arrivalDateLabel.text!, time: self.arrivalTimeLabel.text!)
-        
-        let estimate: Estimate =
-        Estimate(kindsOfEstimate: self.kindsOfEstimate, departure: self.estimateAddresses["departure"]!, return: self.estimateAddresses["return"]!, stopover: self.estimateAddresses["stopover"]!, departureDate: departureDateAndTime, returnDate: returnDateAndTime, number: self.numberTextField.text == "미정" ? nil: Int(self.numberTextField.text ?? "0") ?? nil)
-        
-        print("distance: \(distance)\nprice: \(SupportingMethods.shared.caculateVirtualBasicPrice(distance: distance, kindsOfEstimate: self.kindsOfEstimate))")
-        
-        let vc = SelectEstimateViewController(estimate: estimate, virtualPrice: virtualPrice)
-
-        self.navigationController?.pushViewController(vc, animated: true)
-        NotificationCenter.default.post(name: Notification.Name("MoveEstimateDetail"), object: nil)
         
     }
     

@@ -153,10 +153,17 @@ final class CalendarViewController: UIViewController {
         return button
     }()
     
-    init(way: SelectDateWay) {
+    init(way: SelectDateWay, preselectedDate: String, departDate: String? = nil) {
         self.way = way
+        self.preselectedDate = SupportingMethods.shared.convertString(intoDate: preselectedDate, "yyyy.MM.dd")
+        
+        if let departDate = departDate {
+            self.departDate = SupportingMethods.shared.convertString(intoDate: departDate, "yyyy.MM.dd")
+            
+        }
         
         super.init(nibName: nil, bundle: nil)
+        self.calendar.select(SupportingMethods.shared.convertString(intoDate: preselectedDate, "yyyy.MM.dd"))
         
         self.modalTransitionStyle = .crossDissolve
         self.modalPresentationStyle = .overFullScreen
@@ -168,6 +175,8 @@ final class CalendarViewController: UIViewController {
     
     var way: SelectDateWay = .depart
     var selectedDate: Date = Date()
+    var preselectedDate: Date
+    var departDate: Date?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -396,6 +405,17 @@ extension CalendarViewController: FSCalendarDelegate, FSCalendarDataSource, FSCa
         
     }
     
+    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleDefaultColorFor date: Date) -> UIColor? {
+        if SupportingMethods.shared.determineIfEqualToOrLaterThanTargetDate(self.way == .depart ? Date() : self.departDate!, forOneDate: date) {
+            return .black
+            
+        } else {
+            return .useRGB(red: 188, green: 188, blue: 188)
+            
+        }
+        
+    }
+    
     // 날짜 밑 문자열 표시
     func calendar(_ calendar: FSCalendar, subtitleFor date: Date) -> String? {
         var subTitle: String?
@@ -407,6 +427,14 @@ extension CalendarViewController: FSCalendarDelegate, FSCalendarDataSource, FSCa
     
     // 날짜 선택 시
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
-        self.selectedDate = date
+        if SupportingMethods.shared.determineIfEqualToOrLaterThanTargetDate(self.way == .depart ? Date() : self.departDate!, forOneDate: date) {
+            self.selectedDate = date
+            
+        } else {
+            SupportingMethods.shared.showAlertNoti(title: "해당 날짜는 선택할 수 없습니다.")
+            calendar.select(self.preselectedDate)
+            
+        }
+        
     }
 }
