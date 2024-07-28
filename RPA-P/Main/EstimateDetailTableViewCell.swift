@@ -228,7 +228,7 @@ final class EstimateDetailTableViewCell: UITableViewCell {
         return button
     }()
     
-    var moreInfoList: [String] = ["25명", "현금", "기사 전체 동행", "28인승", "1대", "우등"]
+    var moreInfoList: [String] = []
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -267,7 +267,7 @@ extension EstimateDetailTableViewCell {
     
     // Initialize views
     func initializeViews() {
-        
+
     }
     
     // Set gestures
@@ -454,7 +454,37 @@ extension EstimateDetailTableViewCell {
 
 // MARK: - Extension for methods added
 extension EstimateDetailTableViewCell {
-    func setCell() {
+    func setCell(estimate: Estimate) {
+        self.kindsOfEstimateButton.setTitle(estimate.kindsOfEstimate.rawValue, for: .normal)
+        
+        let distance = Int(SupportingMethods.shared.calculateDistance(departure: estimate.departure, return: estimate.return, kindsOfEstimate: estimate.kindsOfEstimate)) / 1000
+        self.distanceButton.setTitle("\(distance)KM", for: .normal)
+        
+        self.departureAddressLabel.text = estimate.departure.name
+        self.arrivalAddressLabel.text = estimate.return.name
+        
+        self.departureDateAndTimeLabel.text = "\(estimate.departureDate.date) \(estimate.departureDate.time)"
+        self.arrivalDateAndTimeLabel.text = "\(estimate.returnDate.date) \(estimate.returnDate.time)"
+        
+        self.priceLabel.text = "\(estimate.virtualEstimate?.price.withCommaString ?? "0") 원"
+        
+        if self.moreInfoList.isEmpty {
+            self.moreInfoList.append(estimate.pay?.payWay?.rawValue ?? "")
+            if let virtualEstimate = estimate.virtualEstimate {
+                for category in virtualEstimate.category {
+                    self.moreInfoList.append(category.rawValue)
+                    
+                }
+                
+            }
+            
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+                
+            }
+            
+        }
+        
         
     }
 }

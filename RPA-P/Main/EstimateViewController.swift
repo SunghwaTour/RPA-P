@@ -539,6 +539,8 @@ final class EstimateViewController: UIViewController {
         "return": EstimateAddress(),
         "stopover": EstimateAddress(),
     ]
+    var priceWhenPeak: Int = Date().isPeak() ? 200000 : 0
+    var priceWhenWeekday: Int = Date().isWeekday() ? 150000 : 0
     
     let mainModel = MainModel()
     var selectedAddressIndex: Int? {
@@ -608,6 +610,8 @@ extension EstimateViewController: EssentialViewMethods {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(applyDate(_:)), name: Notification.Name("SelectedDate"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(initializeData(_:)), name: Notification.Name("InitializeData"), object: nil)
+        
     }
     
     func setSubviews() {
@@ -1029,6 +1033,67 @@ extension EstimateViewController {
         
         self.addressTableView.isHidden = false
     }
+    
+    func initializeData() {
+        // 데이터 초기화
+        self.estimateAddresses["departure"] = EstimateAddress()
+        self.estimateAddresses["return"] = EstimateAddress()
+        self.estimateAddresses["stopover"] = EstimateAddress()
+        
+        // 출발지
+        self.departureView.layer.borderColor = UIColor.useRGB(red: 255, green: 232, blue: 232).cgColor
+        
+        self.departureLabel.font = .useFont(ofSize: 14, weight: .Regular)
+        self.departureLabel.textColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.2)
+        
+        self.departureLabelTopAnchorConstraint.constant = 13.5
+        self.departureTextField.text = ""
+        
+        // 도착지
+        self.arrivalView.layer.borderColor = UIColor.useRGB(red: 255, green: 232, blue: 232).cgColor
+        
+        self.arrivalLabel.font = .useFont(ofSize: 14, weight: .Regular)
+        self.arrivalLabel.textColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.2)
+        
+        self.arrivalLabelTopAnchorConstraint.constant = 13.5
+        self.arrivalTextField.text = ""
+        
+        // 경유지
+        self.estimateAddresses["stopover"] = EstimateAddress()
+        
+        self.stopoverView.isHidden = true
+        self.stopoverView.layer.borderColor = UIColor.useRGB(red: 255, green: 232, blue: 232).cgColor
+        
+        self.stopoverLabel.font = .useFont(ofSize: 14, weight: .Regular)
+        self.stopoverLabel.textColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.2)
+        
+        self.stopoverLabelTopAnchorConstraint.constant = 13.5
+        self.stopoverTextField.text = ""
+        
+        // 인원수
+        self.numberView.backgroundColor = .white
+        
+        self.numberTextField.text = ""
+        self.numberTextField.textColor = .useRGB(red: 38, green: 38, blue: 38)
+        
+        self.numberTextField.isEnabled = true
+        
+        self.undecidedButton.setTitleColor(.white, for: .normal)
+        self.undecidedButton.backgroundColor = .useRGB(red: 255, green: 160, blue: 160)
+        
+        self.numberLabel.font = .useFont(ofSize: 14, weight: .Regular)
+        self.numberLabel.text = "인원수를 입력해주세요."
+        self.numberLabel.textColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.2)
+        
+        self.numberLabelTopAnchorConstraint.constant = 13.5
+        
+        // 가는 날 & 오는 날
+        self.departureDateLabel.text = SupportingMethods.shared.convertDate(intoString: Date(), "yyyy.MM.dd")
+        self.arrivalDateLabel.text = SupportingMethods.shared.convertDate(intoString: Date() + 1, "yyyy.MM.dd")
+        
+        self.departureTimeLabel.text = SupportingMethods.shared.convertDate(intoString: Date(), "HH:mm a")
+        self.arrivalTimeLabel.text = SupportingMethods.shared.convertDate(intoString: Date() + 1, "HH:mm a")
+    }
 }
 
 // MARK: - Extension for selector methods
@@ -1155,7 +1220,9 @@ extension EstimateViewController {
     }
     
     @objc func removeStopoverButton(_ sender: UIButton) {
+        self.estimateAddresses["stopover"] = EstimateAddress()
         self.stopoverView.isHidden = true
+        self.addressTableView.isHidden = true
         
         self.stopoverTextField.text = ""
         self.view.endEditing(true)
@@ -1191,6 +1258,9 @@ extension EstimateViewController {
         guard let date = notification.userInfo?["date"] as? String else { return }
         guard let time = notification.userInfo?["time"] as? String else { return }
         
+        guard let isPeak = notification.userInfo?["isPeak"] as? Bool else { return }
+        guard let isWeekday = notification.userInfo?["isWeekday"] as? Bool else { return }
+        
         switch way {
         case .depart:
             self.departureDateLabel.text = date
@@ -1201,6 +1271,9 @@ extension EstimateViewController {
             self.arrivalTimeLabel.text = time
             
         }
+        
+        self.priceWhenPeak = isPeak ? 200000 : 0
+        self.priceWhenWeekday = isWeekday ? 150000 : 0
         
     }
     
@@ -1262,24 +1335,55 @@ extension EstimateViewController {
     
     @objc func nextButton(_ sender: UIButton) {
         print("nextButton")
-        let deparutre = CLLocationCoordinate2D(latitude: Double(self.estimateAddresses["departure"]!.latitude)!, longitude: Double(self.estimateAddresses["departure"]!.longitude)!)
-        let `return` = CLLocationCoordinate2D(latitude: Double(self.estimateAddresses["return"]!.latitude)!, longitude: Double(self.estimateAddresses["return"]!.longitude)!)
-        print(SupportingMethods.shared.calculateDistance(departure: deparutre, return: `return`) / 1000)
+        var virtualPrice = 0
+        let distance = Int(SupportingMethods.shared.calculateDistance(estimateAddresses: self.estimateAddresses, kindsOfEstimate: self.kindsOfEstimate) / 1000)
+        var priceWhenWeekday = self.priceWhenWeekday
+        var priceWhenPeak = self.priceWhenPeak
+        
+        if self.kindsOfEstimate == .roundTrip {
+            let howManyNights = SupportingMethods.shared.calculateHowManyNights(departureDate: self.departureDateLabel.text!, returnDate: self.arrivalDateLabel.text!)
+            
+            if howManyNights >= 6 {
+                priceWhenWeekday = 150000
+            }
+            
+            virtualPrice = SupportingMethods.shared.caculateVirtualBasicPrice(distance: distance, kindsOfEstimate: self.kindsOfEstimate) + priceWhenPeak + priceWhenWeekday + ReferenceValues.pricePerOneNight * howManyNights
+            
+        } else {
+            priceWhenPeak = SupportingMethods.shared.convertString(intoDate: self.departureDateLabel.text!, "yyyy.MM.dd").isPeak() ? 200000 : 0
+            virtualPrice = SupportingMethods.shared.caculateVirtualBasicPrice(distance: distance, kindsOfEstimate: self.kindsOfEstimate) + priceWhenPeak + priceWhenWeekday
+            
+        }
+        
         print(self.estimateAddresses)
+        
         let departureDateAndTime = EstimateTime(date: self.departureDateLabel.text!, time: self.departureTimeLabel.text!)
         let returnDateAndTime = EstimateTime(date: self.arrivalDateLabel.text!, time: self.arrivalTimeLabel.text!)
         
         let estimate: Estimate =
-        Estimate(kindsOfEstimate: self.kindsOfEstimate, departure: self.estimateAddresses["departure"]!, return: self.estimateAddresses["return"]!, stopover: self.estimateAddresses["stopover"]!, departureDate: departureDateAndTime, returnDate: returnDateAndTime, number: self.numberTextField.text == "미정" ? nil: Int(self.numberTextField.text ?? "0")!)
+        Estimate(kindsOfEstimate: self.kindsOfEstimate, departure: self.estimateAddresses["departure"]!, return: self.estimateAddresses["return"]!, stopover: self.estimateAddresses["stopover"]!, departureDate: departureDateAndTime, returnDate: returnDateAndTime, number: self.numberTextField.text == "미정" ? nil: Int(self.numberTextField.text ?? "0") ?? nil)
         
-        let vc = SelectEstimateViewController(estimate: estimate)
+        print("distance: \(distance)\nprice: \(SupportingMethods.shared.caculateVirtualBasicPrice(distance: distance, kindsOfEstimate: self.kindsOfEstimate))")
+        
+        let vc = SelectEstimateViewController(estimate: estimate, virtualPrice: virtualPrice)
 
         self.navigationController?.pushViewController(vc, animated: true)
+        NotificationCenter.default.post(name: Notification.Name("MoveEstimateDetail"), object: nil)
         
     }
     
     @objc func estimateDetailButton(_ sender: UIButton) {
         print("estimateDetailButton")
+        NotificationCenter.default.post(name: Notification.Name("MoveEstimateDetail"), object: nil)
+        
+    }
+    
+    @objc func initializeData(_ notification: Notification) {
+        self.initializeData()
+        
+        guard let estimate = notification.userInfo?["estimate"] as? Estimate else { return }
+        print(estimate)
+        NotificationCenter.default.post(name: Notification.Name("SaveEstimateData"), object: nil, userInfo: ["estimate": estimate])
         
     }
 }

@@ -102,6 +102,17 @@ enum Languages: String {
     }
 }
 
+enum PricePerKM: Int {
+    case lessThan400 = 3460
+    case moreThan400 = 2590
+}
+
+enum WaitingTimePrice: Int {
+    case lessThan200 = 150000
+    case lessThan300 = 90000
+    case lessThan400 = 30000
+}
+
 class SupportingMethods {
     
     private lazy var coverView: UIView = {
@@ -489,8 +500,64 @@ extension SupportingMethods {
     }
     
     // MARK: Distance And Virtual Price
-    func calculateDistance(departure: CLLocationCoordinate2D, `return`: CLLocationCoordinate2D) -> CLLocationDistance {
-        return departure.distance(from: `return`)
+    func calculateDistance(departure: EstimateAddress, `return`: EstimateAddress, kindsOfEstimate: KindsOfEstimate) -> CLLocationDistance {
+        let kindOfEstimate = kindsOfEstimate
+        let departure = CLLocationCoordinate2D(latitude: Double(departure.latitude)!, longitude: Double(departure.longitude)!)
+        let `return` = CLLocationCoordinate2D(latitude: Double(`return`.latitude)!, longitude: Double(`return`.longitude)!)
+        
+//        let stopover: CLLocationCoordinate2D? = estimateAddresses["stopover"]?.name != "" ? CLLocationCoordinate2D(latitude: Double(estimateAddresses["stopover"]!.latitude)!, longitude: Double(estimateAddresses["stopover"]!.longitude)!) : nil
+        
+        return kindsOfEstimate == .roundTrip ? departure.distance(from: `return`) * 2 : departure.distance(from: `return`)
+        
+    }
+    
+    func calculateDistance(estimateAddresses: [String: EstimateAddress], kindsOfEstimate: KindsOfEstimate) -> CLLocationDistance {
+        let kindOfEstimate = kindsOfEstimate
+        let departure = CLLocationCoordinate2D(latitude: Double(estimateAddresses["departure"]!.latitude)!, longitude: Double(estimateAddresses["departure"]!.longitude)!)
+        
+        let `return` = CLLocationCoordinate2D(latitude: Double(estimateAddresses["return"]!.latitude)!, longitude: Double(estimateAddresses["return"]!.longitude)!)
+        
+//        let stopover: CLLocationCoordinate2D? = estimateAddresses["stopover"]?.name != "" ? CLLocationCoordinate2D(latitude: Double(estimateAddresses["stopover"]!.latitude)!, longitude: Double(estimateAddresses["stopover"]!.longitude)!) : nil
+        
+        return kindsOfEstimate == .roundTrip ? departure.distance(from: `return`) * 2 : departure.distance(from: `return`)
+        
+    }
+    
+    // FIXME: 가견적 계산
+    func caculateVirtualBasicPrice(distance: Int, kindsOfEstimate: KindsOfEstimate) -> Int {
+        let pricePerKM: PricePerKM = distance < 400 ? .lessThan400 : .moreThan400
+        var waitingTimePrice: Int {
+            get {
+                switch distance {
+                case 0..<200:
+                    return WaitingTimePrice.lessThan200.rawValue
+                case 200..<300:
+                    return WaitingTimePrice.lessThan300.rawValue
+                case 300..<400:
+                    return WaitingTimePrice.lessThan400.rawValue
+                default:
+                    return 0
+                }
+            }
+        }
+        
+        var totalPrice: Int = ReferenceValues.basicPrice + waitingTimePrice
+        
+        if distance > 200 {
+            totalPrice += distance < 400 ?
+            (distance - 200) * pricePerKM.rawValue :
+            200 * PricePerKM.lessThan400.rawValue + (distance - 400) * pricePerKM.rawValue
+            
+        }
+        
+        return Int(Double(totalPrice) * (distance < 400 ? kindsOfEstimate.discountRate : 1.0))
+    }
+    
+    func calculateHowManyNights(departureDate: String, returnDate: String) -> Int {
+        let departure = SupportingMethods.shared.convertString(intoDate: departureDate, "yyyy.MM.dd")
+        let `return` = SupportingMethods.shared.convertString(intoDate: returnDate, "yyyy.MM.dd")
+        
+        return Calendar.current.dateComponents([.day], from: departure, to: `return`).day!
     }
     
     // MARK: Text
@@ -1350,6 +1417,28 @@ extension SupportingMethods {
             }
         }
     }
+    
+    // MARK: UserDefualts Estimate 저장 및 불러오기
+    func saveLocalEstimateData(estimateList: [Estimate]) {
+        let encoder = JSONEncoder()
+        if let encoded = try? encoder.encode(estimateList){
+            UserDefaults.standard.setValue(encoded, forKey: "estimateList")
+        }
+        
+    }
+    
+    func readLocalEstimateData() -> [Estimate]? {
+        if let savedData = UserDefaults.standard.object(forKey: "estimateList") as? Data{
+            let decoder = JSONDecoder()
+            if let estimateList = try? decoder.decode([Estimate].self, from: savedData){
+                return estimateList
+                
+            }
+            
+        }
+        
+        return nil
+    }
 }
 
 // MARK: - Other Extensions
@@ -1366,6 +1455,36 @@ extension Int {
 extension Array {
     subscript(indice indice: Int) -> Element? {
         return indices ~= indice ? self[indice] : nil
+    }
+}
+
+// MARK: Date
+extension Date {
+    func isWeekday() -> Bool {
+        let weekdayList = ["월", "화", "수", "목", "금"]
+        let dayOfTheWeek = SupportingMethods.shared.convertDate(intoString: self, "EE")
+        
+        if weekdayList.contains(dayOfTheWeek) {
+            return true
+            
+        } else {
+            return false
+            
+        }
+        
+    }
+    
+    func isPeak() -> Bool {
+        let peakList = [4,5,8,9,10]
+        let month = Int(SupportingMethods.shared.convertDate(intoString: self, "M"))!
+        
+        if peakList.contains(month) {
+            return true
+            
+        } else {
+            return false
+            
+        }
     }
 }
 

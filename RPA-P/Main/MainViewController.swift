@@ -115,7 +115,7 @@ extension MainViewController: EssentialViewMethods {
     }
     
     func setNotificationCenters() {
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(moveEstimateDetail(_:)), name: Notification.Name("MoveEstimateDetail"), object: nil)
     }
     
     func setSubviews() {
@@ -216,7 +216,10 @@ extension MainViewController {
 
 // MARK: - Extension for selector methods
 extension MainViewController {
-    
+    @objc func moveEstimateDetail(_ notificatoin: Notification) {
+        self.select(index: .detail)
+        
+    }
 }
 
 // MARK: - Extension for UIPageViewControllerDataSource, UIPageViewControllerDelegate

@@ -30,7 +30,7 @@ final class PaymentViewController: UIViewController {
     
     lazy var priceLabel: UILabel = {
         let label = UILabel()
-        label.text = "\(estimate.virtualEstimate?.price ?? "0")원"
+        label.text = (self.estimate.virtualEstimate?.price.withCommaString ?? "0") + " 원"
         label.font = .useFont(ofSize: 32, weight: .Bold)
         label.textColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.87)
         label.textAlignment = .center
@@ -143,6 +143,11 @@ final class PaymentViewController: UIViewController {
         label.textColor = .useRGB(red: 91, green: 91, blue: 91)
         label.translatesAutoresizingMaskIntoConstraints = false
         
+        if self.estimate.kindsOfEstimate == .oneWay {
+            label.isHidden = true
+            
+        }
+        
         return label
     }()
     
@@ -152,6 +157,11 @@ final class PaymentViewController: UIViewController {
         label.font = .useFont(ofSize: 11, weight: .Regular)
         label.textColor = .useRGB(red: 91, green: 91, blue: 91)
         label.translatesAutoresizingMaskIntoConstraints = false
+        
+        if self.estimate.kindsOfEstimate == .oneWay {
+            label.isHidden = true
+            
+        }
         
         return label
     }()
@@ -377,7 +387,8 @@ final class PaymentViewController: UIViewController {
     var authenticationNumberLabelTopAnchorConstraint: NSLayoutConstraint!
     
     var estimate: Estimate
-    var paymentMethodList: [String] = ["만나서 현금결제", "만나서 카드결제", "계좌이체"]
+    var paymentMethodList: [PayWay] = [.cash, .card, .account]
+    var pay: Pay = Pay()
     var selectedIndex: Int? = nil
     
     init(estimate: Estimate) {
@@ -445,6 +456,9 @@ extension PaymentViewController: EssentialViewMethods {
     func setNotificationCenters() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(canceledSign (_:)), name: Notification.Name("CanceledSign"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(saveName(_:)), name: Notification.Name("SignedName"), object: nil)
+        
     }
     
     func setSubviews() {
@@ -839,9 +853,18 @@ extension PaymentViewController {
     @objc func doneButton(_ sender: UIButton) {
         print("doneButton")
         self.view.endEditing(true)
+        
+        guard let _ = self.pay.payWay else {
+            SupportingMethods.shared.showAlertNoti(title: "결제 방식을 선택해 주세요.")
+            return
+        }
+        self.estimate.pay = self.pay
         let vc = ReservationCompletedViewController(estimate: self.estimate)
         
         self.present(vc, animated: true) {
+//            NotificationCenter.default.post(name: Notification.Name("SaveEstimateData"), object: nil, userInfo: ["estimate": self.estimate])
+            NotificationCenter.default.post(name: Notification.Name("InitializeData"), object: nil, userInfo: ["estimate": self.estimate])
+            
             guard let viewControllerStack = self.navigationController?.viewControllers else { return }
             for viewController in viewControllerStack {
                 if let mainView = viewController as? MainViewController {
@@ -850,6 +873,35 @@ extension PaymentViewController {
                 }
                 
             }
+        }
+    }
+    
+    @objc func saveName(_ notification: Notification) {
+        guard let signedName = notification.userInfo?["signedName"] as? String else { return }
+        
+        if signedName == "" {
+            self.pay.payWay = nil
+            self.selectedIndex = nil
+            
+            DispatchQueue.main.async {
+                self.paymentMethodTableView.reloadData()
+                
+            }
+            
+        } else {
+            self.pay.signedName = signedName
+            
+        }
+        
+    }
+    
+    @objc func canceledSign(_ notification: Notification) {
+        self.pay.payWay = nil
+        self.selectedIndex = nil
+        
+        DispatchQueue.main.async {
+            self.paymentMethodTableView.reloadData()
+            
         }
     }
 }
@@ -990,7 +1042,7 @@ extension PaymentViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "PaymentMethodTableViewCell", for: indexPath) as! PaymentMethodTableViewCell
-        let title = self.paymentMethodList[indexPath.row]
+        let title = self.paymentMethodList[indexPath.row].label
         
         cell.setCell(title: title)
         
@@ -1013,7 +1065,13 @@ extension PaymentViewController: UITableViewDelegate, UITableViewDataSource {
         if self.selectedIndex != nil {
             let vc = CheckPaymentViewController()
             
-            self.present(vc, animated: true)
+            self.present(vc, animated: true) {
+                self.pay.payWay = self.paymentMethodList[indexPath.row]
+                
+            }
+            
+        } else {
+            self.pay.payWay = nil
             
         }
         

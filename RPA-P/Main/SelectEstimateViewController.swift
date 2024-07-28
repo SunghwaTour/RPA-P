@@ -231,6 +231,7 @@ final class SelectEstimateViewController: UIViewController {
     
     var estimate: Estimate
     var virtualEstimate: VirtualEstimate?
+//    var virtualPrice: Int
     var kindsOfEstimate: KindsOfEstimate
     var allCategoryList: [Category] = [.general, .honor, .full, .partial]
     var virtualEstimateList: [VirtualEstimate] = []
@@ -239,16 +240,27 @@ final class SelectEstimateViewController: UIViewController {
     var selectedIndexForTableView: Int?
     
     var fullData: [VirtualEstimate] = [
-        VirtualEstimate(no: 1, category: [.full, .honor], price: "900,000"),
-        VirtualEstimate(no: 2, category: [.full, .general], price: "800,000"),
-        VirtualEstimate(no: 3, category: [.partial, .honor], price: "300,000"),
-        VirtualEstimate(no: 4, category: [.full, .honor], price: "700,000"),
-        VirtualEstimate(no: 5, category: [.partial, .general], price: "1,200,000"),
+        VirtualEstimate(no: 1, category: [.full, .honor], price: 0),
+        VirtualEstimate(no: 2, category: [.full, .general], price: 0),
+        VirtualEstimate(no: 3, category: [.partial, .honor], price: 0),
+        VirtualEstimate(no: 4, category: [.partial, .general], price: 0),
     ]
     
-    init(estimate: Estimate) {
+    init(estimate: Estimate, virtualPrice: Int) {
         self.estimate = estimate
         self.kindsOfEstimate = estimate.kindsOfEstimate
+//        self.virtualPrice = virtualPrice
+        
+        for index in 0..<self.fullData.count {
+            var totalPrice = virtualPrice
+            for category in self.fullData[index].category {
+                totalPrice += category.price
+                
+            }
+            self.fullData[index].price = totalPrice
+            
+        }
+        print(self.fullData)
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -300,6 +312,7 @@ extension SelectEstimateViewController: EssentialViewMethods {
         self.arrivalAddressLabel.text = self.estimate.return.name
         self.arrivalDateLabel.text = self.estimate.returnDate.date
         self.arrivalTimeLabel.text = self.estimate.returnDate.time
+        
     }
     
     func setDelegates() {

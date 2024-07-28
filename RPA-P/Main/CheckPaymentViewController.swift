@@ -282,13 +282,17 @@ extension CheckPaymentViewController {
     }
     
     @objc func cancelButton(_ sender: UIButton) {
-        self.dismiss(animated: true)
+        self.dismiss(animated: true) {
+            NotificationCenter.default.post(name: Notification.Name("CanceledSign"), object: nil)
+                                            
+        }
         
     }
     
     @objc func checkButton(_ sender: UIButton) {
         self.dismiss(animated: true) {
             print("Signed Name: \(self.signTextField.text ?? "")")
+            NotificationCenter.default.post(name: Notification.Name("SignedName"), object: nil, userInfo: ["signedName": self.signTextField.text ?? ""])
             
         }
         

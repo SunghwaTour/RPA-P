@@ -40,7 +40,7 @@ final class ReservationCompletedViewController: UIViewController {
     
     lazy var priceLabel: UILabel = {
         let label = UILabel()
-        label.text = "\(self.estimate.virtualEstimate?.price ?? "0") 원"
+        label.text =  (self.estimate.virtualEstimate?.price.withCommaString ?? "0") + " 원"
         label.font = .useFont(ofSize: 32, weight: .Bold)
         label.textColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.87)
         label.asFontColor(targetString: "원", font: .useFont(ofSize: 18, weight: .Regular), color: .useRGB(red: 0, green: 0, blue: 0))
@@ -156,6 +156,11 @@ final class ReservationCompletedViewController: UIViewController {
         label.font = .useFont(ofSize: 12, weight: .Medium)
         label.translatesAutoresizingMaskIntoConstraints = false
         
+        if self.estimate.kindsOfEstimate == .oneWay {
+            label.isHidden = true
+            
+        }
+        
         return label
     }()
     
@@ -267,10 +272,19 @@ final class ReservationCompletedViewController: UIViewController {
     var heightAnchorContraint: NSLayoutConstraint!
     
     var estimate: Estimate
-    var moreInfoList: [String] = ["25명", "현금", "기사 전체 동행", "28인승", "1대", "우등"]
+    var moreInfoList: [String] = []
     
     init(estimate: Estimate) {
         self.estimate = estimate
+        
+        self.moreInfoList.append(estimate.pay?.payWay?.rawValue ?? "")
+        if let virtualEstimate = estimate.virtualEstimate {
+            for category in virtualEstimate.category {
+                self.moreInfoList.append(category.rawValue)
+                
+            }
+            
+        }
         
         super.init(nibName: nil, bundle: nil)
         
@@ -603,6 +617,7 @@ extension ReservationCompletedViewController {
         print("findOtherEstimateButton")
         
         self.dismiss(animated: true)
+        
     }
     
     @objc func accountCopyButton(_ sender: UIButton) {

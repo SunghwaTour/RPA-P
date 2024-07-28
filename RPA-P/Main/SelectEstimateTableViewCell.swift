@@ -145,7 +145,7 @@ extension SelectEstimateTableViewCell {
 // MARK: - Extension for methods added
 extension SelectEstimateTableViewCell {
     func setCell(virtualEstimate: VirtualEstimate) {
-        self.priceLabel.text = "\(virtualEstimate.price) 원"
+        self.priceLabel.text = (virtualEstimate.price.withCommaString ?? "0") + " 원"
         self.priceLabel.asFontColor(targetString: "원", font: .useFont(ofSize: 14, weight: .Medium), color: .useRGB(red: 115, green: 115, blue: 115))
         
         self.allCategoryList = virtualEstimate.category

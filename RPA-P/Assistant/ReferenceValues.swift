@@ -65,6 +65,12 @@ struct ReferenceValues {
     // MARK: 카카오 키
     static let kakaoAuthKey = "KakaoAK 97fea36c4c0c18e6d16275c777f969f2"
     
+    // MARK: Basic Price
+    static let basicPrice = 692000
+    
+    // MARK: One Night Price
+    static let pricePerOneNight = 692000
+    
 }
 
 // MARK: - Extension of referenceValues

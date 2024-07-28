@@ -167,7 +167,7 @@ final class CalendarViewController: UIViewController {
     }
     
     var way: SelectDateWay = .depart
-    var selectedDate: String = ""
+    var selectedDate: Date = Date()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -370,11 +370,15 @@ extension CalendarViewController {
         if self.datePicker.isHidden == false {
             self.dismiss(animated: true) {
                 let time = SupportingMethods.shared.convertDate(intoString: self.datePicker.date, "hh:mm a")
+                let date = SupportingMethods.shared.convertDate(intoString: self.selectedDate, "yyyy.MM.dd")
                 
-                NotificationCenter.default.post(name: Notification.Name("SelectedDate"), object: nil, userInfo: ["date": self.selectedDate, "time": time, "way": self.way])
-                
-                print("Selected Date: \(self.selectedDate)")
+                print("Selected Date: \(date)")
                 print("Selected Time: \(time)")
+                print("Way: \(self.way)")
+                print("isPeak: \(self.selectedDate.isPeak())")
+                print("isWeekday: \(self.selectedDate.isWeekday())")
+                
+                NotificationCenter.default.post(name: Notification.Name("SelectedDate"), object: nil, userInfo: ["date": date, "time": time, "way": self.way, "isPeak": self.selectedDate.isPeak(), "isWeekday": self.selectedDate.isWeekday()])
             }
         }
         
@@ -403,7 +407,6 @@ extension CalendarViewController: FSCalendarDelegate, FSCalendarDataSource, FSCa
     
     // 날짜 선택 시
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
-        self.selectedDate = SupportingMethods.shared.convertDate(intoString: date, "yyyy.MM.dd")
-        
+        self.selectedDate = date
     }
 }

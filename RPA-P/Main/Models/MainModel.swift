@@ -27,7 +27,7 @@ final class MainModel {
 }
 
 // MARK: Estimate
-enum Category: String {
+enum Category: String, Codable {
     case general = "일반"
     case honor = "우등"
     case full = "전체 기사 동행"
@@ -45,15 +45,56 @@ enum Category: String {
             return 1
         }
     }
+    
+    var price: Int {
+        switch self {
+        case .general:
+            return 0
+        case .honor:
+            return 150000
+        case .full:
+            return 150000
+        case .partial:
+            return 0
+        }
+    }
 }
 
-enum KindsOfEstimate: String {
+enum KindsOfEstimate: String, Codable {
     case roundTrip = "왕복"
     case oneWay = "편도"
     case shuttle = "셔틀"
+    
+    var discountRate: Double {
+        switch self {
+        case .roundTrip:
+            return 1.0
+        case .oneWay:
+            return 0.8
+        case .shuttle:
+            return 0
+        }
+    }
 }
 
-struct Estimate {
+enum PayWay: String, Codable {
+    case cash = "현금"
+    case card = "카드"
+    case account = "계좌이체"
+    
+    var label: String {
+        switch self {
+        case .cash:
+            return "만나서 현금결제"
+        case .card:
+            return "만나서 카드결제"
+        case .account:
+            return "계좌이체"
+        }
+    }
+}
+
+struct Estimate: Codable {
     var kindsOfEstimate: KindsOfEstimate
     var departure: EstimateAddress
     var `return`: EstimateAddress
@@ -61,26 +102,32 @@ struct Estimate {
     var departureDate: EstimateTime
     var returnDate: EstimateTime
     var number: Int?
+    var pay: Pay?
     
     var virtualEstimate: VirtualEstimate? = nil
 }
 
-struct EstimateAddress {
+struct EstimateAddress: Codable {
     var name: String = ""
     var latitude: String = ""
     var longitude: String = ""
 }
 
-struct EstimateTime {
+struct EstimateTime: Codable {
     var date: String = ""
     var time: String = ""
 }
 
-struct VirtualEstimate {
+struct VirtualEstimate: Codable {
     let no: Int
     let category: [Category]
-    let price: String
+    var price: Int
     
+}
+
+struct Pay: Codable {
+    var payWay: PayWay?
+    var signedName: String = ""
 }
 
 // MARK: - Kakao API
