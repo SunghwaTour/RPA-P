@@ -29,6 +29,7 @@
 		2DA8211B2C41491A000EF1D9 /* EstimateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DA8211A2C41491A000EF1D9 /* EstimateViewController.swift */; };
 		2DA8211D2C414967000EF1D9 /* EstimateDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DA8211C2C414967000EF1D9 /* EstimateDetailViewController.swift */; };
 		2DA8211F2C415172000EF1D9 /* ViewPagerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DA8211E2C415172000EF1D9 /* ViewPagerCollectionViewCell.swift */; };
+		2DC277942C5719810073E4A3 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2DC277932C5719810073E4A3 /* GoogleService-Info.plist */; };
 		2DCC4EA12C4663270035FD24 /* SelectEstimateTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DCC4EA02C4663270035FD24 /* SelectEstimateTableViewCell.swift */; };
 		2DCC4EA42C46672D0035FD24 /* MainModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DCC4EA32C46672D0035FD24 /* MainModel.swift */; };
 		2DCC4EA62C47B01F0035FD24 /* PaymentMethodTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DCC4EA52C47B01F0035FD24 /* PaymentMethodTableViewCell.swift */; };
@@ -64,6 +65,7 @@
 		2DA8211A2C41491A000EF1D9 /* EstimateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EstimateViewController.swift; sourceTree = "<group>"; };
 		2DA8211C2C414967000EF1D9 /* EstimateDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EstimateDetailViewController.swift; sourceTree = "<group>"; };
 		2DA8211E2C415172000EF1D9 /* ViewPagerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewPagerCollectionViewCell.swift; sourceTree = "<group>"; };
+		2DC277932C5719810073E4A3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		2DCC4EA02C4663270035FD24 /* SelectEstimateTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectEstimateTableViewCell.swift; sourceTree = "<group>"; };
 		2DCC4EA32C46672D0035FD24 /* MainModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainModel.swift; sourceTree = "<group>"; };
 		2DCC4EA52C47B01F0035FD24 /* PaymentMethodTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentMethodTableViewCell.swift; sourceTree = "<group>"; };
@@ -107,6 +109,7 @@
 			children = (
 				2D46F5922C3DAF7100C711E2 /* LaunchScreen.storyboard */,
 				2D46F5902C3DAF7100C711E2 /* Assets.xcassets */,
+				2DC277932C5719810073E4A3 /* GoogleService-Info.plist */,
 				2D46F5952C3DAF7100C711E2 /* Info.plist */,
 				2D46F5872C3DAF6F00C711E2 /* AppDelegate.swift */,
 				2D46F5892C3DAF6F00C711E2 /* SceneDelegate.swift */,
@@ -255,6 +258,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D46F5942C3DAF7100C711E2 /* LaunchScreen.storyboard in Resources */,
+				2DC277942C5719810073E4A3 /* GoogleService-Info.plist in Resources */,
 				2D46F5912C3DAF7100C711E2 /* Assets.xcassets in Resources */,
 				2D46F5AF2C3E553600C711E2 /* PretendardVariable.ttf in Resources */,
 			);

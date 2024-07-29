@@ -9,4 +9,5 @@ target 'RPA-P' do
   pod 'Alamofire'
   pod 'FSCalendar'
   pod 'RealmSwift'
+  pod 'FirebaseAuth'
 end

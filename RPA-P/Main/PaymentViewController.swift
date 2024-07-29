@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 final class PaymentViewController: UIViewController {
     
@@ -330,7 +331,7 @@ final class PaymentViewController: UIViewController {
         button.backgroundColor = .useRGB(red: 255, green: 232, blue: 232)
         button.titleLabel?.font = .useFont(ofSize: 14, weight: .Medium)
         button.layer.cornerRadius = 10
-        button.addTarget(self, action: #selector(sendAuthenticationNumberButton(_:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(completeAuthenticationButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -390,6 +391,9 @@ final class PaymentViewController: UIViewController {
     var paymentMethodList: [PayWay] = [.cash, .card, .account]
     var pay: Pay = Pay()
     var selectedIndex: Int? = nil
+    
+    var isAuthenticated: Bool = false
+    var verificationID: String = ""
     
     init(estimate: Estimate) {
         self.estimate = estimate
@@ -833,9 +837,29 @@ extension PaymentViewController {
     }
     
     @objc func sendAuthenticationNumberButton(_ sender: UIButton) {
-        self.sendAuthenticationNumberButton.setTitle("다시 보내기", for: .normal)
-        
-        self.authenticationNumberView.isHidden = false
+        guard let phoneNumber = self.numberTextField.text else {
+            SupportingMethods.shared.showAlertNoti(title: "핸드폰 번호를 입력해주세요.")
+            return
+        }
+        SupportingMethods.shared.turnCoverView(.on)
+        PhoneAuthProvider.provider().verifyPhoneNumber("+82 \(phoneNumber)", uiDelegate: nil)
+        { verificationID, error in
+            if let error = error {
+                print(error.localizedDescription)
+                SupportingMethods.shared.turnCoverView(.off)
+                return
+                
+            } else {
+                print("verificationID: \(verificationID ?? "")")
+                self.verificationID = verificationID ?? ""
+                SupportingMethods.shared.turnCoverView(.off)
+                self.sendAuthenticationNumberButton.setTitle("다시 보내기", for: .normal)
+                
+                self.authenticationNumberView.isHidden = false
+                
+            }
+            
+        }
         
         UIView.animate(withDuration: 0.1) {
             self.view.layoutIfNeeded()
@@ -850,30 +874,75 @@ extension PaymentViewController {
         
     }
     
+    @objc func completeAuthenticationButton(_ sender: UIButton) {
+        guard let verificationCode = self.authenticationNumberTextField.text else {
+            SupportingMethods.shared.showAlertNoti(title: "인증번호를 입력해 주세요.")
+            return
+        }
+        let credential = PhoneAuthProvider.provider().credential(withVerificationID: self.verificationID, verificationCode: verificationCode)
+        
+        SupportingMethods.shared.turnCoverView(.on)
+        Auth.auth().signIn(with: credential) { authResult, error in
+            if let error = error {
+                SupportingMethods.shared.turnCoverView(.off)
+                SupportingMethods.shared.showAlertNoti(title: "인증번호가 틀렸습니다.")
+                print("Auth Error: \(error.localizedDescription)")
+                return
+                
+            } else {
+                SupportingMethods.shared.turnCoverView(.off)
+                self.nameButton.isEnabled = false
+                self.nameTextField.isEnabled = false
+                
+                self.numberButton.isEnabled = false
+                self.numberTextField.isEnabled = false
+                
+                self.sendAuthenticationNumberButton.isEnabled = false
+                
+                self.authenticationNumberTextField.isEnabled = false
+                self.completeAuthenticationButton.isEnabled = false
+                
+                self.completeAuthenticationButton.backgroundColor = .useRGB(red: 231, green: 231, blue: 231)
+                self.completeAuthenticationButton.setTitleColor(.white, for: .normal)
+                
+                self.isAuthenticated = true
+                
+                return
+            }
+        }
+    }
+    
     @objc func doneButton(_ sender: UIButton) {
         print("doneButton")
         self.view.endEditing(true)
         
-        guard let _ = self.pay.payWay else {
-            SupportingMethods.shared.showAlertNoti(title: "결제 방식을 선택해 주세요.")
-            return
-        }
-        self.estimate.pay = self.pay
-        let vc = ReservationCompletedViewController(estimate: self.estimate)
-        
-        self.present(vc, animated: true) {
-//            NotificationCenter.default.post(name: Notification.Name("SaveEstimateData"), object: nil, userInfo: ["estimate": self.estimate])
-            NotificationCenter.default.post(name: Notification.Name("InitializeData"), object: nil, userInfo: ["estimate": self.estimate])
-            
-            guard let viewControllerStack = self.navigationController?.viewControllers else { return }
-            for viewController in viewControllerStack {
-                if let mainView = viewController as? MainViewController {
-                    
-                    self.navigationController?.popToViewController(mainView, animated: true)
-                }
-                
+        if self.isAuthenticated {
+            guard let _ = self.pay.payWay else {
+                SupportingMethods.shared.showAlertNoti(title: "결제 방식을 선택해 주세요.")
+                return
             }
+            self.estimate.pay = self.pay
+            let vc = ReservationCompletedViewController(estimate: self.estimate)
+            
+            self.present(vc, animated: true) {
+    //            NotificationCenter.default.post(name: Notification.Name("SaveEstimateData"), object: nil, userInfo: ["estimate": self.estimate])
+                NotificationCenter.default.post(name: Notification.Name("InitializeData"), object: nil, userInfo: ["estimate": self.estimate])
+                
+                guard let viewControllerStack = self.navigationController?.viewControllers else { return }
+                for viewController in viewControllerStack {
+                    if let mainView = viewController as? MainViewController {
+                        
+                        self.navigationController?.popToViewController(mainView, animated: true)
+                    }
+                    
+                }
+            }
+            
+        } else {
+            SupportingMethods.shared.showAlertNoti(title: "휴대폰 인증을 진행해주세요.")
+            
         }
+
     }
     
     @objc func saveName(_ notification: Notification) {
