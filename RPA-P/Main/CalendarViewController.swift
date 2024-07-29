@@ -432,6 +432,7 @@ extension CalendarViewController: FSCalendarDelegate, FSCalendarDataSource, FSCa
             
         } else {
             SupportingMethods.shared.showAlertNoti(title: "해당 날짜는 선택할 수 없습니다.")
+            self.selectedDate = self.preselectedDate
             self.calendar.select(self.preselectedDate)
             self.calendar.reloadData()
             

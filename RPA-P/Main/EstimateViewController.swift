@@ -1029,7 +1029,7 @@ extension EstimateViewController {
             self.addressTableViewTopAnchorConstraint
         ])
         
-        self.addressTableView.isHidden = false
+//        self.addressTableView.isHidden = false
     }
     
     func initializeData() {
@@ -1376,6 +1376,7 @@ extension EstimateViewController {
 
             self.navigationController?.pushViewController(vc, animated: true)
             NotificationCenter.default.post(name: Notification.Name("MoveEstimateDetail"), object: nil)
+            NotificationCenter.default.post(name: Notification.Name("MoveEstimate"), object: nil)
             
         } else {
             SupportingMethods.shared.showAlertNoti(title: "주소를 입력해주세요.")
@@ -1406,10 +1407,11 @@ extension EstimateViewController: UITextFieldDelegate {
         guard let text = textField.text, text.trimmingCharacters(in: .whitespacesAndNewlines) != "" else {
             return true
         }
-        
+        SupportingMethods.shared.turnCoverView(.on)
         self.mainModel.initializeModel()
         
         self.mainModel.searchAddressWithText(text) {
+            SupportingMethods.shared.turnCoverView(.off)
             self.addressTableView.reloadData()
             
             if self.mainModel.searchedAddress.address.isEmpty {
@@ -1420,6 +1422,7 @@ extension EstimateViewController: UITextFieldDelegate {
             }
             
         } failure: { errorMessage in
+            SupportingMethods.shared.turnCoverView(.off)
             self.addressTableView.reloadData()
             
             if self.mainModel.searchedAddress.address.isEmpty {
@@ -1569,13 +1572,13 @@ extension EstimateViewController: UITextFieldDelegate {
     }
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
-//        if self.idTextField.text != "" && self.passwordTextField.text != "" {
-//            self.loginButton.isEnabled = true
-//
-//        } else {
-//            self.loginButton.isEnabled = false
-//
-//        }
+        if textField.text == "" {
+            self.addressTableView.isHidden = true
+            
+        } else {
+            self.addressTableView.isHidden = false
+            
+        }
     }
 }
 

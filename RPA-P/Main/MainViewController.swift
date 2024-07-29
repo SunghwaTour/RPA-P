@@ -116,6 +116,7 @@ extension MainViewController: EssentialViewMethods {
     
     func setNotificationCenters() {
         NotificationCenter.default.addObserver(self, selector: #selector(moveEstimateDetail(_:)), name: Notification.Name("MoveEstimateDetail"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(moveEstimate(_:)), name: Notification.Name("MoveEstimate"), object: nil)
     }
     
     func setSubviews() {
@@ -218,6 +219,11 @@ extension MainViewController {
 extension MainViewController {
     @objc func moveEstimateDetail(_ notificatoin: Notification) {
         self.select(index: .detail)
+        
+    }
+    
+    @objc func moveEstimate(_ notificatoin: Notification) {
+        self.select(index: .estimate)
         
     }
 }
