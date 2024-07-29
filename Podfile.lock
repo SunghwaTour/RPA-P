@@ -39,18 +39,12 @@ PODS:
     - GoogleUtilities/Privacy
   - GTMSessionFetcher/Core (3.5.0)
   - PromisesObjC (2.4.0)
-  - Realm (10.52.2):
-    - Realm/Headers (= 10.52.2)
-  - Realm/Headers (10.52.2)
-  - RealmSwift (10.52.2):
-    - Realm (= 10.52.2)
   - RecaptchaInterop (100.0.0)
 
 DEPENDENCIES:
   - Alamofire
   - FirebaseAuth
   - FSCalendar
-  - RealmSwift
 
 SPEC REPOS:
   trunk:
@@ -63,8 +57,6 @@ SPEC REPOS:
     - GoogleUtilities
     - GTMSessionFetcher
     - PromisesObjC
-    - Realm
-    - RealmSwift
     - RecaptchaInterop
 
 SPEC CHECKSUMS:
@@ -77,10 +69,8 @@ SPEC CHECKSUMS:
   GoogleUtilities: ea963c370a38a8069cc5f7ba4ca849a60b6d7d15
   GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
-  Realm: e44eb7d20fe469fe1179894fd356727b8fbe61c2
-  RealmSwift: 7aacbd3101158f7d54c930bcfcfaafadbd376ffc
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
 
-PODFILE CHECKSUM: a63509e664e3c9f576971b913e6e610b27178f45
+PODFILE CHECKSUM: ee213fd291ee21f3ed033f87cfb7750e17e3efa0
 
 COCOAPODS: 1.13.0

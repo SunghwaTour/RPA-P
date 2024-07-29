@@ -6,16 +6,7 @@
 //
 
 import Foundation
-import RealmSwift
 import Alamofire
-
-class FullData: Object {
-    @objc dynamic var id = ""
-    
-    override static func primaryKey() -> String? {
-        return "id"
-    }
-}
 
 final class MainModel {
     // MARK: Kakao requests

@@ -6,8 +6,7 @@ target 'RPA-P' do
   use_frameworks!
 
   # Pods for RPA-P
-  pod 'Alamofire'
   pod 'FSCalendar'
-  pod 'RealmSwift'
   pod 'FirebaseAuth'
+  pod 'Alamofire'
 end
