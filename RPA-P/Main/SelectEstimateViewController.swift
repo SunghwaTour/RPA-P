@@ -229,7 +229,7 @@ final class SelectEstimateViewController: UIViewController {
         return tableView
     }()
     
-    var estimate: Estimate
+    var estimate: PreEstimate
     var virtualEstimate: VirtualEstimate?
 //    var virtualPrice: Int
     var kindsOfEstimate: KindsOfEstimate
@@ -240,13 +240,13 @@ final class SelectEstimateViewController: UIViewController {
     var selectedIndexForTableView: Int?
     
     var fullData: [VirtualEstimate] = [
-        VirtualEstimate(no: 1, category: [.full, .honor], price: 0),
-        VirtualEstimate(no: 2, category: [.full, .general], price: 0),
-        VirtualEstimate(no: 3, category: [.partial, .honor], price: 0),
-        VirtualEstimate(no: 4, category: [.partial, .general], price: 0),
+        VirtualEstimate(no: 1, category: [.partial, .general], price: 0),
+        VirtualEstimate(no: 2, category: [.partial, .honor], price: 0),
+        VirtualEstimate(no: 3, category: [.full, .general], price: 0),
+        VirtualEstimate(no: 4, category: [.full, .honor], price: 0),
     ]
     
-    init(estimate: Estimate, virtualPrice: Int) {
+    init(estimate: PreEstimate, virtualPrice: Int) {
         self.estimate = estimate
         self.kindsOfEstimate = estimate.kindsOfEstimate
 //        self.virtualPrice = virtualPrice

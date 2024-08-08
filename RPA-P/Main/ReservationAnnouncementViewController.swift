@@ -38,7 +38,7 @@ final class ReservationAnnouncementViewController: UIViewController {
     
     lazy var priceLabel: UILabel = {
         let label = UILabel()
-        label.text = "\(self.estimate.virtualEstimate?.price.withCommaString ?? "0") 원"
+        label.text = "\(self.deposit.withCommaString ?? "0") 원"
         label.textColor = .useRGB(red: 184, green: 0, blue: 0)
         label.font = .useFont(ofSize: 20, weight: .Medium)
         label.asFontColor(targetString: "원", font: .useFont(ofSize: 14, weight: .Regular), color: .useRGB(red: 184, green: 0, blue: 0))
@@ -89,6 +89,14 @@ final class ReservationAnnouncementViewController: UIViewController {
         return label
     }()
     
+    lazy var accountLabelBorderView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.87)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
     lazy var checkButton: UIButton = {
         let button = UIButton()
         button.setTitle("확인했습니다.", for: .normal)
@@ -102,8 +110,8 @@ final class ReservationAnnouncementViewController: UIViewController {
         return button
     }()
     
-    init(estimate: Estimate) {
-        self.estimate = estimate
+    init(deposit: Double) {
+        self.deposit = Int(deposit)
         
         super.init(nibName: nil , bundle: nil)
         
@@ -114,7 +122,7 @@ final class ReservationAnnouncementViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    var estimate: Estimate
+    var deposit: Int
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -159,6 +167,9 @@ extension ReservationAnnouncementViewController: EssentialViewMethods {
     }
     
     func setGestures() {
+        let accountGesture = UITapGestureRecognizer(target: self, action: #selector(copyAccount(_:)))
+        self.accountLabel.addGestureRecognizer(accountGesture)
+        self.accountLabel.isUserInteractionEnabled = true
         
     }
     
@@ -187,6 +198,7 @@ extension ReservationAnnouncementViewController: EssentialViewMethods {
         SupportingMethods.shared.addSubviews([
             self.accountTitleLabel,
             self.accountLabel,
+            self.accountLabelBorderView,
         ], to: self.accountView)
     }
     
@@ -247,6 +259,15 @@ extension ReservationAnnouncementViewController: EssentialViewMethods {
             self.accountLabel.bottomAnchor.constraint(equalTo: self.accountView.bottomAnchor, constant: -16),
         ])
         
+        // accountLabelBorderView
+        NSLayoutConstraint.activate([
+            self.accountLabelBorderView.leadingAnchor.constraint(equalTo: self.accountLabel.leadingAnchor),
+            self.accountLabelBorderView.trailingAnchor.constraint(equalTo: self.accountLabel.trailingAnchor),
+            self.accountLabelBorderView.topAnchor.constraint(equalTo: self.accountLabel.bottomAnchor, constant: 1.0),
+            self.accountLabelBorderView.heightAnchor.constraint(equalToConstant: 1)
+            
+        ])
+        
         // checkButton
         NSLayoutConstraint.activate([
             self.checkButton.widthAnchor.constraint(equalToConstant: 200),
@@ -272,5 +293,11 @@ extension ReservationAnnouncementViewController {
     @objc func checkButton(_ sender: UIButton) {
         self.dismiss(animated: true)
         
+    }
+    
+    @objc func copyAccount(_ gesture: UITapGestureRecognizer) {
+        UIPasteboard.general.string = self.accountLabel.text
+        guard let storedString = UIPasteboard.general.string else { return }
+        SupportingMethods.shared.showAlertNoti(title: "\(storedString) 복사되었습니다.")
     }
 }

@@ -387,7 +387,7 @@ final class PaymentViewController: UIViewController {
     var numberLabelTopAnchorConstraint: NSLayoutConstraint!
     var authenticationNumberLabelTopAnchorConstraint: NSLayoutConstraint!
     
-    var estimate: Estimate
+    var estimate: PreEstimate
     var paymentMethodList: [PayWay] = [.cash, .card, .account]
     var pay: Pay = Pay()
     var selectedIndex: Int? = nil
@@ -395,7 +395,7 @@ final class PaymentViewController: UIViewController {
     var isAuthenticated: Bool = false
     var verificationID: String = ""
     
-    init(estimate: Estimate) {
+    init(estimate: PreEstimate) {
         self.estimate = estimate
         
         super.init(nibName: nil, bundle: nil)
@@ -906,6 +906,9 @@ extension PaymentViewController {
                 self.completeAuthenticationButton.setTitleColor(.white, for: .normal)
                 
                 self.isAuthenticated = true
+                guard let uid = authResult?.user.uid else { return }
+                print(uid)
+                ReferenceValues.uid = uid
                 
                 return
             }

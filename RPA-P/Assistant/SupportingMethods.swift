@@ -1432,7 +1432,7 @@ extension SupportingMethods {
     }
     
     // MARK: UserDefualts Estimate 저장 및 불러오기
-    func saveLocalEstimateData(estimateList: [Estimate]) {
+    func saveLocalEstimateData(estimateList: [PreEstimate]) {
         let encoder = JSONEncoder()
         if let encoded = try? encoder.encode(estimateList){
             UserDefaults.standard.setValue(encoded, forKey: "estimateList")
@@ -1440,10 +1440,10 @@ extension SupportingMethods {
         
     }
     
-    func readLocalEstimateData() -> [Estimate]? {
+    func readLocalEstimateData() -> [PreEstimate]? {
         if let savedData = UserDefaults.standard.object(forKey: "estimateList") as? Data{
             let decoder = JSONDecoder()
-            if let estimateList = try? decoder.decode([Estimate].self, from: savedData){
+            if let estimateList = try? decoder.decode([PreEstimate].self, from: savedData){
                 return estimateList
                 
             }
@@ -1609,6 +1609,18 @@ extension UILabel {
         
         attributedString.addAttributes([.font: font as Any, .foregroundColor: color as Any], range: range)
         self.attributedText = attributedString
+    }
+    
+    func setLineSpacing(spacing: CGFloat) {
+        guard let text = text else { return }
+
+        let attributeString = NSMutableAttributedString(string: text)
+        let style = NSMutableParagraphStyle()
+        style.lineSpacing = spacing
+        attributeString.addAttribute(.paragraphStyle,
+                                     value: style,
+                                     range: NSRange(location: 0, length: attributeString.length))
+        self.attributedText = attributeString
     }
 }
 

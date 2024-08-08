@@ -83,8 +83,18 @@ extension MoreInfoCollectionViewCell: EssentialCellHeaderMethods {
 
 // MARK: - Extension for methods added
 extension MoreInfoCollectionViewCell {
-    func setCell(info: String) {
+    func setCell(info: String, isCompletedReservation: Bool) {
         self.categoryLabel.text = info
+        
+        if isCompletedReservation {
+            self.categoryView.layer.borderColor = UIColor.useRGB(red: 184, green: 0, blue: 0).cgColor
+            self.categoryLabel.textColor = .useRGB(red: 184, green: 0, blue: 0)
+            
+        } else {
+            self.categoryView.layer.borderColor = UIColor.useRGB(red: 255, green: 142, blue: 142).cgColor
+            self.categoryLabel.textColor = .useRGB(red: 255, green: 142, blue: 142)
+            
+        }
         
     }
 }

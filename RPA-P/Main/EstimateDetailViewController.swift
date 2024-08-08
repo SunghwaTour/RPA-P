@@ -40,15 +40,16 @@ final class EstimateDetailViewController: UIViewController {
         return tableView
     }()
     
+    private let mainModel = MainModel()
     var estimateList: [Estimate] = []
-    var tempEstimate: Estimate?
+    var deposit: Double = 0
     
     init() {
         
-        if let estimateList = SupportingMethods.shared.readLocalEstimateData() {
-            self.estimateList = estimateList
-            
-        }
+//        if let estimateList = SupportingMethods.shared.readLocalEstimateData() {
+//            self.estimateList = estimateList
+//            
+//        }
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -67,6 +68,7 @@ final class EstimateDetailViewController: UIViewController {
         self.setNotificationCenters()
         self.setSubviews()
         self.setLayouts()
+        self.setData()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -150,6 +152,26 @@ extension EstimateDetailViewController: EssentialViewMethods {
         ])
     }
     
+    func setData() {
+        SupportingMethods.shared.turnCoverView(.on)
+        self.mainModel.getEstimateData { estimates in
+            print(estimates)
+            self.estimateList = estimates
+            
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+                SupportingMethods.shared.turnCoverView(.off)
+                
+            }
+            
+        } failure: { error in
+            print("setData Error: \(error)")
+            SupportingMethods.shared.turnCoverView(.off)
+            
+        }
+
+    }
+    
     func setViewAfterTransition() {
         //self.navigationController?.setNavigationBarHidden(false, animated: true)
         //self.tabBarController?.tabBar.isHidden = false
@@ -165,10 +187,23 @@ extension EstimateDetailViewController {
 extension EstimateDetailViewController {    
     @objc func reservationConfirmButton(_ notification: Notification) {
         guard let estimate = notification.userInfo?["estimate"] as? Estimate else { return }
-        self.tempEstimate = estimate
-        let vc = EstimateConfirmationViewController()
         
-        self.present(vc, animated: true)
+        if estimate.isEstimateApproval {
+            if estimate.isCompletedReservation {
+                // 계약서 보기
+                print("계약서 보기")
+                
+            } else {
+                // 예약 확정하기
+                self.deposit = Double(estimate.price)! * 0.08
+                let vc = EstimateConfirmationViewController()
+                
+                self.present(vc, animated: true)
+                
+            }
+            
+        }
+        
         
     }
     
@@ -179,16 +214,16 @@ extension EstimateDetailViewController {
     
     @objc func estimateConfirm(_ notificatoin: Notification) {
         print("estimateConfirm")
-        let vc = ReservationAnnouncementViewController(estimate: self.tempEstimate!)
+        let vc = ReservationAnnouncementViewController(deposit: self.deposit)
         
         self.present(vc, animated: true)
     }
     
     @objc func saveEstimateData(_ notification: Notification) {
-         guard let data = notification.userInfo?["estimate"] as? Estimate else { return }
+         guard let data = notification.userInfo?["estimate"] as? PreEstimate else { return }
         
-        self.estimateList.append(data)
-        SupportingMethods.shared.saveLocalEstimateData(estimateList: self.estimateList)
+//        self.estimateList.append(data)
+//        SupportingMethods.shared.saveLocalEstimateData(estimateList: self.estimateList)
         
         DispatchQueue.main.async {
             self.tableView.reloadData()

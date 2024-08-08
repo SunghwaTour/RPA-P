@@ -271,10 +271,10 @@ final class ReservationCompletedViewController: UIViewController {
     
     var heightAnchorContraint: NSLayoutConstraint!
     
-    var estimate: Estimate
+    var estimate: PreEstimate
     var moreInfoList: [String] = []
     
-    init(estimate: Estimate) {
+    init(estimate: PreEstimate) {
         self.estimate = estimate
         
         self.moreInfoList.append(estimate.pay?.payWay?.rawValue ?? "")
@@ -523,7 +523,7 @@ extension ReservationCompletedViewController: EssentialViewMethods {
         
         // accountCopyButton
         NSLayoutConstraint.activate([
-            self.accountCopyButton.leadingAnchor.constraint(equalTo: self.accountTitleLabel.trailingAnchor, constant: 4),
+            self.accountCopyButton.leadingAnchor.constraint(equalTo: self.accountLabel.trailingAnchor, constant: 4),
             self.accountCopyButton.centerYAnchor.constraint(equalTo: self.accountLabel.centerYAnchor),
             self.accountCopyButton.heightAnchor.constraint(equalToConstant: 16),
             self.accountCopyButton.widthAnchor.constraint(equalToConstant: 30),
@@ -622,7 +622,10 @@ extension ReservationCompletedViewController {
     
     @objc func accountCopyButton(_ sender: UIButton) {
         print("accountCopyButton")
+        UIPasteboard.general.string = self.accountLabel.text
         
+        guard let storedString = UIPasteboard.general.string else { return }
+        SupportingMethods.shared.showAlertNoti(title: "\(storedString) 복사되었습니다.")
     }
     
 }
@@ -637,7 +640,7 @@ extension ReservationCompletedViewController: UICollectionViewDelegateFlowLayout
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MoreInfoCollectionViewCell", for: indexPath) as! MoreInfoCollectionViewCell
         let info = self.moreInfoList[indexPath.row]
         
-        cell.setCell(info: "# \(info)")
+        cell.setCell(info: "# \(info)", isCompletedReservation: false)
         
         return cell
     }

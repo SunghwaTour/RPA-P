@@ -141,6 +141,17 @@ final class EstimateDetailTableViewCell: UITableViewCell {
         return label
     }()
     
+    lazy var priceChangeAnnouncementImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.isHidden = true
+        imageView.image = .useCustomImage("priceChangeAnnouncement")
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return imageView
+    }()
+    
     lazy var priceTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "총 금액"
@@ -304,6 +315,7 @@ extension EstimateDetailTableViewCell {
             self.arrivalDateAndTimeTitleLabel,
             self.arrivalDateAndTimeLabel,
             
+            self.priceChangeAnnouncementImageView,
             self.priceTitleLabel,
             self.priceLabel,
             
@@ -399,6 +411,14 @@ extension EstimateDetailTableViewCell {
             self.arrivalDateAndTimeLabel.trailingAnchor.constraint(equalTo: self.basicInfoBaseView.trailingAnchor, constant: -8),
         ])
         
+        // priceChangeAnnouncementImageView
+        NSLayoutConstraint.activate([
+            self.priceChangeAnnouncementImageView.leadingAnchor.constraint(equalTo: self.priceTitleLabel.leadingAnchor, constant: 44),
+            self.priceChangeAnnouncementImageView.bottomAnchor.constraint(equalTo: self.priceTitleLabel.topAnchor, constant: 8),
+            self.priceChangeAnnouncementImageView.widthAnchor.constraint(equalToConstant: 172),
+            self.priceChangeAnnouncementImageView.heightAnchor.constraint(equalToConstant: 38),
+        ])
+        
         // priceTitleLabel
         NSLayoutConstraint.activate([
             self.priceTitleLabel.leadingAnchor.constraint(equalTo: self.basicInfoBaseView.leadingAnchor, constant: 30),
@@ -456,44 +476,71 @@ extension EstimateDetailTableViewCell {
 // MARK: - Extension for methods added
 extension EstimateDetailTableViewCell {
     func setCell(estimate: Estimate) {
-        self.estimate = estimate
-        self.kindsOfEstimateButton.setTitle(estimate.kindsOfEstimate.rawValue, for: .normal)
+        if estimate.isEstimateApproval {
+            self.estimate = estimate
+            self.reservationConfirmButton.isEnabled = true
+            self.reservationConfirmButton.setTitleColor(.useRGB(red: 184, green: 0, blue: 0), for: .normal)
+            self.reservationConfirmButton.backgroundColor = .white
+            self.reservationConfirmButton.layer.borderColor = UIColor.useRGB(red: 184, green: 0, blue: 0).cgColor
+            
+            if estimate.isCompletedReservation {
+                self.reservationConfirmButton.setTitle("계약서 보기", for: .normal)
+                self.distanceButton.setTitleColor(.useRGB(red: 184, green: 0, blue: 0), for: .normal)
+                self.distanceButton.layer.borderColor = UIColor.useRGB(red: 184, green: 0, blue: 0).cgColor
+                self.kindsOfEstimateButton.backgroundColor = .useRGB(red: 184, green: 0, blue: 0)
+                
+            } else {
+                self.reservationConfirmButton.setTitle("예약 확정하기", for: .normal)
+                self.distanceButton.setTitleColor(.useRGB(red: 255, green: 142, blue: 142), for: .normal)
+                self.distanceButton.layer.borderColor = UIColor.useRGB(red: 255, green: 142, blue: 142).cgColor
+                self.kindsOfEstimateButton.backgroundColor = .useRGB(red: 255, green: 142, blue: 142)
+                
+            }
+            
+        } else {
+            self.reservationConfirmButton.isEnabled = false
+            self.reservationConfirmButton.setTitle("견적 내는 중", for: .normal)
+            self.reservationConfirmButton.setTitleColor(.useRGB(red: 167, green: 167, blue: 167), for: .normal)
+            self.reservationConfirmButton.backgroundColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.6)
+            self.reservationConfirmButton.layer.borderColor = UIColor.useRGB(red: 167, green: 167, blue: 167).cgColor
+            
+        }
         
-        let distance = Int(SupportingMethods.shared.calculateDistance(departure: estimate.departure, return: estimate.return, kindsOfEstimate: estimate.kindsOfEstimate)) / 1000
-        self.distanceButton.setTitle("\(distance)KM", for: .normal)
+        self.priceChangeAnnouncementImageView.isHidden = !estimate.isPriceChange
         
-        self.departureAddressLabel.text = estimate.departure.name
-        self.arrivalAddressLabel.text = estimate.return.name
+        self.kindsOfEstimateButton.setTitle(estimate.kindsOfEstimate, for: .normal)
         
-        self.departureDateAndTimeLabel.text = "\(estimate.departureDate.date) \(estimate.departureDate.time)"
+        self.distanceButton.setTitle("\(estimate.distance)KM", for: .normal)
         
-        if estimate.kindsOfEstimate == .oneWay {
+        self.departureAddressLabel.text = estimate.departure
+        self.arrivalAddressLabel.text = estimate.arrival
+        
+        self.departureDateAndTimeLabel.text = estimate.departureDate
+        
+        if estimate.kindsOfEstimate == "편도" {
             self.arrivalDateAndTimeTitleLabel.isHidden = true
             self.arrivalDateAndTimeLabel.isHidden = true
             
         } else {
             self.arrivalDateAndTimeTitleLabel.isHidden = false
-            self.arrivalDateAndTimeLabel.text = "\(estimate.returnDate.date) \(estimate.returnDate.time)"
+            self.arrivalDateAndTimeLabel.isHidden = false
+            self.arrivalDateAndTimeLabel.text = estimate.arrivalDate
             
         }
         
-        
-        self.priceLabel.text = "\(estimate.virtualEstimate?.price.withCommaString ?? "0") 원"
+        self.priceLabel.text = "\(Int(estimate.price)!.withCommaString ?? "0") 원"
         
         if self.moreInfoList.isEmpty {
-            self.moreInfoList.append(estimate.pay?.payWay?.rawValue ?? "")
-            if let virtualEstimate = estimate.virtualEstimate {
-                for category in virtualEstimate.category {
-                    self.moreInfoList.append(category.rawValue)
-                    
-                }
-                
-            }
+            self.moreInfoList.append("\(estimate.busCount)대")
+            self.moreInfoList.append("\(estimate.busType)")
+            self.moreInfoList.append("\(estimate.number)명")
+            self.moreInfoList.append("\(estimate.operationType)")
+            self.moreInfoList.append("\(estimate.payWay)")
             
-            DispatchQueue.main.async {
-                self.collectionView.reloadData()
-                
-            }
+        }
+        
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
             
         }
         
@@ -520,6 +567,7 @@ extension EstimateDetailTableViewCell {
     }
     
     @objc func reservationConfirmButton(_ sender: UIButton) {
+        print("reservationConfirmButton")
         guard let estimate = self.estimate else { return }
         NotificationCenter.default.post(name: Notification.Name("RservationConfirmation"), object: nil, userInfo: ["estimate": estimate])
         
@@ -535,8 +583,9 @@ extension EstimateDetailTableViewCell: UICollectionViewDelegateFlowLayout, UICol
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MoreInfoCollectionViewCell", for: indexPath) as! MoreInfoCollectionViewCell
         let info = self.moreInfoList[indexPath.row]
+        let isCompletedReservation = self.estimate != nil ? self.estimate!.isCompletedReservation : false
         
-        cell.setCell(info: "# \(info)")
+        cell.setCell(info: "# \(info)", isCompletedReservation: isCompletedReservation)
         
         return cell
     }

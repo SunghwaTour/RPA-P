@@ -59,6 +59,17 @@ struct ReferenceValues {
         }
     }
     
+    // 전화번호 인증을 통해 얻은 UID
+    static var uid: String {
+        get {
+            return UserDefaults.standard.string(forKey: "uid") ?? "null"
+        }
+        
+        set {
+            UserDefaults.standard.setValue(newValue, forKey: "uid")
+        }
+    }
+    
     // FIXME: 서버와 약속에 따라서 String 바꿔주기
     static let expiredConditionMessage: String = "다른 기기에서 로그인 되었습니다."
     

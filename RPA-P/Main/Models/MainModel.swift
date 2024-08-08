@@ -7,13 +7,74 @@
 
 import Foundation
 import Alamofire
+import FirebaseFirestore
 
 final class MainModel {
+    // MARK: Firebase
+    private var db = Firestore.firestore()
+    
+    private(set) var getEstimateData: DataRequest?
+    
     // MARK: Kakao requests
     private(set) var findKeywordWithTextRequest: DataRequest?
     private(set) var searchAddressWithTextReqeust: DataRequest?
     
     private(set) var searchedAddress: SearchedAddress = SearchedAddress()
+    
+    func getEstimateData(success: (([Estimate]) -> ())?, failure: ((String) -> ())?) {
+        let uid = ReferenceValues.uid
+        print("path: /User/\(uid)/Estimate")
+        if uid == "null" {
+            failure?("전화번호 인증 필요.")
+        } else {
+            self.db.collection("/User/\(uid)/Estimate").order(by: "departureIndex").addSnapshotListener { querySnapshot, error in
+                if let error = error {
+                    failure?("getEstimateData Error: \(error.localizedDescription)")
+                    
+                } else {
+                    guard let querySnapshot = querySnapshot else {
+                        failure?("getEstimateData Error: Empty Data")
+                        return
+                    }
+                    
+                    for document in querySnapshot.documents {
+                        print(document.documentID)
+                    }
+                    let esimates: [Estimate] = querySnapshot.documents.compactMap { doc -> Estimate? in
+                        do {
+                            let jsonData = try JSONSerialization.data(withJSONObject: doc.data(), options: [])
+                            let estimate = try JSONDecoder().decode(Estimate.self, from: jsonData)
+                            
+                            return estimate
+                            
+                        } catch let error {
+                            failure?(error.localizedDescription)
+                            return nil
+                            
+                        }
+                        
+                    }
+                    
+                    querySnapshot.documentChanges.forEach { change in
+                        switch change.type {
+                        case .added:
+                            print("added")
+                        case .modified:
+                            print("modified")
+                        case .removed:
+                            print("removed")
+                        }
+                    }
+                    
+                    success?(esimates)
+                    
+                }
+                
+            }
+            
+        }
+        
+    }
     
 }
 
@@ -85,7 +146,7 @@ enum PayWay: String, Codable {
     }
 }
 
-struct Estimate: Codable {
+struct PreEstimate: Codable {
     var kindsOfEstimate: KindsOfEstimate
     var departure: EstimateAddress
     var `return`: EstimateAddress
@@ -119,6 +180,30 @@ struct VirtualEstimate: Codable {
 struct Pay: Codable {
     var payWay: PayWay?
     var signedName: String = ""
+}
+
+// MARK: Firebase Model
+struct Estimate: Codable {
+    let kindsOfEstimate: String // 왕복, 편도, 셔틀
+    let departure: String // 출발지
+    let arrival: String // 도착지
+    let distance: Int //거리
+    let duration: Double // 출발지에서 도착지까지의 시간
+    let stopover: [String] // 경유지 ([수원, 서울])
+    let departureDate: String // 출발날짜시간(yyyy-MM-dd HH:mm)
+    let arrivalDate: String // 도착날짜시간(yyyy-MM-dd HH:mm)
+    let number: String // 인원수
+    let busCount: String // 버스대수
+    let payWay: String // 결제방식 (현금, 카드, 계좌이체)
+    let signedName: String // 이름
+    let price: String // 가격
+    let busType: String // 차량종류
+    let operationType: String // 운행종류
+    let isCompletedReservation: Bool // 운행 확정시 true
+    let isEstimateApproval: Bool // trp에서 배차시 true(해당 값이 true면 예약 확정하기 버튼 활성화)
+    let isPriceChange: Bool // 가격 변경시 true
+    let departureIndex: Int // 출발시간값 인덱스 (202408101012)
+    let phone: String // 휴대폰 번호
 }
 
 // MARK: - Kakao API

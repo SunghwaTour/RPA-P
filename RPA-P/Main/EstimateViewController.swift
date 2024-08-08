@@ -26,6 +26,16 @@ final class EstimateViewController: UIViewController {
         return view
     }()
     
+    lazy var annoucementImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = .useCustomImage("announcementBGImage")
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return imageView
+    }()
+    
     lazy var backgroundImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = .useCustomImage("HomeBackground")
@@ -619,6 +629,7 @@ extension EstimateViewController: EssentialViewMethods {
         
         SupportingMethods.shared.addSubviews([
             self.backgroundImageView,
+            self.annoucementImageView,
             self.indicatorSizeView,
             self.kindsOfEstimateStackView,
             self.departureView,
@@ -709,6 +720,11 @@ extension EstimateViewController: EssentialViewMethods {
             self.indicatorSizeView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor),
             self.indicatorSizeView.topAnchor.constraint(equalTo: self.contentView.topAnchor),
             self.indicatorSizeView.heightAnchor.constraint(equalToConstant: 27.5)
+        ])
+        
+        // annoucementImageView
+        NSLayoutConstraint.activate([
+            
         ])
         
         // kindsOfEstimateStackView
@@ -1366,8 +1382,8 @@ extension EstimateViewController {
             let departureDateAndTime = EstimateTime(date: self.departureDateLabel.text!, time: self.departureTimeLabel.text!)
             let returnDateAndTime = EstimateTime(date: self.arrivalDateLabel.text!, time: self.arrivalTimeLabel.text!)
             
-            let estimate: Estimate =
-            Estimate(kindsOfEstimate: self.kindsOfEstimate, departure: self.estimateAddresses["departure"]!, return: self.estimateAddresses["return"]!, stopover: self.estimateAddresses["stopover"]!, departureDate: departureDateAndTime, returnDate: returnDateAndTime, number: self.numberTextField.text == "미정" ? nil: Int(self.numberTextField.text ?? "0") ?? nil)
+            let estimate: PreEstimate =
+            PreEstimate(kindsOfEstimate: self.kindsOfEstimate, departure: self.estimateAddresses["departure"]!, return: self.estimateAddresses["return"]!, stopover: self.estimateAddresses["stopover"]!, departureDate: departureDateAndTime, returnDate: returnDateAndTime, number: self.numberTextField.text == "미정" ? nil: Int(self.numberTextField.text ?? "0") ?? nil)
             
             print("distance: \(distance)\nprice: \(SupportingMethods.shared.caculateVirtualBasicPrice(distance: distance, kindsOfEstimate: self.kindsOfEstimate))")
             print("virtualPrice: \(virtualPrice)")
@@ -1394,7 +1410,7 @@ extension EstimateViewController {
     @objc func initializeData(_ notification: Notification) {
         self.initializeData()
         
-        guard let estimate = notification.userInfo?["estimate"] as? Estimate else { return }
+        guard let estimate = notification.userInfo?["estimate"] as? PreEstimate else { return }
         print(estimate)
         NotificationCenter.default.post(name: Notification.Name("SaveEstimateData"), object: nil, userInfo: ["estimate": estimate])
         
