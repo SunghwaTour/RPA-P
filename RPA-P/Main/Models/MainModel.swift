@@ -10,6 +10,9 @@ import Alamofire
 import FirebaseFirestore
 
 final class MainModel {
+    // MARK: Server
+    private(set) var getTokenRequest: DataRequest?
+    
     // MARK: Firebase
     private var db = Firestore.firestore()
     

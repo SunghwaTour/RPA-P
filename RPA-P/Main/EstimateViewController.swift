@@ -28,6 +28,7 @@ final class EstimateViewController: UIViewController {
     
     lazy var annoucementImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.isHidden = true
         imageView.image = .useCustomImage("announcementBGImage")
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true

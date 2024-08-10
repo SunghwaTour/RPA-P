@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		05437B452C52210700963271 /* AddressSearchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05437B442C52210700963271 /* AddressSearchTableViewCell.swift */; };
+		05DD11732C64482C0005B073 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DD11722C64482C0005B073 /* Server.swift */; };
 		2D0F91FB2C4841CB0014A87D /* EstimateConfirmationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D0F91FA2C4841CB0014A87D /* EstimateConfirmationViewController.swift */; };
 		2D0F91FD2C48F4200014A87D /* EstimateDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D0F91FC2C48F4200014A87D /* EstimateDetailTableViewCell.swift */; };
 		2D0F91FF2C48FD480014A87D /* ReservationAnnouncementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D0F91FE2C48FD480014A87D /* ReservationAnnouncementViewController.swift */; };
@@ -44,6 +45,7 @@
 
 /* Begin PBXFileReference section */
 		05437B442C52210700963271 /* AddressSearchTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressSearchTableViewCell.swift; sourceTree = "<group>"; };
+		05DD11722C64482C0005B073 /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
 		245F003AC91AF64A072E5738 /* Pods-RPA-P.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RPA-P.debug.xcconfig"; path = "Target Support Files/Pods-RPA-P/Pods-RPA-P.debug.xcconfig"; sourceTree = "<group>"; };
 		295C48971F4628F6AD3FE7AF /* Pods-RPA-P.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RPA-P.release.xcconfig"; path = "Target Support Files/Pods-RPA-P/Pods-RPA-P.release.xcconfig"; sourceTree = "<group>"; };
 		2D0F91FA2C4841CB0014A87D /* EstimateConfirmationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EstimateConfirmationViewController.swift; sourceTree = "<group>"; };
@@ -137,6 +139,7 @@
 				2D46F59D2C3DB0D300C711E2 /* SupportingMethods.swift */,
 				2D46F59F2C3DB0DD00C711E2 /* ReferenceValues.swift */,
 				2D46F5A92C3E445800C711E2 /* CustomizedNavigationController.swift */,
+				05DD11722C64482C0005B073 /* Server.swift */,
 			);
 			path = Assistant;
 			sourceTree = "<group>";
@@ -337,6 +340,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05DD11732C64482C0005B073 /* Server.swift in Sources */,
 				2D5342132C47E79000B74FBF /* MoreInfoCollectionViewCell.swift in Sources */,
 				2D46F5AC2C3E448100C711E2 /* MainViewController.swift in Sources */,
 				2D5342112C47C9D700B74FBF /* ReservationCompletedViewController.swift in Sources */,
