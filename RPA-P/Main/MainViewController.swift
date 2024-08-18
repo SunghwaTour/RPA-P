@@ -173,8 +173,8 @@ extension MainViewController: EssentialViewMethods {
         appearance.configureWithTransparentBackground()
         appearance.backgroundColor = .white // Navigation bar is transparent and root view appears on it.
         appearance.titleTextAttributes = [
-            NSAttributedString.Key.foregroundColor:UIColor.useRGB(red: 66, green: 66, blue: 66),
-            .font:UIFont.useFont(ofSize: 18, weight: .Bold)
+            NSAttributedString.Key.foregroundColor:UIColor.useRGB(red: 184, green: 0, blue: 0),
+            .font:UIFont.useFont(ofSize: 16, weight: .Bold)
         ]
         
         // MARK: NavigationItem appearance for each view controller
@@ -184,7 +184,7 @@ extension MainViewController: EssentialViewMethods {
         
         self.navigationItem.title = "킹버스"
         
-//        self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "backButton")?.withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(leftBarButtonItem(_:)))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "Profile")?.withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(rightBarButtonItem(_:)))
     }
     
     func setPageViewController() {
@@ -225,6 +225,12 @@ extension MainViewController {
     @objc func moveEstimate(_ notificatoin: Notification) {
         self.select(index: .estimate)
         
+    }
+    
+    @objc func rightBarButtonItem(_ barButtonItem: UIBarButtonItem) {
+        let vc = ProfileViewController()
+        
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 }
 

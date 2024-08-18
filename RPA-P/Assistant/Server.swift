@@ -20,7 +20,7 @@ struct Server {
         var URL: String {
             switch self {
             case .DEV:
-                return "34.121.50.23"
+                return "http://34.121.50.23:8000"
                 
             case .QA:
                 return ""
@@ -40,6 +40,17 @@ struct Server {
                 
             case .RELEASE:
                 return "prod"
+            }
+        }
+        
+        var firebaseServerURL: String {
+            switch self {
+            case .DEV:
+                return "/Server/Dev"
+            case .QA:
+                return ""
+            case .RELEASE:
+                return "/Server/Sunghwatour"
             }
         }
         

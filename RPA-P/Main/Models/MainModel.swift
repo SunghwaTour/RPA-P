@@ -12,6 +12,9 @@ import FirebaseFirestore
 final class MainModel {
     // MARK: Server
     private(set) var getTokenRequest: DataRequest?
+    private(set) var sendEstimateDataRequest: DataRequest?
+    private(set) var sendConfirmReservationRequest: DataRequest?
+    private(set) var getContractRequest: DataRequest?
     
     // MARK: Firebase
     private var db = Firestore.firestore()
@@ -21,16 +24,253 @@ final class MainModel {
     // MARK: Kakao requests
     private(set) var findKeywordWithTextRequest: DataRequest?
     private(set) var searchAddressWithTextReqeust: DataRequest?
+    private(set) var searchDurationRequest: DataRequest?
     
     private(set) var searchedAddress: SearchedAddress = SearchedAddress()
     
+    // MARK: Server
+    func getTokenRequest(success: (() -> ())?, failure: ((_ message: String) -> ())?) {
+        let url = Server.server.URL + "/login"
+        
+        let headers: HTTPHeaders = [
+            "Content-Type":"application/json",
+//            "Authorization": User.shared.accessToken
+        ]
+        
+        let parameters: Parameters = [
+            "user_id": "rpap",
+            "password": "kingbus12!@",
+        ]
+        
+        self.getTokenRequest = AF.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+        
+        self.getTokenRequest?.responseData { (response) in
+            switch response.result {
+            case .success(let data):
+                guard let statusCode = response.response?.statusCode else {
+                    print("getTokenRequest failure: statusCode nil")
+                    failure?("statusCodeNil")
+                    
+                    return
+                }
+                
+                guard statusCode >= 200 && statusCode < 300 else {
+                    print("getTokenRequest failure: statusCode(\(statusCode))")
+                    failure?("statusCodeError")
+                    
+                    return
+                }
+                
+                if let decodedData = try? JSONDecoder().decode(Token.self, from: data) {
+                    
+                    print("getTokenRequest accessToekn: \(decodedData.data.access)")
+                    print("getTokenRequest succeeded")
+                    User.shared.accessToken = "Bearer \(decodedData.data.access)"
+                    success?()
+                    
+                } else {
+                    print("getTokenRequest failure: API 성공, Parsing 실패")
+                    failure?("API 성공, Parsing 실패")
+                    
+                }
+                
+            case .failure(let error):
+                print("getTokenRequest error: \(error.localizedDescription)")
+                failure?(error.localizedDescription)
+            }
+        }
+    }
+    
+    func sendEstimateDataRequest(estimate: PreEstimate, success: (() -> ())?, failure: ((_ message: String) -> ())?) {
+        let url = Server.server.URL + "/dispatch/estimate"
+        
+        let headers: HTTPHeaders = [
+            "Content-Type":"application/json",
+            "Authorization": User.shared.accessToken
+        ]
+        
+        let parameters: Parameters = [
+            "uid": ReferenceValues.uid,
+            "kindsOfEstimate": estimate.kindsOfEstimate.rawValue,
+            "departure": [
+                "index" : estimate.departure.index,
+                "latitude" : Double(estimate.departure.latitude)!,
+                "longitude" : Double(estimate.departure.longitude)!,
+                "address" : estimate.departure.address,
+                "name" : estimate.departure.name,
+                "type" : estimate.departure.type
+            ],
+            "arrival": [
+                "index" : estimate.return.index,
+                "latitude" : Double(estimate.return.latitude)!,
+                "longitude" : Double(estimate.return.longitude)!,
+                "address" : estimate.return.address,
+                "name" : estimate.return.name,
+                "type" : estimate.return.type
+            ],
+            "stopover": estimate.stopover == nil ? [] : [[
+                "index" : estimate.stopover!.index,
+                "latitude" : Double(estimate.stopover!.latitude)!,
+                "longitude" : Double(estimate.stopover!.longitude)!,
+                "address" : estimate.stopover!.address,
+                "name" : estimate.stopover!.name,
+                "type" : estimate.stopover!.type
+            ]
+            ],
+            "distance": estimate.distance,
+            "duration": estimate.duration, // 분
+            "departureDate": estimate.departureDate.dateForServer(),
+            "arrivalDate": estimate.returnDate.dateForServer(),
+            "number": estimate.number == nil ? "미정" : String(estimate.number!),
+            "busCount": "\(estimate.busCount)",
+            "payWay": estimate.pay!.payWay!.rawValue,
+            "signedName": estimate.pay!.signedName,
+            "price": "\(estimate.virtualEstimate?.price ?? 0)",
+            "busType": estimate.busType?.rawValue ?? "47인승",
+            "operationType": estimate.virtualEstimate?.category[0].rawValue ?? "단순 기사 동행", // 기사동행여부
+            "isCompletedReservation": false,
+            "isConfirmedReservation": false,
+            "isPriceChange": false,
+            "isEstimateApproval": false,
+            "departureIndex": estimate.departureDate.returnDepartureIndex(),
+            "phone": ReferenceValues.phoneNumber
+        ]
+        
+        self.sendEstimateDataRequest = AF.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+        
+        self.sendEstimateDataRequest?.responseData { (response) in
+            switch response.result {
+            case .success(let data):
+                guard let statusCode = response.response?.statusCode else {
+                    print("sendEstimateDataRequest failure: statusCode nil")
+                    failure?("statusCodeNil")
+                    
+                    return
+                }
+                
+                guard statusCode >= 200 && statusCode < 300 else {
+                    print("sendEstimateDataRequest failure: statusCode(\(statusCode))")
+                    failure?("statusCodeError")
+                    
+                    return
+                }
+                
+                if let decodedData = try? JSONDecoder().decode(DefaultResponse.self, from: data) {
+                    print("sendEstimateDataRequest succeeded")
+                    print(decodedData.result)
+                    success?()
+                    
+                } else {
+                    print("sendEstimateDataRequest failure: API 성공, Parsing 실패")
+                    failure?("API 성공, Parsing 실패")
+                }
+                
+            case .failure(let error):
+                print("sendEstimateDataRequest error: \(error.localizedDescription)")
+                failure?(error.localizedDescription)
+            }
+        }
+    }
+    
+    func sendConfirmReservationRequest(estimateId: String, success: (() -> ())?, failure: ((_ message: String) -> ())?) {
+        let url = Server.server.URL + "/dispatch/estimate/reservation/confirm"
+        
+        let headers: HTTPHeaders = [
+            "Content-Type":"application/json",
+            "Authorization": User.shared.accessToken
+        ]
+        
+        let parameters: Parameters = [
+            "userUid": ReferenceValues.uid,
+            "estimateUid": estimateId,
+        ]
+        
+        self.sendConfirmReservationRequest = AF.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+        
+        self.sendConfirmReservationRequest?.responseData { (response) in
+            switch response.result {
+            case .success(let data):
+                guard let statusCode = response.response?.statusCode else {
+                    print("sendConfirmReservationRequest failure: statusCode nil")
+                    failure?("statusCodeNil")
+                    
+                    return
+                }
+                
+                guard statusCode >= 200 && statusCode < 300 else {
+                    print("sendConfirmReservationRequest failure: statusCode(\(statusCode))")
+                    failure?("statusCodeError")
+                    
+                    return
+                }
+                
+                if let decodedData = try? JSONDecoder().decode(DefaultResponse.self, from: data) {
+                    print("sendConfirmReservationRequest succeeded")
+                    print(decodedData.result)
+                    success?()
+                    
+                } else {
+                    print("sendConfirmReservationRequest failure: API 성공, Parsing 실패")
+                    failure?("API 성공, Parsing 실패")
+                }
+                
+            case .failure(let error):
+                print("sendConfirmReservationRequest error: \(error.localizedDescription)")
+                failure?(error.localizedDescription)
+            }
+        }
+    }
+    
+    func getContractRequest(estimateUid: String, success: ((String) -> ())?, failure: ((_ message: String) -> ())?) {
+        let url = Server.server.URL + "/dispatch/estimate/contract"
+        
+        let headers: HTTPHeaders = [
+            "accept":"application/json",
+            "Authorization": User.shared.accessToken
+        ]
+        
+        var parameters: Parameters = [
+            "estimateUid": estimateUid,
+        ]
+        
+        self.getContractRequest = AF.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+        
+        self.getContractRequest?.responseString { response in
+            switch response.result {
+            case .success(let data):
+                guard let statusCode = response.response?.statusCode else {
+                    print("getContractRequest failure: statusCode nil")
+                    failure?("statusCodeNil")
+                    
+                    return
+                }
+                
+                guard statusCode >= 200 && statusCode < 300 else {
+                    print("getContractRequest failure: statusCode(\(statusCode))")
+                    failure?("statusCodeError")
+                    
+                    return
+                }
+                
+                success?(data)
+                
+            case .failure(let error): // error
+                print("getContractRequest error: \(error.localizedDescription)")
+                failure?(error.localizedDescription)
+            }
+            
+        }
+        
+    }
+    
+    // MARK: Firebase
     func getEstimateData(success: (([Estimate]) -> ())?, failure: ((String) -> ())?) {
         let uid = ReferenceValues.uid
-        print("path: /User/\(uid)/Estimate")
+        
         if uid == "null" {
             failure?("전화번호 인증 필요.")
         } else {
-            self.db.collection("/User/\(uid)/Estimate").order(by: "departureIndex").addSnapshotListener { querySnapshot, error in
+            self.db.collection("\(Server.server.firebaseServerURL)/User/\(uid)/Estimate").order(by: "departureIndex").addSnapshotListener { querySnapshot, error in
                 if let error = error {
                     failure?("getEstimateData Error: \(error.localizedDescription)")
                     
@@ -43,10 +283,12 @@ final class MainModel {
                     for document in querySnapshot.documents {
                         print(document.documentID)
                     }
+                    
                     let esimates: [Estimate] = querySnapshot.documents.compactMap { doc -> Estimate? in
                         do {
                             let jsonData = try JSONSerialization.data(withJSONObject: doc.data(), options: [])
-                            let estimate = try JSONDecoder().decode(Estimate.self, from: jsonData)
+                            var estimate = try JSONDecoder().decode(Estimate.self, from: jsonData)
+                            estimate.documentId = doc.documentID
                             
                             return estimate
                             
@@ -81,12 +323,25 @@ final class MainModel {
     
 }
 
+// MARK: Server
+struct DefaultResponse: Codable {
+    let result: String
+}
+
+struct Token: Codable {
+    let data: TokenItem
+}
+
+struct TokenItem: Codable {
+    let access: String
+}
+
 // MARK: Estimate
 enum Category: String, Codable {
     case general = "일반"
     case honor = "우등"
     case full = "전체 기사 동행"
-    case partial = "부분 기사 동행"
+    case partial = "단순 기사 동행"
     
     var kindsNumber: Int {
         switch self {
@@ -149,6 +404,27 @@ enum PayWay: String, Codable {
     }
 }
 
+enum BusType: String, Codable {
+    // 25/33/43/47
+    case twentyFive = "25인승"
+    case thirtyThree = "33인승"
+    case fortyThree = "43인승"
+    case fortySeven = "47인승"
+    
+    var number: Int {
+        switch self {
+        case .twentyFive:
+            return 25
+        case .thirtyThree:
+            return 33
+        case .fortyThree:
+            return 43
+        case .fortySeven:
+            return 47
+        }
+    }
+}
+
 struct PreEstimate: Codable {
     var kindsOfEstimate: KindsOfEstimate
     var departure: EstimateAddress
@@ -158,19 +434,49 @@ struct PreEstimate: Codable {
     var returnDate: EstimateTime
     var number: Int?
     var pay: Pay?
+    var distance: Int
+    var duration: Int
+    var busType: BusType?
+    var busCount: Int
     
     var virtualEstimate: VirtualEstimate? = nil
 }
 
 struct EstimateAddress: Codable {
-    var name: String = ""
-    var latitude: String = ""
-    var longitude: String = ""
+    var index: Int = 2
+    var name: String = "경유지 없음"
+    var address: String = ""
+    var latitude: String = "0"
+    var longitude: String = "0"
+    var type: String = "경유지"
 }
 
 struct EstimateTime: Codable {
     var date: String = ""
     var time: String = ""
+    
+    func dateForServer() -> String {
+        let dateForConverting = SupportingMethods.shared.convertString(intoDate: self.date, "yyyy.MM.dd")
+        let splitTime = self.time.split(separator: " ")
+        var changedTime: String = ""
+        
+        if splitTime[1] == "오후" {
+            changedTime = "\(Int(splitTime[0].split(separator: ":")[0])! + 12):" + splitTime[0].split(separator: ":")[1]
+        } else {
+            changedTime = "\(splitTime[0])"
+        }
+        
+        let dateForServer = SupportingMethods.shared.convertDate(intoString: dateForConverting, "yyyy-MM-dd") + " \(changedTime)"
+        
+        return dateForServer
+    }
+    
+    func returnDepartureIndex() -> String {
+        let fullDate = SupportingMethods.shared.convertString(intoDate: self.dateForServer(), "yyyy-MM-dd HH:mm")
+        let departureIndex = SupportingMethods.shared.convertDate(intoString: fullDate, "yyyyMMddHHmm")
+        
+        return departureIndex
+    }
 }
 
 struct VirtualEstimate: Codable {
@@ -187,6 +493,7 @@ struct Pay: Codable {
 
 // MARK: Firebase Model
 struct Estimate: Codable {
+    var documentId: String = "" // 견적 uid
     let kindsOfEstimate: String // 왕복, 편도, 셔틀
     let departure: String // 출발지
     let arrival: String // 도착지
@@ -203,10 +510,35 @@ struct Estimate: Codable {
     let busType: String // 차량종류
     let operationType: String // 운행종류
     let isCompletedReservation: Bool // 운행 확정시 true
+    let isConfirmedReservation: Bool // 예약 확정시 true
     let isEstimateApproval: Bool // trp에서 배차시 true(해당 값이 true면 예약 확정하기 버튼 활성화)
     let isPriceChange: Bool // 가격 변경시 true
-    let departureIndex: Int // 출발시간값 인덱스 (202408101012)
+    let departureIndex: String // 출발시간값 인덱스 (202408101012)
     let phone: String // 휴대폰 번호
+    
+    enum CodingKeys: CodingKey {
+        case kindsOfEstimate
+        case departure
+        case arrival
+        case distance
+        case duration
+        case stopover
+        case departureDate
+        case arrivalDate
+        case number
+        case busCount
+        case payWay
+        case signedName
+        case price
+        case busType
+        case operationType
+        case isCompletedReservation
+        case isConfirmedReservation
+        case isEstimateApproval
+        case isPriceChange
+        case departureIndex
+        case phone
+    }
 }
 
 // MARK: - Kakao API
@@ -381,6 +713,54 @@ extension MainModel {
         }
         
         return searchedAddress
+    }
+    
+    func searchDurationRequest(origin: EstimateAddress, destination: EstimateAddress, success: ((DirectionSummary) -> ())?, failure: ((_ message: String) -> ())?) {
+        let url = "https://apis-navi.kakaomobility.com/v1/directions"
+        
+        let headers: HTTPHeaders = [
+            "Authorization": ReferenceValues.kakaoAuthKey,
+            "Content-Type": "application/json"
+        ]
+        
+        let parameters: Parameters = [
+            "origin": "\(origin.longitude),\(origin.latitude)",
+            "destination": "\(destination.longitude),\(destination.latitude)",
+        ]
+        
+        self.searchDurationRequest = AF.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+        
+        self.searchDurationRequest?.responseData { (response) in
+            switch response.result {
+            case .success(let data):
+                guard let statusCode = response.response?.statusCode else {
+                    print("searchDurationRequest failure: statusCode nil")
+                    failure?("statusCodeNil")
+                    
+                    return
+                }
+                
+                guard statusCode >= 200 && statusCode < 300 else {
+                    print("searchDurationRequest failure: statusCode(\(statusCode))")
+                    failure?("statusCodeError")
+                    
+                    return
+                }
+                
+                if let decodedData = try? JSONDecoder().decode(Direction.self, from: data) {
+                    print("sendEstimateDataRequest succeeded")
+                    success?(decodedData.routes[0].summary)
+                    
+                } else {
+                    print("sendEstimateDataRequest failure: API 성공, Parsing 실패")
+                    failure?("API 성공, Parsing 실패")
+                }
+                
+            case .failure(let error):
+                print("searchDurationRequest error: \(error.localizedDescription)")
+                failure?(error.localizedDescription)
+            }
+        }
     }
 }
 
@@ -570,3 +950,20 @@ struct CompanyAddress: Codable {
     }
 }
 
+struct Direction: Codable {
+    let transId: String
+    let routes: [DirectionRoutes]
+    
+    enum CodingKeys: String, CodingKey {
+        case transId = "trans_id"
+        case routes
+    }
+}
+
+struct DirectionRoutes: Codable {
+    let summary: DirectionSummary
+}
+
+struct DirectionSummary: Codable {
+    let duration: Int
+}

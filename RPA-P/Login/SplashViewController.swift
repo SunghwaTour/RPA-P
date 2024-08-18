@@ -177,8 +177,7 @@ extension SplashViewController: EssentialViewMethods {
         SupportingMethods.shared.requestNotificationPermission {
             print("CallBack")
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                self.baseView.isHidden = false
-                self.gifImageView.animate(withGIFNamed: "Splash", loopCount: 1, animationBlock:  {
+                if ReferenceValues.isLaunchedBefore {
                     let mainVC = CustomizedNavigationController(rootViewController: MainViewController())
                     
                     mainVC.modalTransitionStyle = .crossDissolve
@@ -186,7 +185,22 @@ extension SplashViewController: EssentialViewMethods {
                     
                     self.present(mainVC, animated: true)
                     
-                })
+                } else {
+                    self.baseView.isHidden = false
+                    self.gifImageView.animate(withGIFNamed: "Splash", loopCount: 1, animationBlock:  {
+                        let mainVC = CustomizedNavigationController(rootViewController: MainViewController())
+                        
+                        mainVC.modalTransitionStyle = .crossDissolve
+                        mainVC.modalPresentationStyle = .fullScreen
+                        
+                        self.present(mainVC, animated: true) {
+                            ReferenceValues.isLaunchedBefore = true
+                            
+                        }
+                        
+                    })
+                    
+                }
                 
             }
             

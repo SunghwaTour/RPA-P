@@ -180,11 +180,45 @@ extension EstimateDetailViewController: EssentialViewMethods {
 
 // MARK: - Extension for methods added
 extension EstimateDetailViewController {
+    func getTokenRequest(success: (() -> ())?) {
+        self.mainModel.getTokenRequest {
+            success?()
+            
+        } failure: { message in
+            print("error: \(message)")
+            SupportingMethods.shared.turnCoverView(.off)
+            
+        }
+
+    }
     
+    func sendConfirmReservationRequest(estimateId: String, success: (() -> ())?) {
+        self.mainModel.sendConfirmReservationRequest(estimateId: estimateId) {
+            success?()
+            
+        } failure: { message in
+            print("error: \(message)")
+            SupportingMethods.shared.turnCoverView(.off)
+            
+        }
+
+    }
+    
+    func getContractRequest(estimateId: String, success: ((String) -> ())?) {
+        self.mainModel.getContractRequest(estimateUid: estimateId) { html in
+            success?(html)
+            
+        } failure: { message in
+            print("error: \(message)")
+            SupportingMethods.shared.turnCoverView(.off)
+            
+        }
+
+    }
 }
 
 // MARK: - Extension for selector methods
-extension EstimateDetailViewController {    
+extension EstimateDetailViewController {
     @objc func reservationConfirmButton(_ notification: Notification) {
         guard let estimate = notification.userInfo?["estimate"] as? Estimate else { return }
         
@@ -192,13 +226,40 @@ extension EstimateDetailViewController {
             if estimate.isCompletedReservation {
                 // 계약서 보기
                 print("계약서 보기")
+                SupportingMethods.shared.turnCoverView(.on)
+                self.getTokenRequest {
+                    self.getContractRequest(estimateId: estimate.documentId) { html in
+                        let vc = ContractViewController(html: html)
+                        
+                        self.navigationController?.pushViewController(vc, animated: true)
+                        SupportingMethods.shared.turnCoverView(.off)
+                    }
+                    
+                }
                 
             } else {
-                // 예약 확정하기
-                self.deposit = Double(estimate.price)! * 0.08
-                let vc = EstimateConfirmationViewController()
+                if !estimate.isConfirmedReservation {
+                    // 예약 확정하기
+                    SupportingMethods.shared.turnCoverView(.on)
+                    self.getTokenRequest {
+                        self.sendConfirmReservationRequest(estimateId: estimate.documentId) {
+                            self.deposit = Double(estimate.price)! * 0.08
+                            let vc = EstimateConfirmationViewController()
+                            
+                            self.present(vc, animated: true) {
+                                SupportingMethods.shared.turnCoverView(.off)
+                                
+                            }
+                            
+                        }
+                        
+                    }
+                    
+                } else {
+                    SupportingMethods.shared.showAlertNoti(title: "계약금을 입금하시면 운행 확정 및 계약서를 확인하실 수 있습니다.")
+                    
+                }
                 
-                self.present(vc, animated: true)
                 
             }
             

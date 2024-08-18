@@ -1109,6 +1109,18 @@ extension EstimateViewController {
         self.departureTimeLabel.text = SupportingMethods.shared.convertDate(intoString: Date(timeIntervalSinceNow: 86400 * 3), "HH:mm a")
         self.arrivalTimeLabel.text = SupportingMethods.shared.convertDate(intoString: Date(timeIntervalSinceNow: 86400 * 4), "HH:mm a")
     }
+    
+    func searchDurationRequest(origin: EstimateAddress, destination: EstimateAddress, success: ((Int) -> ())?) {
+        self.mainModel.searchDurationRequest(origin: origin, destination: destination) { summary in
+            success?(summary.duration)
+            
+        } failure: { message in
+            print("error: \(message)")
+            SupportingMethods.shared.turnCoverView(.off)
+            
+        }
+
+    }
 }
 
 // MARK: - Extension for selector methods
@@ -1383,17 +1395,62 @@ extension EstimateViewController {
             let departureDateAndTime = EstimateTime(date: self.departureDateLabel.text!, time: self.departureTimeLabel.text!)
             let returnDateAndTime = EstimateTime(date: self.arrivalDateLabel.text!, time: self.arrivalTimeLabel.text!)
             
-            let estimate: PreEstimate =
-            PreEstimate(kindsOfEstimate: self.kindsOfEstimate, departure: self.estimateAddresses["departure"]!, return: self.estimateAddresses["return"]!, stopover: self.estimateAddresses["stopover"]!, departureDate: departureDateAndTime, returnDate: returnDateAndTime, number: self.numberTextField.text == "미정" ? nil: Int(self.numberTextField.text ?? "0") ?? nil)
-            
-            print("distance: \(distance)\nprice: \(SupportingMethods.shared.caculateVirtualBasicPrice(distance: distance, kindsOfEstimate: self.kindsOfEstimate))")
-            print("virtualPrice: \(virtualPrice)")
-            
-            let vc = SelectEstimateViewController(estimate: estimate, virtualPrice: virtualPrice)
+            SupportingMethods.shared.turnCoverView(.on)
+            self.searchDurationRequest(origin: self.estimateAddresses["departure"]!, destination: self.estimateAddresses["return"]!) { duration in
+                print("duration: \(duration / 60)")
+                
+                let peopleCount = self.numberTextField.text
+                var busType: BusType?
+                var busCount: Int = 0
+                if peopleCount == "미정" {
+                    busType = nil
+                    busCount = 0
+                    
+                } else if Int(peopleCount!)! <= 25 {
+                    guard Int(peopleCount!)! > 10 else {
+                        SupportingMethods.shared.showAlertNoti(title: "인원은 10명 이상이어야 합니다.")
+                        return
+                    }
+                    busType = .twentyFive
+                    busCount = 1
+                    
+                } else if Int(peopleCount!)! <= 33 {
+                    busType = .thirtyThree
+                    busCount = 1
+                    
+                } else if Int(peopleCount!)! <= 43 {
+                    busType = .fortyThree
+                    busCount = 1
+                    
+                } else if Int(peopleCount!)! <= 47 {
+                    busType = .fortySeven
+                    busCount = 1
+                    
+                } else {
+                    busType = .fortySeven
+                    if (Int(peopleCount!)! % 47) == 0 {
+                        busCount = Int(peopleCount!)! / 47
+                        
+                    } else {
+                        busCount = Int(peopleCount!)! / 47 + 1
+                        
+                    }
+                    
+                }
+                
+                let estimate: PreEstimate =
+                PreEstimate(kindsOfEstimate: self.kindsOfEstimate, departure: self.estimateAddresses["departure"]!, return: self.estimateAddresses["return"]!, stopover: self.stopoverTextField.text == "" ? nil : self.estimateAddresses["stopover"]!, departureDate: departureDateAndTime, returnDate: returnDateAndTime, number: self.numberTextField.text == "미정" ? nil: Int(self.numberTextField.text ?? "0") ?? nil, distance: distance, duration: duration / 60, busType: busType, busCount: busCount)
+                
+                print("distance: \(distance)\nprice: \(SupportingMethods.shared.caculateVirtualBasicPrice(distance: distance, kindsOfEstimate: self.kindsOfEstimate))")
+                print("virtualPrice: \(virtualPrice)")
+                
+                let vc = SelectEstimateViewController(estimate: estimate, virtualPrice: virtualPrice)
 
-            self.navigationController?.pushViewController(vc, animated: true)
-            NotificationCenter.default.post(name: Notification.Name("MoveEstimateDetail"), object: nil)
-            NotificationCenter.default.post(name: Notification.Name("MoveEstimate"), object: nil)
+                self.navigationController?.pushViewController(vc, animated: true)
+                NotificationCenter.default.post(name: Notification.Name("MoveEstimateDetail"), object: nil)
+                NotificationCenter.default.post(name: Notification.Name("MoveEstimate"), object: nil)
+                SupportingMethods.shared.turnCoverView(.off)
+            }
             
         } else {
             SupportingMethods.shared.showAlertNoti(title: "주소를 입력해주세요.")
@@ -1638,23 +1695,32 @@ extension EstimateViewController: UITableViewDelegate, UITableViewDataSource {
         self.addressTableView.isHidden = true
         
         if self.isEditingView == self.departureView {
+            self.estimateAddresses["departure"]?.index = 0
             self.estimateAddresses["departure"]?.name = self.mainModel.searchedAddress.address[indexPath.row].placeName ?? self.mainModel.searchedAddress.address[indexPath.row].roadAddress ?? self.mainModel.searchedAddress.address[indexPath.row].jibeonAddress ?? "알 수 없음"
+            self.estimateAddresses["departure"]?.address = self.mainModel.searchedAddress.address[indexPath.row].roadAddress ?? self.mainModel.searchedAddress.address[indexPath.row].jibeonAddress ?? "알 수 없음"
             self.estimateAddresses["departure"]?.latitude = self.mainModel.searchedAddress.address[indexPath.row].latitude
             self.estimateAddresses["departure"]?.longitude = self.mainModel.searchedAddress.address[indexPath.row].longitude
+            self.estimateAddresses["departure"]?.type = "출발지"
             
             self.departureTextField.text = self.mainModel.searchedAddress.address[indexPath.row].placeName ?? self.mainModel.searchedAddress.address[indexPath.row].roadAddress ?? self.mainModel.searchedAddress.address[indexPath.row].jibeonAddress ?? "알 수 없음"
             
         } else if self.isEditingView == self.arrivalView {
+            self.estimateAddresses["return"]?.index = 1
             self.estimateAddresses["return"]?.name = self.mainModel.searchedAddress.address[indexPath.row].placeName ?? self.mainModel.searchedAddress.address[indexPath.row].roadAddress ?? self.mainModel.searchedAddress.address[indexPath.row].jibeonAddress ?? "알 수 없음"
+            self.estimateAddresses["return"]?.address = self.mainModel.searchedAddress.address[indexPath.row].roadAddress ?? self.mainModel.searchedAddress.address[indexPath.row].jibeonAddress ?? "알 수 없음"
             self.estimateAddresses["return"]?.latitude = self.mainModel.searchedAddress.address[indexPath.row].latitude
             self.estimateAddresses["return"]?.longitude = self.mainModel.searchedAddress.address[indexPath.row].longitude
+            self.estimateAddresses["return"]?.type = "도착지"
             
             self.arrivalTextField.text = self.mainModel.searchedAddress.address[indexPath.row].placeName ?? self.mainModel.searchedAddress.address[indexPath.row].roadAddress ?? self.mainModel.searchedAddress.address[indexPath.row].jibeonAddress ?? "알 수 없음"
             
         } else {
+            self.estimateAddresses["stopover"]?.index = 2
             self.estimateAddresses["stopover"]?.name = self.mainModel.searchedAddress.address[indexPath.row].placeName ?? self.mainModel.searchedAddress.address[indexPath.row].roadAddress ?? self.mainModel.searchedAddress.address[indexPath.row].jibeonAddress ?? "알 수 없음"
+            self.estimateAddresses["stopover"]?.address = self.mainModel.searchedAddress.address[indexPath.row].roadAddress ?? self.mainModel.searchedAddress.address[indexPath.row].jibeonAddress ?? "알 수 없음"
             self.estimateAddresses["stopover"]?.latitude = self.mainModel.searchedAddress.address[indexPath.row].latitude
             self.estimateAddresses["stopover"]?.longitude = self.mainModel.searchedAddress.address[indexPath.row].longitude
+            self.estimateAddresses["stopover"]?.type = "경유지"
             
             self.stopoverTextField.text = self.mainModel.searchedAddress.address[indexPath.row].placeName ?? self.mainModel.searchedAddress.address[indexPath.row].roadAddress ?? self.mainModel.searchedAddress.address[indexPath.row].jibeonAddress ?? "알 수 없음"
             

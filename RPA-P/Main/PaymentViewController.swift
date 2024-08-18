@@ -395,6 +395,8 @@ final class PaymentViewController: UIViewController {
     var isAuthenticated: Bool = false
     var verificationID: String = ""
     
+    let mainModel = MainModel()
+    
     init(estimate: PreEstimate) {
         self.estimate = estimate
         
@@ -784,7 +786,29 @@ extension PaymentViewController: EssentialViewMethods {
 
 // MARK: - Extension for methods added
 extension PaymentViewController {
+    func getTokenRequest(success: (() -> ())?) {
+        self.mainModel.getTokenRequest {
+            success?()
+            
+        } failure: { message in
+            print("error: \(message)")
+            SupportingMethods.shared.turnCoverView(.off)
+            
+        }
+
+    }
     
+    func sendEstimateDataRequest(estimate: PreEstimate, success: (() -> ())?) {
+        self.mainModel.sendEstimateDataRequest(estimate: estimate) {
+            success?()
+            
+        } failure: { message in
+            print("error: \(message)")
+            SupportingMethods.shared.turnCoverView(.off)
+            
+        }
+        
+    }
 }
 
 // MARK: - Extension for selector methods
@@ -907,8 +931,11 @@ extension PaymentViewController {
                 
                 self.isAuthenticated = true
                 guard let uid = authResult?.user.uid else { return }
+                guard let phoneNumber = authResult?.user.phoneNumber else { return }
                 print(uid)
+                print(phoneNumber)
                 ReferenceValues.uid = uid
+                ReferenceValues.phoneNumber = self.numberTextField.text ?? phoneNumber
                 
                 return
             }
@@ -925,20 +952,29 @@ extension PaymentViewController {
                 return
             }
             self.estimate.pay = self.pay
-            let vc = ReservationCompletedViewController(estimate: self.estimate)
-            
-            self.present(vc, animated: true) {
-    //            NotificationCenter.default.post(name: Notification.Name("SaveEstimateData"), object: nil, userInfo: ["estimate": self.estimate])
-                NotificationCenter.default.post(name: Notification.Name("InitializeData"), object: nil, userInfo: ["estimate": self.estimate])
-                
-                guard let viewControllerStack = self.navigationController?.viewControllers else { return }
-                for viewController in viewControllerStack {
-                    if let mainView = viewController as? MainViewController {
+            SupportingMethods.shared.turnCoverView(.on)
+            self.getTokenRequest {
+                self.sendEstimateDataRequest(estimate: self.estimate) {
+                    let vc = ReservationCompletedViewController(estimate: self.estimate)
+                    
+                    self.present(vc, animated: true) {
+            //            NotificationCenter.default.post(name: Notification.Name("SaveEstimateData"), object: nil, userInfo: ["estimate": self.estimate])
+                        NotificationCenter.default.post(name: Notification.Name("InitializeData"), object: nil, userInfo: ["estimate": self.estimate])
                         
-                        self.navigationController?.popToViewController(mainView, animated: true)
+                        guard let viewControllerStack = self.navigationController?.viewControllers else { return }
+                        for viewController in viewControllerStack {
+                            if let mainView = viewController as? MainViewController {
+                                
+                                self.navigationController?.popToViewController(mainView, animated: true)
+                                ReferenceValues.useCount += 1
+                                SupportingMethods.shared.turnCoverView(.off)
+                            }
+                            
+                        }
                     }
                     
                 }
+                
             }
             
         } else {

@@ -70,6 +70,26 @@ struct ReferenceValues {
         }
     }
     
+    static var phoneNumber: String {
+        get {
+            return UserDefaults.standard.string(forKey: "phoneNumber") ?? "null"
+        }
+        
+        set {
+            UserDefaults.standard.setValue(newValue, forKey: "phoneNumber")
+        }
+    }
+    
+    static var useCount: Int {
+        get {
+            return UserDefaults.standard.integer(forKey: "useCount")
+        }
+        
+        set {
+            UserDefaults.standard.setValue(newValue, forKey: "useCount")
+        }
+    }
+    
     // FIXME: 서버와 약속에 따라서 String 바꿔주기
     static let expiredConditionMessage: String = "다른 기기에서 로그인 되었습니다."
     

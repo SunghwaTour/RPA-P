@@ -744,7 +744,7 @@ extension SupportingMethods {
     func convertDate(intoString date: Date, _ dateFormat: String = "yyyy-MM-dd") -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
-        formatter.timeZone = TimeZone(abbreviation: "KST")!
+        formatter.timeZone = TimeZone(abbreviation: "KST")
         formatter.dateFormat = dateFormat
         
         return formatter.string(from: date)
@@ -753,8 +753,8 @@ extension SupportingMethods {
     // String -> Date
     func convertString(intoDate date: String, _ dateFormat: String = "yyyy_MM_dd") -> Date {
         let formatter = DateFormatter()
+        formatter.timeZone = TimeZone(abbreviation: "KST")
         formatter.locale = Locale(identifier: "ko_KR")
-        formatter.timeZone = TimeZone(abbreviation: "KST")!
         formatter.dateFormat = dateFormat
         let date = formatter.date(from: date) ?? Date()
         
@@ -763,7 +763,7 @@ extension SupportingMethods {
     
     func selectedDate(_ dateString: String) -> Date {
         let formatter = DateFormatter()
-        formatter.timeZone = TimeZone(abbreviation: "KST")!
+        formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
         formatter.dateFormat = "yyyy-MM-dd"
         let date = formatter.date(from: dateString)!
         

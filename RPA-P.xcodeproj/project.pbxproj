@@ -34,12 +34,20 @@
 		2DB4ADC22C5FCDBD00813097 /* CompletedReservation.gif in Resources */ = {isa = PBXBuildFile; fileRef = 2DB4ADBF2C5FCDBD00813097 /* CompletedReservation.gif */; };
 		2DB4ADC32C5FCDBD00813097 /* EstimateRequest.gif in Resources */ = {isa = PBXBuildFile; fileRef = 2DB4ADC02C5FCDBD00813097 /* EstimateRequest.gif */; };
 		2DB4ADC52C62EB4C00813097 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2DB4ADC42C62EB4C00813097 /* GoogleService-Info.plist */; };
+		2DB4ADC72C7066EF00813097 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DB4ADC62C7066EF00813097 /* User.swift */; };
 		2DC277962C5766D40073E4A3 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 2DC277952C57666A0073E4A3 /* PrivacyInfo.xcprivacy */; };
 		2DCC4EA12C4663270035FD24 /* SelectEstimateTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DCC4EA02C4663270035FD24 /* SelectEstimateTableViewCell.swift */; };
 		2DCC4EA42C46672D0035FD24 /* MainModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DCC4EA32C46672D0035FD24 /* MainModel.swift */; };
 		2DCC4EA62C47B01F0035FD24 /* PaymentMethodTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DCC4EA52C47B01F0035FD24 /* PaymentMethodTableViewCell.swift */; };
 		2DCC4EA82C47B84A0035FD24 /* CheckPaymentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DCC4EA72C47B84A0035FD24 /* CheckPaymentViewController.swift */; };
 		2DDE4B572C4258DD00CA644F /* SelectEstimateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DDE4B562C4258DD00CA644F /* SelectEstimateViewController.swift */; };
+		2DEF5FDD2C718C240089C020 /* ContractViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DEF5FDC2C718C240089C020 /* ContractViewController.swift */; };
+		2DEF5FE02C718D5D0089C020 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DEF5FDF2C718D5D0089C020 /* ProfileViewController.swift */; };
+		2DEF5FE22C7193910089C020 /* ProfileDetailInfoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DEF5FE12C7193910089C020 /* ProfileDetailInfoTableViewCell.swift */; };
+		2DEF5FE42C7196F50089C020 /* CustomerServiceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DEF5FE32C7196F50089C020 /* CustomerServiceViewController.swift */; };
+		2DEF5FE62C719CBD0089C020 /* FAQViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DEF5FE52C719CBD0089C020 /* FAQViewController.swift */; };
+		2DEF5FE82C719D730089C020 /* PastHistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DEF5FE72C719D730089C020 /* PastHistoryViewController.swift */; };
+		2DEF5FEA2C719EB30089C020 /* PastHistoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DEF5FE92C719EB30089C020 /* PastHistoryTableViewCell.swift */; };
 		69B15B46FB6ADEE267E7FC95 /* Pods_RPA_P.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6CE012D210ECB19B433ABE71 /* Pods_RPA_P.framework */; };
 /* End PBXBuildFile section */
 
@@ -75,12 +83,20 @@
 		2DB4ADBF2C5FCDBD00813097 /* CompletedReservation.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = CompletedReservation.gif; sourceTree = "<group>"; };
 		2DB4ADC02C5FCDBD00813097 /* EstimateRequest.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = EstimateRequest.gif; sourceTree = "<group>"; };
 		2DB4ADC42C62EB4C00813097 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		2DB4ADC62C7066EF00813097 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		2DC277952C57666A0073E4A3 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		2DCC4EA02C4663270035FD24 /* SelectEstimateTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectEstimateTableViewCell.swift; sourceTree = "<group>"; };
 		2DCC4EA32C46672D0035FD24 /* MainModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainModel.swift; sourceTree = "<group>"; };
 		2DCC4EA52C47B01F0035FD24 /* PaymentMethodTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentMethodTableViewCell.swift; sourceTree = "<group>"; };
 		2DCC4EA72C47B84A0035FD24 /* CheckPaymentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckPaymentViewController.swift; sourceTree = "<group>"; };
 		2DDE4B562C4258DD00CA644F /* SelectEstimateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectEstimateViewController.swift; sourceTree = "<group>"; };
+		2DEF5FDC2C718C240089C020 /* ContractViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContractViewController.swift; sourceTree = "<group>"; };
+		2DEF5FDF2C718D5D0089C020 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		2DEF5FE12C7193910089C020 /* ProfileDetailInfoTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileDetailInfoTableViewCell.swift; sourceTree = "<group>"; };
+		2DEF5FE32C7196F50089C020 /* CustomerServiceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerServiceViewController.swift; sourceTree = "<group>"; };
+		2DEF5FE52C719CBD0089C020 /* FAQViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQViewController.swift; sourceTree = "<group>"; };
+		2DEF5FE72C719D730089C020 /* PastHistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PastHistoryViewController.swift; sourceTree = "<group>"; };
+		2DEF5FE92C719EB30089C020 /* PastHistoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PastHistoryTableViewCell.swift; sourceTree = "<group>"; };
 		6CE012D210ECB19B433ABE71 /* Pods_RPA_P.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RPA_P.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -129,6 +145,7 @@
 				2D46F59B2C3DB01500C711E2 /* Assistant */,
 				2D46F59C2C3DB02100C711E2 /* Login */,
 				2D46F5A12C3E114400C711E2 /* Main */,
+				2DEF5FDE2C718D530089C020 /* Profile */,
 			);
 			path = "RPA-P";
 			sourceTree = "<group>";
@@ -140,6 +157,7 @@
 				2D46F59F2C3DB0DD00C711E2 /* ReferenceValues.swift */,
 				2D46F5A92C3E445800C711E2 /* CustomizedNavigationController.swift */,
 				05DD11722C64482C0005B073 /* Server.swift */,
+				2DB4ADC62C7066EF00813097 /* User.swift */,
 			);
 			path = Assistant;
 			sourceTree = "<group>";
@@ -162,6 +180,7 @@
 				2D6882912C49095700F9A9CD /* CalendarViewController.swift */,
 				2DA8211E2C415172000EF1D9 /* ViewPagerCollectionViewCell.swift */,
 				2DA8211C2C414967000EF1D9 /* EstimateDetailViewController.swift */,
+				2DEF5FDC2C718C240089C020 /* ContractViewController.swift */,
 				2D0F91FC2C48F4200014A87D /* EstimateDetailTableViewCell.swift */,
 				2D0F91FA2C4841CB0014A87D /* EstimateConfirmationViewController.swift */,
 				2D0F91FE2C48FD480014A87D /* ReservationAnnouncementViewController.swift */,
@@ -201,6 +220,19 @@
 				2DCC4EA32C46672D0035FD24 /* MainModel.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		2DEF5FDE2C718D530089C020 /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				2DEF5FDF2C718D5D0089C020 /* ProfileViewController.swift */,
+				2DEF5FE12C7193910089C020 /* ProfileDetailInfoTableViewCell.swift */,
+				2DEF5FE32C7196F50089C020 /* CustomerServiceViewController.swift */,
+				2DEF5FE72C719D730089C020 /* PastHistoryViewController.swift */,
+				2DEF5FE92C719EB30089C020 /* PastHistoryTableViewCell.swift */,
+				2DEF5FE52C719CBD0089C020 /* FAQViewController.swift */,
+			);
+			path = Profile;
 			sourceTree = "<group>";
 		};
 		C219D823340DE1468B53031B /* Pods */ = {
@@ -343,9 +375,12 @@
 				05DD11732C64482C0005B073 /* Server.swift in Sources */,
 				2D5342132C47E79000B74FBF /* MoreInfoCollectionViewCell.swift in Sources */,
 				2D46F5AC2C3E448100C711E2 /* MainViewController.swift in Sources */,
+				2DEF5FE82C719D730089C020 /* PastHistoryViewController.swift in Sources */,
 				2D5342112C47C9D700B74FBF /* ReservationCompletedViewController.swift in Sources */,
+				2DEF5FE22C7193910089C020 /* ProfileDetailInfoTableViewCell.swift in Sources */,
 				2DA8211F2C415172000EF1D9 /* ViewPagerCollectionViewCell.swift in Sources */,
 				2D6882922C49095700F9A9CD /* CalendarViewController.swift in Sources */,
+				2DEF5FDD2C718C240089C020 /* ContractViewController.swift in Sources */,
 				2DA8211D2C414967000EF1D9 /* EstimateDetailViewController.swift in Sources */,
 				2DCC4EA12C4663270035FD24 /* SelectEstimateTableViewCell.swift in Sources */,
 				2D0F91FF2C48FD480014A87D /* ReservationAnnouncementViewController.swift in Sources */,
@@ -357,12 +392,17 @@
 				2D0F91FD2C48F4200014A87D /* EstimateDetailTableViewCell.swift in Sources */,
 				2DCC4EA42C46672D0035FD24 /* MainModel.swift in Sources */,
 				2DCC4EA82C47B84A0035FD24 /* CheckPaymentViewController.swift in Sources */,
+				2DEF5FE02C718D5D0089C020 /* ProfileViewController.swift in Sources */,
 				2D46F5AE2C3E536000C711E2 /* PaymentViewController.swift in Sources */,
 				2DCC4EA62C47B01F0035FD24 /* PaymentMethodTableViewCell.swift in Sources */,
 				2D46F59E2C3DB0D300C711E2 /* SupportingMethods.swift in Sources */,
 				2D46F58A2C3DAF6F00C711E2 /* SceneDelegate.swift in Sources */,
 				2DA8211B2C41491A000EF1D9 /* EstimateViewController.swift in Sources */,
 				2D46F5A02C3DB0DD00C711E2 /* ReferenceValues.swift in Sources */,
+				2DEF5FE42C7196F50089C020 /* CustomerServiceViewController.swift in Sources */,
+				2DEF5FEA2C719EB30089C020 /* PastHistoryTableViewCell.swift in Sources */,
+				2DEF5FE62C719CBD0089C020 /* FAQViewController.swift in Sources */,
+				2DB4ADC72C7066EF00813097 /* User.swift in Sources */,
 				2D46F5A32C3E3FB300C711E2 /* SplashViewController.swift in Sources */,
 				2D0F91FB2C4841CB0014A87D /* EstimateConfirmationViewController.swift in Sources */,
 			);
