@@ -492,8 +492,9 @@ struct Pay: Codable {
 }
 
 // MARK: Firebase Model
-struct Estimate: Codable {
+class Estimate: Codable {
     var documentId: String = "" // 견적 uid
+    var isHiddenCategory: Bool = true
     let kindsOfEstimate: String // 왕복, 편도, 셔틀
     let departure: String // 출발지
     let arrival: String // 도착지

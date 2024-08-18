@@ -476,8 +476,9 @@ extension EstimateDetailTableViewCell {
 // MARK: - Extension for methods added
 extension EstimateDetailTableViewCell {
     func setCell(estimate: Estimate) {
+        self.estimate = estimate
+        
         if estimate.isEstimateApproval {
-            self.estimate = estimate
             self.reservationConfirmButton.isEnabled = true
             self.reservationConfirmButton.setTitleColor(.useRGB(red: 184, green: 0, blue: 0), for: .normal)
             self.reservationConfirmButton.backgroundColor = .white
@@ -504,6 +505,9 @@ extension EstimateDetailTableViewCell {
             self.reservationConfirmButton.backgroundColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.6)
             self.reservationConfirmButton.layer.borderColor = UIColor.useRGB(red: 167, green: 167, blue: 167).cgColor
             
+            self.kindsOfEstimateButton.backgroundColor = .useRGB(red: 255, green: 199, blue: 199)
+            self.distanceButton.setTitleColor(.useRGB(red: 255, green: 199, blue: 199), for: .normal)
+            self.distanceButton.layer.borderColor = UIColor.useRGB(red: 255, green: 206, blue: 206).cgColor
         }
         
         self.priceChangeAnnouncementImageView.isHidden = !estimate.isPriceChange
@@ -530,12 +534,20 @@ extension EstimateDetailTableViewCell {
         
         self.priceLabel.text = "\(Int(estimate.price)!.withCommaString ?? "0") 원"
         
-        if self.moreInfoList.isEmpty {
-            self.moreInfoList.append("\(estimate.busCount)대")
-            self.moreInfoList.append("\(estimate.busType)")
-            self.moreInfoList.append("\(estimate.number)명")
-            self.moreInfoList.append("\(estimate.operationType)")
-            self.moreInfoList.append("\(estimate.payWay)")
+        self.moreInfoList = []
+        self.moreInfoList.append("\(estimate.busCount)대")
+        self.moreInfoList.append("\(estimate.busType)")
+        self.moreInfoList.append(estimate.number == "미정" ? "미정" : "\(estimate.number)명")
+        self.moreInfoList.append("\(estimate.operationType)")
+        self.moreInfoList.append("\(estimate.payWay)")
+        
+        if self.estimate!.isHiddenCategory {
+            self.moreInfoBaseView.isHidden = true
+            self.infoControlButton.setTitle("더보기", for: .normal)
+            
+        } else {
+            self.moreInfoBaseView.isHidden = false
+            self.infoControlButton.setTitle("닫기", for: .normal)
             
         }
         
@@ -552,17 +564,8 @@ extension EstimateDetailTableViewCell {
 extension EstimateDetailTableViewCell {
     @objc func infoControlButton(_ sender: UIButton) {
         print("infoControlButton")
+        self.estimate?.isHiddenCategory.toggle()
         NotificationCenter.default.post(name: Notification.Name("ReloadDataForMoreInfo"), object: nil)
-        
-        if self.moreInfoBaseView.isHidden {
-            self.moreInfoBaseView.isHidden = false
-            self.infoControlButton.setTitle("닫기", for: .normal)
-            
-        } else {
-            self.moreInfoBaseView.isHidden = true
-            self.infoControlButton.setTitle("더보기", for: .normal)
-            
-        }
         
     }
     
@@ -583,7 +586,7 @@ extension EstimateDetailTableViewCell: UICollectionViewDelegateFlowLayout, UICol
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MoreInfoCollectionViewCell", for: indexPath) as! MoreInfoCollectionViewCell
         let info = self.moreInfoList[indexPath.row]
-        let isCompletedReservation = self.estimate != nil ? self.estimate!.isCompletedReservation : false
+        let isCompletedReservation = self.estimate!.isCompletedReservation
         
         cell.setCell(info: "# \(info)", isCompletedReservation: isCompletedReservation)
         

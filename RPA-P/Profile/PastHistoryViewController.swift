@@ -143,8 +143,13 @@ extension PastHistoryViewController: EssentialViewMethods {
     func setData() {
         SupportingMethods.shared.turnCoverView(.on)
         self.mainModel.getEstimateData { estimates in
-            print(estimates)
-            self.estimateList = estimates
+            for estimate in estimates {
+                if estimate.isCompletedReservation {
+                    self.estimateList.append(estimate)
+                    
+                }
+                
+            }
             
             DispatchQueue.main.async {
                 self.tableView.reloadData()

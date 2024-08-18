@@ -17,11 +17,34 @@ final class SelectEstimateViewController: UIViewController {
         return view
     }()
     
-    lazy var dateLabel: UILabel = {
+    lazy var guideView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 255, green: 251, blue: 251)
+        view.layer.borderColor = UIColor.useRGB(red: 249, green: 152, blue: 152).cgColor
+        view.layer.borderWidth = 1.0
+        view.layer.cornerRadius = 15
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var guideImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = .useCustomImage("smile")
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return imageView
+    }()
+    
+    lazy var guideLabel: UILabel = {
         let label = UILabel()
-        label.text = SupportingMethods.shared.convertDate(intoString: Date(), "yyyy.MM.dd")
-        label.textColor = .useRGB(red: 167, green: 167, blue: 167)
-        label.font = .useFont(ofSize: 14, weight: .Medium)
+        label.text = "고객님의 추천 인승은 \(self.estimate.busType?.rawValue ?? "기본")인승, \(self.estimate.busCount)대이며\n추후 전화로 변경 가능합니다."
+        label.textColor = .useRGB(red: 115, green: 115, blue: 115)
+        label.font = .useFont(ofSize: 14, weight: .Regular)
+        label.asFontColor(targetString: "\(self.estimate.busType?.rawValue ?? "기본")인승, \(self.estimate.busCount)대", font: .useFont(ofSize: 14, weight: .Bold), color: .black)
+        label.numberOfLines = 2
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -29,7 +52,9 @@ final class SelectEstimateViewController: UIViewController {
     
     lazy var addressBaseView: UIView = {
         let view = UIView()
-        view.backgroundColor = .useRGB(red: 255, green: 243, blue: 243)
+        view.backgroundColor = .useRGB(red: 255, green: 251, blue: 251)
+        view.layer.borderColor = UIColor.useRGB(red: 249, green: 152, blue: 152).cgColor
+        view.layer.borderWidth = 1.0
         view.layer.cornerRadius = 10
         view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -233,7 +258,7 @@ final class SelectEstimateViewController: UIViewController {
     var virtualEstimate: VirtualEstimate?
 //    var virtualPrice: Int
     var kindsOfEstimate: KindsOfEstimate
-    var allCategoryList: [Category] = [.general, .honor, .full, .partial]
+    var allCategoryList: [Category] = [.general, .honor, .partial, .full]
     var virtualEstimateList: [VirtualEstimate] = []
     
     var selectedCategoryList: [Category] = []
@@ -331,14 +356,20 @@ extension SelectEstimateViewController: EssentialViewMethods {
         SupportingMethods.shared.addSubviews([
             self.contentView,
         ], to: self.view)
+        
         SupportingMethods.shared.addSubviews([
-            self.dateLabel,
+            self.guideView,
             self.addressBaseView,
             self.estimateTitleLabel,
             self.reservationBaseView,
             self.collectionView,
             self.tableView,
         ], to: self.contentView)
+        
+        SupportingMethods.shared.addSubviews([
+            self.guideImageView,
+            self.guideLabel,
+        ], to: self.guideView)
         
         SupportingMethods.shared.addSubviews([
             self.departureTitleLabel,
@@ -370,17 +401,35 @@ extension SelectEstimateViewController: EssentialViewMethods {
             self.contentView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
         ])
         
-        // dateLabel
+        // guideView
         NSLayoutConstraint.activate([
-            self.dateLabel.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 16),
-            self.dateLabel.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 30),
+            self.guideView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 16),
+            self.guideView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -16),
+            self.guideView.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 20),
+            self.guideView.heightAnchor.constraint(equalToConstant: 58),
+        ])
+        
+        // guideImageView
+        NSLayoutConstraint.activate([
+            self.guideImageView.leadingAnchor.constraint(equalTo: self.guideView.leadingAnchor, constant: 30),
+            self.guideImageView.topAnchor.constraint(equalTo: self.guideView.topAnchor, constant: 10),
+            self.guideImageView.widthAnchor.constraint(equalToConstant: 17),
+            self.guideImageView.heightAnchor.constraint(equalToConstant: 17),
+        ])
+        
+        // guideLabel
+        NSLayoutConstraint.activate([
+            self.guideLabel.leadingAnchor.constraint(equalTo: self.guideImageView.trailingAnchor, constant: 5),
+            self.guideLabel.topAnchor.constraint(equalTo: self.guideView.topAnchor, constant: 10),
+            self.guideLabel.trailingAnchor.constraint(equalTo: self.guideView.trailingAnchor, constant: -10),
+            self.guideLabel.bottomAnchor.constraint(equalTo: self.guideView.bottomAnchor, constant: -10),
         ])
         
         // addressBaseView
         NSLayoutConstraint.activate([
             self.addressBaseView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 16),
             self.addressBaseView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -16),
-            self.addressBaseView.topAnchor.constraint(equalTo: self.dateLabel.bottomAnchor, constant: 10),
+            self.addressBaseView.topAnchor.constraint(equalTo: self.guideView.bottomAnchor, constant: 10),
         ])
         
         // departureTitleLabel
@@ -573,6 +622,7 @@ extension SelectEstimateViewController: UICollectionViewDelegateFlowLayout, UICo
         let category = self.allCategoryList[indexPath.row]
         
         if self.selectedCategoryList.contains(category) {
+            // 기존 category 제거
             for index in 0..<self.selectedCategoryList.count {
                 if self.selectedCategoryList[index] == category {
                     self.selectedCategoryList.remove(at: index)
@@ -583,23 +633,21 @@ extension SelectEstimateViewController: UICollectionViewDelegateFlowLayout, UICo
             }
             
         } else {
+            // category 추가
             if self.selectedCategoryList.isEmpty {
                 self.selectedCategoryList.append(category)
                 
             } else {
+                // 같은 종류의 category 있으면 제거
                 for index in 0..<self.selectedCategoryList.count {
                     if self.selectedCategoryList[index].kindsNumber == category.kindsNumber {
                         self.selectedCategoryList.remove(at: index)
-                        self.selectedCategoryList.append(category)
-                        break
-                        
-                    } else {
-                        self.selectedCategoryList.append(category)
                         break
                         
                     }
                     
                 }
+                self.selectedCategoryList.append(category)
                 
             }
             
@@ -610,25 +658,36 @@ extension SelectEstimateViewController: UICollectionViewDelegateFlowLayout, UICo
             
         }
         
+        print("selectedCategory: \(self.selectedCategoryList)")
         self.virtualEstimateList = []
         if self.selectedCategoryList.isEmpty {
             self.virtualEstimateList = self.fullData
             
         } else {
             for data in self.fullData {
-                if data.category.contains(category) {
-                    if self.virtualEstimateList.isEmpty {
-                        self.virtualEstimateList.append(data)
-                        
-                    } else {
-                        for item in self.virtualEstimateList {
-                            if data.no != item.no {
-                                self.virtualEstimateList.append(data)
-                                break
-                                
-                            }
+                if self.selectedCategoryList.count == 2 {
+                    // 2개
+                    if self.selectedCategoryList[0].kindsNumber == data.category[0].kindsNumber {
+                        if self.selectedCategoryList == data.category {
+                            self.virtualEstimateList.append(data)
+                            break
                             
                         }
+                        
+                    } else {
+                        if self.selectedCategoryList == data.category.reversed() {
+                            self.virtualEstimateList.append(data)
+                            break
+                            
+                        }
+                        
+                    }
+                    
+                    
+                } else if self.selectedCategoryList.count == 1 {
+                    // 1개
+                    if data.category.contains(self.selectedCategoryList[0]) {
+                        self.virtualEstimateList.append(data)
                         
                     }
                     

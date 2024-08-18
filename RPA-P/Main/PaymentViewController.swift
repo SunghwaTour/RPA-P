@@ -1115,6 +1115,26 @@ extension PaymentViewController: UITextFieldDelegate {
         return true
     }
     
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        guard let text = self.authenticationNumberTextField.text else { return false }
+        let length = text.count
+        
+        // backspace 허용
+        if let char = string.cString(using: String.Encoding.utf8) {
+            let isBackSpace = strcmp(char, "\\b")
+            if isBackSpace == -92 {
+                return true
+            }
+        }
+                
+        // 글자수 제한
+        if length > 5 {
+            return false
+        }
+
+        return true
+    }
+    
     func textFieldDidChangeSelection(_ textField: UITextField) {
         if self.nameTextField.text != "" && self.numberTextField.text != "" {
             self.sendAuthenticationNumberButton.isHidden = false

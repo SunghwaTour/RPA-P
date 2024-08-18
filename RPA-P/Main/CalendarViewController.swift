@@ -100,7 +100,11 @@ final class CalendarViewController: UIViewController {
         picker.datePickerMode = .time
         picker.preferredDatePickerStyle = .wheels
         picker.locale = Locale(identifier: "ko-KR")
-//        picker.date = SupportingMethods.shared.convertString(intoDate: self.date, "yyyy-MM-dd HH:mm")
+        if let departDate = self.departDate {
+            picker.minimumDate = Calendar.current.date(bySettingHour: Int(departTime[0])!, minute: Int(departTime[1])!, second: 0, of: departDate)
+            
+        }
+        
         picker.translatesAutoresizingMaskIntoConstraints = false
         
         return picker
@@ -154,12 +158,25 @@ final class CalendarViewController: UIViewController {
         return button
     }()
     
-    init(way: SelectDateWay, preselectedDate: String, departDate: String? = nil) {
+    init(way: SelectDateWay, preselectedDate: String, departDate: String? = nil, departTime: String? = nil) {
         self.way = way
         self.preselectedDate = SupportingMethods.shared.convertString(intoDate: preselectedDate, "yyyy.MM.dd")
         
-        if let departDate = departDate {
+        if let departDate = departDate, let departTime = departTime {
             self.departDate = SupportingMethods.shared.convertString(intoDate: departDate, "yyyy.MM.dd")
+            let splitTime = departTime.split(separator: " ")
+            var changedTime: String = ""
+            
+            if splitTime[1] == "오후" {
+                changedTime = "\(Int(splitTime[0].split(separator: ":")[0])! + 12):" + splitTime[0].split(separator: ":")[1]
+                
+            } else {
+                changedTime = "\(splitTime[0])"
+                
+            }
+            self.departTime = changedTime.split(separator: ":")
+            self.selectedDate = self.departDate!
+            
             
         }
         
@@ -178,6 +195,7 @@ final class CalendarViewController: UIViewController {
     var selectedDate: Date = Date(timeIntervalSinceNow: 86400 * 3)
     var preselectedDate: Date
     var departDate: Date?
+    var departTime: [Substring] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -394,6 +412,14 @@ extension CalendarViewController {
         
         self.calendar.isHidden = true
         self.datePicker.isHidden = false
+        
+        if self.selectedDate == self.departDate {
+            self.datePicker.minimumDate = Calendar.current.date(bySettingHour: Int(departTime[0])!, minute: Int(departTime[1])!, second: 0, of: self.selectedDate)
+            
+        } else {
+            self.datePicker.minimumDate = nil
+            
+        }
         
     }
 }

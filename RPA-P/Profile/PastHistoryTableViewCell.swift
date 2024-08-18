@@ -83,6 +83,18 @@ final class PastHistoryTableViewCell: UITableViewCell {
         return label
     }()
     
+    lazy var kindsOfEstimateButton: UIButton = {
+        let button = UIButton()
+        button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = .useFont(ofSize: 12, weight: .Medium)
+        button.backgroundColor = .useRGB(red: 255, green: 142, blue: 142)
+        button.layer.cornerRadius = 15
+        button.isEnabled = false
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -147,6 +159,7 @@ extension PastHistoryTableViewCell {
             self.departureDateAndTimeLabel,
             self.arrivalLabel,
             self.arrivalDateAndTimeLabel,
+            self.kindsOfEstimateButton,
         ], to: self.baseView)
     }
     
@@ -211,6 +224,14 @@ extension PastHistoryTableViewCell {
             self.arrivalDateAndTimeLabel.leadingAnchor.constraint(equalTo: self.arrivalLabel.leadingAnchor),
             self.arrivalDateAndTimeLabel.bottomAnchor.constraint(equalTo: self.baseView.bottomAnchor, constant: -15),
         ])
+        
+        // kindsOfEstimateButton
+        NSLayoutConstraint.activate([
+            self.kindsOfEstimateButton.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor, constant: -16),
+            self.kindsOfEstimateButton.topAnchor.constraint(equalTo: self.baseView.topAnchor, constant: 10),
+            self.kindsOfEstimateButton.widthAnchor.constraint(equalToConstant: 64),
+            self.kindsOfEstimateButton.heightAnchor.constraint(equalToConstant: 30),
+        ])
     }
 }
 
@@ -222,5 +243,7 @@ extension PastHistoryTableViewCell {
         
         self.arrivalLabel.text = estimate.arrival
         self.arrivalDateAndTimeLabel.text = estimate.arrivalDate
+        
+        self.kindsOfEstimateButton.setTitle(estimate.kindsOfEstimate, for: .normal)
     }
 }

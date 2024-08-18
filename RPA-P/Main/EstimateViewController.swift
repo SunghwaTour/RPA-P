@@ -105,6 +105,16 @@ final class EstimateViewController: UIViewController {
         return button
     }()
     
+    lazy var noDataLabel: UILabel = {
+        let label = UILabel()
+        label.text = "검색 버튼을 눌러주세요."
+        label.textColor = .useRGB(red: 189, green: 189, blue: 189)
+        label.font = .useFont(ofSize: 16, weight: .Bold)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
     lazy var addressTableView: UITableView = {
         let tableView = UITableView()
         tableView.isHidden = true
@@ -645,6 +655,10 @@ extension EstimateViewController: EssentialViewMethods {
         ], to: self.contentView)
         
         SupportingMethods.shared.addSubviews([
+            self.noDataLabel,
+        ], to: self.addressTableView)
+        
+        SupportingMethods.shared.addSubviews([
             self.departureLabel,
             self.departureTextField,
             self.departureButton,
@@ -756,6 +770,12 @@ extension EstimateViewController: EssentialViewMethods {
             self.departureView.topAnchor.constraint(equalTo: self.kindsOfEstimateStackView.bottomAnchor, constant: 20),
             self.departureView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -16),
             self.departureView.heightAnchor.constraint(equalToConstant: 48)
+        ])
+        
+        // noDataLabel
+        NSLayoutConstraint.activate([
+            self.noDataLabel.centerXAnchor.constraint(equalTo: self.addressTableView.centerXAnchor),
+            self.noDataLabel.centerYAnchor.constraint(equalTo: self.addressTableView.centerYAnchor),
         ])
         
         // addressTableView
@@ -1033,6 +1053,7 @@ extension EstimateViewController {
     func setAddressTableView(view: UIView) {
         self.isEditingView = view
         self.mainModel.initializeModel()
+        self.noDataLabel.isHidden = false
         self.selectedAddressIndex = nil
         
         self.addressTableView.reloadData()
@@ -1275,7 +1296,7 @@ extension EstimateViewController {
     }
     
     @objc func arrivalDateAndTimeButton(_ sender: UIButton) {
-        let vc = CalendarViewController(way: .return, preselectedDate: self.arrivalDateLabel.text!, departDate: self.departureDateLabel.text!)
+        let vc = CalendarViewController(way: .return, preselectedDate: self.arrivalDateLabel.text!, departDate: self.departureDateLabel.text!, departTime: self.departureTimeLabel.text!)
         
         self.present(vc, animated: true)
     }
@@ -1295,6 +1316,11 @@ extension EstimateViewController {
             
             if !SupportingMethods.shared.determineIfEqualToOrLaterThanTargetDate(departureDate, forOneDate: returnDate) {
                 self.arrivalDateLabel.text = date
+                let splitTime = time.split(separator: " ") // HH:mm, a
+                let hour = Int(splitTime[0].split(separator: ":")[0])! + 1 // HH
+                let minute = splitTime[0].split(separator: ":")[1]
+                
+                self.arrivalTimeLabel.text = "\(hour < 10 ? "0\(hour)" : "\(hour)"):\(minute) \(splitTime[1])"
                 
             }
             
@@ -1481,6 +1507,7 @@ extension EstimateViewController: UITextFieldDelegate {
         guard let text = textField.text, text.trimmingCharacters(in: .whitespacesAndNewlines) != "" else {
             return true
         }
+        self.noDataLabel.isHidden = true
         SupportingMethods.shared.turnCoverView(.on)
         self.mainModel.initializeModel()
         
@@ -1489,6 +1516,7 @@ extension EstimateViewController: UITextFieldDelegate {
             self.addressTableView.reloadData()
             
             if self.mainModel.searchedAddress.address.isEmpty {
+                SupportingMethods.shared.showAlertNoti(title: "검색된 데이터가 없습니다.")
                 self.addressTableView.isHidden = true
                 
             } else {
@@ -1500,6 +1528,7 @@ extension EstimateViewController: UITextFieldDelegate {
             self.addressTableView.reloadData()
             
             if self.mainModel.searchedAddress.address.isEmpty {
+                SupportingMethods.shared.showAlertNoti(title: "검색된 데이터가 없습니다.")
                 self.addressTableView.isHidden = true
                 
             } else {
@@ -1645,14 +1674,45 @@ extension EstimateViewController: UITextFieldDelegate {
         return true
     }
     
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        guard let text = self.numberTextField.text else { return false }
+        let length = text.count
+        
+        // backspace 허용
+        if let char = string.cString(using: String.Encoding.utf8) {
+            let isBackSpace = strcmp(char, "\\b")
+            if isBackSpace == -92 {
+                return true
+            }
+        }
+                
+        // 글자수 제한
+        if length > 3 {
+            return false
+        }
+
+        return true
+    }
+    
     func textFieldDidChangeSelection(_ textField: UITextField) {
-        if textField.text == "" {
-            self.addressTableView.isHidden = true
-            
-        } else {
-            self.addressTableView.isHidden = false
+        if textField != self.numberTextField {
+            if textField.text == "" {
+                self.addressTableView.isHidden = true
+                
+            } else {
+                self.addressTableView.isHidden = false
+                if self.mainModel.searchedAddress.address.isEmpty {
+                    self.noDataLabel.isHidden = false
+                    
+                } else {
+                    self.noDataLabel.isHidden = true
+                    
+                }
+                
+            }
             
         }
+        
     }
 }
 
