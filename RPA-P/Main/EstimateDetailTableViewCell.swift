@@ -230,13 +230,22 @@ final class EstimateDetailTableViewCell: UITableViewCell {
     
     lazy var infoControlButton: UIButton = {
         let button = UIButton()
-        button.setTitle("더보기", for: .normal)
-        button.setTitleColor(.black , for: .normal)
-        button.titleLabel?.font = .useFont(ofSize: 12, weight: .Medium)
+//        button.setTitle("더보기", for: .normal)
+//        button.setTitleColor(.black , for: .normal)
+//        button.titleLabel?.font = .useFont(ofSize: 12, weight: .Medium)
         button.addTarget(self, action: #selector(infoControlButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
+    }()
+    
+    lazy var infoControlImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return imageView
     }()
     
     var moreInfoList: [String] = []
@@ -301,6 +310,7 @@ extension EstimateDetailTableViewCell {
         SupportingMethods.shared.addSubviews([
             self.infoStackView,
             self.infoControlButton,
+            self.infoControlImageView,
         ], to: self.estimateBaseView)
         
         SupportingMethods.shared.addSubviews([
@@ -470,6 +480,14 @@ extension EstimateDetailTableViewCell {
             self.infoControlButton.trailingAnchor.constraint(equalTo: self.estimateBaseView.trailingAnchor),
             self.infoControlButton.heightAnchor.constraint(equalToConstant: 30),
         ])
+        
+        // infoControlImageView
+        NSLayoutConstraint.activate([
+            self.infoControlImageView.leadingAnchor.constraint(equalTo: self.infoControlButton.trailingAnchor, constant: 3),
+            self.infoControlImageView.centerYAnchor.constraint(equalTo: self.infoControlButton.centerYAnchor),
+            self.infoControlImageView.widthAnchor.constraint(equalToConstant: 10),
+            self.infoControlImageView.heightAnchor.constraint(equalToConstant: 8),
+        ])
     }
 }
 
@@ -543,11 +561,11 @@ extension EstimateDetailTableViewCell {
         
         if self.estimate!.isHiddenCategory {
             self.moreInfoBaseView.isHidden = true
-            self.infoControlButton.setTitle("더보기", for: .normal)
+            self.infoControlButton.setImage(.useCustomImage("moreImage"), for: .normal)
             
         } else {
             self.moreInfoBaseView.isHidden = false
-            self.infoControlButton.setTitle("닫기", for: .normal)
+            self.infoControlButton.setImage(.useCustomImage("closeImage"), for: .normal)
             
         }
         
