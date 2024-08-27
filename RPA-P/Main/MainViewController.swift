@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Gifu
 
 enum SelectTab: Int {
     case estimate
@@ -63,6 +64,73 @@ final class MainViewController: UIViewController {
         return pageVC
     }()
     
+    lazy var completedRequestReservationBaseView: UIView = {
+        let view = UIView()
+        view.isHidden = true
+        view.backgroundColor = .white
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var guideTitleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .useFont(ofSize: 30, weight: .Bold)
+        label.numberOfLines = 2
+        label.textColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.87)
+        label.setLineSpacing(spacing: 4)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var guideLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.textColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.87)
+        label.font = .useFont(ofSize: 14, weight: .Medium)
+        label.setLineSpacing(spacing: 4)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var completedRequestReservationGIFImageView: GIFImageView = {
+        let imageView = GIFImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.clipsToBounds = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return imageView
+    }()
+    
+    lazy var moveReservationListButton: UIButton = {
+        let button = UIButton()
+        button.isHidden = true
+        button.setTitle("견적 예약 확인하기", for: .normal)
+        button.setTitleColor(.useRGB(red: 184, green: 0, blue: 0), for: .normal)
+        button.titleLabel?.font = .useFont(ofSize: 16, weight: .Medium)
+        button.layer.borderColor = UIColor.useRGB(red: 184, green: 0, blue: 0).cgColor
+        button.layer.borderWidth = 1.0
+        button.layer.cornerRadius = 22
+        button.addTarget(self, action: #selector(moveReservationListButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    lazy var moveEstimateButton: UIButton = {
+        let button = UIButton()
+        button.isHidden = true
+        button.setTitle("견적 내러 가기", for: .normal)
+        button.setTitleColor(.useRGB(red: 167, green: 167, blue: 167), for: .normal)
+        button.titleLabel?.font = .useFont(ofSize: 14, weight: .Regular)
+        button.addTarget(self, action: #selector(moveEstimateButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
     var subControllers: [UIViewController] = []
     var currentIndex: Int = 0
     
@@ -117,13 +185,24 @@ extension MainViewController: EssentialViewMethods {
     func setNotificationCenters() {
         NotificationCenter.default.addObserver(self, selector: #selector(moveEstimateDetail(_:)), name: Notification.Name("MoveEstimateDetail"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(moveEstimate(_:)), name: Notification.Name("MoveEstimate"), object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(completedReqeustReservation(_:)), name: Notification.Name("CompletedReqeustReservation"), object: nil)
     }
     
     func setSubviews() {
         SupportingMethods.shared.addSubviews([
             self.contentView,
             self.collectionView,
+            self.completedRequestReservationBaseView,
         ], to: self.view)
+        
+        SupportingMethods.shared.addSubviews([
+            self.guideTitleLabel,
+            self.guideLabel,
+            self.completedRequestReservationGIFImageView,
+            self.moveReservationListButton,
+            self.moveEstimateButton,
+        ], to: self.completedRequestReservationBaseView)
         
         addChild(self.pageViewController)
         
@@ -134,6 +213,50 @@ extension MainViewController: EssentialViewMethods {
     
     func setLayouts() {
         let safeArea = self.view.safeAreaLayoutGuide
+        
+        // completedRequestReservationBaseView
+        NSLayoutConstraint.activate([
+            self.completedRequestReservationBaseView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            self.completedRequestReservationBaseView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            self.completedRequestReservationBaseView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            self.completedRequestReservationBaseView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+        ])
+        
+        // guideTitleLabel
+        NSLayoutConstraint.activate([
+            self.guideTitleLabel.leadingAnchor.constraint(equalTo: self.completedRequestReservationBaseView.leadingAnchor, constant: 30),
+            self.guideTitleLabel.trailingAnchor.constraint(equalTo: self.completedRequestReservationBaseView.trailingAnchor, constant: -20),
+            self.guideTitleLabel.topAnchor.constraint(equalTo: self.completedRequestReservationBaseView.topAnchor, constant: 100),
+        ])
+        
+        // guideLabel
+        NSLayoutConstraint.activate([
+            self.guideLabel.leadingAnchor.constraint(equalTo: self.completedRequestReservationBaseView.leadingAnchor, constant: 30),
+            self.guideLabel.trailingAnchor.constraint(equalTo: self.completedRequestReservationBaseView.trailingAnchor, constant: -20),
+            self.guideLabel.topAnchor.constraint(equalTo: self.guideTitleLabel.bottomAnchor, constant: 10),
+        ])
+        
+        // completedRequestReservationGIFImageView
+        NSLayoutConstraint.activate([
+            self.completedRequestReservationGIFImageView.centerYAnchor.constraint(equalTo: self.completedRequestReservationBaseView.centerYAnchor),
+            self.completedRequestReservationGIFImageView.centerXAnchor.constraint(equalTo: self.completedRequestReservationBaseView.centerXAnchor),
+            self.completedRequestReservationGIFImageView.heightAnchor.constraint(equalToConstant: 300),
+            self.completedRequestReservationGIFImageView.widthAnchor.constraint(equalToConstant: 300),
+        ])
+        
+        // moveReservationListButton
+        NSLayoutConstraint.activate([
+            self.moveReservationListButton.bottomAnchor.constraint(equalTo: self.completedRequestReservationBaseView.bottomAnchor, constant: -90),
+            self.moveReservationListButton.centerXAnchor.constraint(equalTo: self.completedRequestReservationBaseView.centerXAnchor),
+            self.moveReservationListButton.widthAnchor.constraint(equalToConstant: 170),
+            self.moveReservationListButton.heightAnchor.constraint(equalToConstant: 44),
+        ])
+        
+        // moveEstimateButton
+        NSLayoutConstraint.activate([
+            self.moveEstimateButton.centerXAnchor.constraint(equalTo: self.completedRequestReservationBaseView.centerXAnchor),
+            self.moveEstimateButton.topAnchor.constraint(equalTo: self.moveReservationListButton.bottomAnchor, constant: 10),
+        ])
         
         // contentView
         NSLayoutConstraint.activate([
@@ -161,7 +284,7 @@ extension MainViewController: EssentialViewMethods {
     }
     
     func setViewAfterTransition() {
-        self.navigationController?.setNavigationBarHidden(false, animated: true)
+//        self.navigationController?.setNavigationBarHidden(false, animated: true)
         //self.tabBarController?.tabBar.isHidden = false
     }
     
@@ -231,6 +354,48 @@ extension MainViewController {
         let vc = ProfileViewController()
         
         self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    // MARK: 예약 완료 애니메이션
+    @objc func completedReqeustReservation(_ notification: Notification) {
+        self.guideTitleLabel.text = "견젹 예약이\n완료되었습니다!"
+        self.guideLabel.text = "예약 정보를 확인하고 계약을 완료해주세요!"
+        
+        self.completedRequestReservationBaseView.isHidden = false
+        self.moveReservationListButton.isHidden = false
+        self.moveEstimateButton.isHidden = false
+        self.completedRequestReservationGIFImageView.animate(withGIFNamed: "EstimateRequest", loopCount: 1, animationBlock:  {
+            NotificationCenter.default.post(name: Notification.Name("ReloadData"), object: nil)
+        })
+    }
+    
+    @objc func moveReservationListButton(_ sender: UIButton) {
+        self.navigationController?.setNavigationBarHidden(false, animated: true)
+        self.completedRequestReservationBaseView.isHidden = true
+        self.select(index: .detail)
+        
+    }    
+    
+    @objc func moveEstimateButton(_ sender: UIButton) {
+        self.navigationController?.setNavigationBarHidden(false, animated: true)
+        self.completedRequestReservationBaseView.isHidden = true
+        self.select(index: .estimate)
+        
+    }
+    
+    // MARK: 견적 완료 애니메이션
+    @objc func completedEstimate(_ notification: Notification) {
+        self.guideTitleLabel.text = "운행이 확정되었습니다!"
+        self.guideLabel.text = "행복한 시간 되시길 바라겠습니다."
+        
+        self.completedRequestReservationBaseView.isHidden = false
+        self.completedRequestReservationGIFImageView.animate(withGIFNamed: "CompletedReservation", loopCount: 1, animationBlock:  {
+            NotificationCenter.default.post(name: Notification.Name("ReloadData"), object: nil)
+
+            self.navigationController?.setNavigationBarHidden(false, animated: true)
+            self.completedRequestReservationBaseView.isHidden = true
+            self.select(index: .detail)
+        })
     }
 }
 

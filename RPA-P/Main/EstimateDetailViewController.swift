@@ -105,6 +105,7 @@ extension EstimateDetailViewController: EssentialViewMethods {
     }
     
     func setNotificationCenters() {
+        NotificationCenter.default.addObserver(self, selector: #selector(reloadData(_:)), name: Notification.Name("ReloadData"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(reservationConfirmButton(_:)), name: Notification.Name("RservationConfirmation"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(reload(_:)), name:  Notification.Name("ReloadDataForMoreInfo"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(estimateConfirm(_:)), name:  Notification.Name("EstimateConfirmation"), object: nil)
@@ -219,6 +220,11 @@ extension EstimateDetailViewController {
 
 // MARK: - Extension for selector methods
 extension EstimateDetailViewController {
+    @objc func reloadData(_ notification: Notification) {
+        self.setData()
+        
+    }
+    
     @objc func reservationConfirmButton(_ notification: Notification) {
         guard let estimate = notification.userInfo?["estimate"] as? Estimate else { return }
         

@@ -9,7 +9,10 @@
 /* Begin PBXBuildFile section */
 		05437B452C52210700963271 /* AddressSearchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05437B442C52210700963271 /* AddressSearchTableViewCell.swift */; };
 		056C58312C71D64100A0D225 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 056C58302C71D64100A0D225 /* GoogleService-Info.plist */; };
+		056E05672C7DC05000582D15 /* CircularProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056E05662C7DC05000582D15 /* CircularProgress.swift */; };
 		05DD11732C64482C0005B073 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DD11722C64482C0005B073 /* Server.swift */; };
+		05EDA1382C7D8C5B00966E6F /* PastHistoryMoreInfoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05EDA1372C7D8C5B00966E6F /* PastHistoryMoreInfoCollectionViewCell.swift */; };
+		05EDA13A2C7D9BFE00966E6F /* FAQTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05EDA1392C7D9BFE00966E6F /* FAQTableViewCell.swift */; };
 		2D0F91FB2C4841CB0014A87D /* EstimateConfirmationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D0F91FA2C4841CB0014A87D /* EstimateConfirmationViewController.swift */; };
 		2D0F91FD2C48F4200014A87D /* EstimateDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D0F91FC2C48F4200014A87D /* EstimateDetailTableViewCell.swift */; };
 		2D0F91FF2C48FD480014A87D /* ReservationAnnouncementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D0F91FE2C48FD480014A87D /* ReservationAnnouncementViewController.swift */; };
@@ -54,7 +57,10 @@
 /* Begin PBXFileReference section */
 		05437B442C52210700963271 /* AddressSearchTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressSearchTableViewCell.swift; sourceTree = "<group>"; };
 		056C58302C71D64100A0D225 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		056E05662C7DC05000582D15 /* CircularProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgress.swift; sourceTree = "<group>"; };
 		05DD11722C64482C0005B073 /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
+		05EDA1372C7D8C5B00966E6F /* PastHistoryMoreInfoCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PastHistoryMoreInfoCollectionViewCell.swift; sourceTree = "<group>"; };
+		05EDA1392C7D9BFE00966E6F /* FAQTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQTableViewCell.swift; sourceTree = "<group>"; };
 		245F003AC91AF64A072E5738 /* Pods-RPA-P.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RPA-P.debug.xcconfig"; path = "Target Support Files/Pods-RPA-P/Pods-RPA-P.debug.xcconfig"; sourceTree = "<group>"; };
 		295C48971F4628F6AD3FE7AF /* Pods-RPA-P.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RPA-P.release.xcconfig"; path = "Target Support Files/Pods-RPA-P/Pods-RPA-P.release.xcconfig"; sourceTree = "<group>"; };
 		2D0F91FA2C4841CB0014A87D /* EstimateConfirmationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EstimateConfirmationViewController.swift; sourceTree = "<group>"; };
@@ -158,6 +164,7 @@
 				2D46F5A92C3E445800C711E2 /* CustomizedNavigationController.swift */,
 				05DD11722C64482C0005B073 /* Server.swift */,
 				2DB4ADC62C7066EF00813097 /* User.swift */,
+				056E05662C7DC05000582D15 /* CircularProgress.swift */,
 			);
 			path = Assistant;
 			sourceTree = "<group>";
@@ -230,7 +237,9 @@
 				2DEF5FE32C7196F50089C020 /* CustomerServiceViewController.swift */,
 				2DEF5FE72C719D730089C020 /* PastHistoryViewController.swift */,
 				2DEF5FE92C719EB30089C020 /* PastHistoryTableViewCell.swift */,
+				05EDA1372C7D8C5B00966E6F /* PastHistoryMoreInfoCollectionViewCell.swift */,
 				2DEF5FE52C719CBD0089C020 /* FAQViewController.swift */,
+				05EDA1392C7D9BFE00966E6F /* FAQTableViewCell.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -376,6 +385,7 @@
 				2D5342132C47E79000B74FBF /* MoreInfoCollectionViewCell.swift in Sources */,
 				2D46F5AC2C3E448100C711E2 /* MainViewController.swift in Sources */,
 				2DEF5FE82C719D730089C020 /* PastHistoryViewController.swift in Sources */,
+				05EDA1382C7D8C5B00966E6F /* PastHistoryMoreInfoCollectionViewCell.swift in Sources */,
 				2D5342112C47C9D700B74FBF /* ReservationCompletedViewController.swift in Sources */,
 				2DEF5FE22C7193910089C020 /* ProfileDetailInfoTableViewCell.swift in Sources */,
 				2DA8211F2C415172000EF1D9 /* ViewPagerCollectionViewCell.swift in Sources */,
@@ -396,9 +406,11 @@
 				2D46F5AE2C3E536000C711E2 /* PaymentViewController.swift in Sources */,
 				2DCC4EA62C47B01F0035FD24 /* PaymentMethodTableViewCell.swift in Sources */,
 				2D46F59E2C3DB0D300C711E2 /* SupportingMethods.swift in Sources */,
+				056E05672C7DC05000582D15 /* CircularProgress.swift in Sources */,
 				2D46F58A2C3DAF6F00C711E2 /* SceneDelegate.swift in Sources */,
 				2DA8211B2C41491A000EF1D9 /* EstimateViewController.swift in Sources */,
 				2D46F5A02C3DB0DD00C711E2 /* ReferenceValues.swift in Sources */,
+				05EDA13A2C7D9BFE00966E6F /* FAQTableViewCell.swift in Sources */,
 				2DEF5FE42C7196F50089C020 /* CustomerServiceViewController.swift in Sources */,
 				2DEF5FEA2C719EB30089C020 /* PastHistoryTableViewCell.swift in Sources */,
 				2DEF5FE62C719CBD0089C020 /* FAQViewController.swift in Sources */,

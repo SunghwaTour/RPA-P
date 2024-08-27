@@ -30,7 +30,7 @@ final class SplashViewController: UIViewController {
     
     lazy var gifImageView: GIFImageView = {
         let imageView = GIFImageView()
-        imageView.contentMode = .scaleToFill
+        imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -166,6 +166,8 @@ extension SplashViewController: EssentialViewMethods {
             self.guideLabel.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor, constant: -20),
             self.guideLabel.topAnchor.constraint(equalTo: self.guideTitleLabel.bottomAnchor, constant: 10),
         ])
+        
+
     }
     
     func setViewAfterTransition() {

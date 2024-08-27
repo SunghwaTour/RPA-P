@@ -85,7 +85,7 @@ extension PastHistoryViewController: EssentialViewMethods {
     }
     
     func setNotificationCenters() {
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(reload(_:)), name:  Notification.Name("ReloadDataForMoreInfo"), object: nil)
     }
     
     func setSubviews() {
@@ -175,6 +175,11 @@ extension PastHistoryViewController {
 extension PastHistoryViewController {
     @objc func leftBarButtonItem(_ barButtonItem: UIBarButtonItem) {
         self.navigationController?.popViewController(animated: true)
+        
+    }
+    
+    @objc func reload(_ notification: Notification) {
+        self.tableView.reloadData()
         
     }
 }

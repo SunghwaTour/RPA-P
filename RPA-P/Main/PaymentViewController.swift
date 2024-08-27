@@ -966,8 +966,12 @@ extension PaymentViewController {
                             if let mainView = viewController as? MainViewController {
                                 
                                 self.navigationController?.popToViewController(mainView, animated: true)
+                                
+                                mainView.navigationController?.setNavigationBarHidden(true, animated: false)
+                                mainView.completedRequestReservationBaseView.isHidden = false
                                 ReferenceValues.useCount += 1
                                 SupportingMethods.shared.turnCoverView(.off)
+                                
                             }
                             
                         }

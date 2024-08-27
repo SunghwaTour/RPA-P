@@ -616,7 +616,10 @@ extension ReservationCompletedViewController {
     @objc func findOtherEstimateButton(_ sender: UIButton) {
         print("findOtherEstimateButton")
         
-        self.dismiss(animated: true)
+        self.dismiss(animated: true) {
+            NotificationCenter.default.post(name: Notification.Name("CompletedReqeustReservation"), object: nil)
+            
+        }
         
     }
     
