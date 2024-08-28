@@ -68,6 +68,7 @@
 		059949142C7EBB52000F7028 /* ClauseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClauseViewController.swift; sourceTree = "<group>"; };
 		059949162C7EBE4A000F7028 /* ClauseTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClauseTableViewCell.swift; sourceTree = "<group>"; };
 		0599491A2C7EC40D000F7028 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../GoogleService-Info.plist"; sourceTree = "<group>"; };
+		05AD2ADF2C7EE86D000E1827 /* RPA-P.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "RPA-P.entitlements"; sourceTree = "<group>"; };
 		05DD11722C64482C0005B073 /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
 		05EDA1372C7D8C5B00966E6F /* PastHistoryMoreInfoCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PastHistoryMoreInfoCollectionViewCell.swift; sourceTree = "<group>"; };
 		05EDA1392C7D9BFE00966E6F /* FAQTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQTableViewCell.swift; sourceTree = "<group>"; };
@@ -149,6 +150,7 @@
 		2D46F5862C3DAF6F00C711E2 /* RPA-P */ = {
 			isa = PBXGroup;
 			children = (
+				05AD2ADF2C7EE86D000E1827 /* RPA-P.entitlements */,
 				2D46F5922C3DAF7100C711E2 /* LaunchScreen.storyboard */,
 				2D46F5902C3DAF7100C711E2 /* Assets.xcassets */,
 				0599491A2C7EC40D000F7028 /* GoogleService-Info.plist */,
@@ -579,9 +581,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "RPA-P/RPA-P.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = 3C347T67DV;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "RPA-P/Info.plist";
@@ -614,9 +617,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "RPA-P/RPA-P.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = 3C347T67DV;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "RPA-P/Info.plist";
