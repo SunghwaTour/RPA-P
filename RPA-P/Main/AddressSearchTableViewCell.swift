@@ -117,9 +117,9 @@ extension AddressSearchTableViewCell {
         NSLayoutConstraint.activate([
             self.baseView.topAnchor.constraint(equalTo: safeArea.topAnchor),
             self.baseView.heightAnchor.constraint(equalToConstant: 64),
-            self.baseView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -8),
-            self.baseView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 16),
-            self.baseView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -16),
+            self.baseView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -4),
+            self.baseView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+            self.baseView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
         ])
         
         // placeNameLabel

@@ -749,11 +749,11 @@ extension MainModel {
                 }
                 
                 if let decodedData = try? JSONDecoder().decode(Direction.self, from: data) {
-                    print("sendEstimateDataRequest succeeded")
+                    print("searchDurationRequest succeeded")
                     success?(decodedData.routes[0].summary)
                     
                 } else {
-                    print("sendEstimateDataRequest failure: API 성공, Parsing 실패")
+                    print("searchDurationRequest failure: API 성공, Parsing 실패")
                     failure?("API 성공, Parsing 실패")
                 }
                 
@@ -966,5 +966,5 @@ struct DirectionRoutes: Codable {
 }
 
 struct DirectionSummary: Codable {
-    let duration: Int
+    let duration: Int?
 }

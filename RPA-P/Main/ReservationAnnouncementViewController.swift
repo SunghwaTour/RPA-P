@@ -110,6 +110,39 @@ final class ReservationAnnouncementViewController: UIViewController {
         return button
     }()
     
+    lazy var circularProgress: CircularProgress = {
+        let view = CircularProgress()
+        view.backgroundColor = .clear
+        view.progressLineWidth = 5
+        view.progressLineColor = .useRGB(red: 255, green: 115, blue: 115)
+        view.trackLineWidth = 5
+        view.trackColor = .white
+        view.setProgress(value: 1.0)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var timerImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = .useCustomImage("timerImage")
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return imageView
+    }()
+    
+    lazy var leftTimeLabel: UILabel = {
+        let label = UILabel()
+        label.text = "72:00:00"
+        label.textColor = .black
+        label.font = .useFont(ofSize: 16, weight: .Regular)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
     init(deposit: Double) {
         self.deposit = Int(deposit)
         
@@ -123,6 +156,8 @@ final class ReservationAnnouncementViewController: UIViewController {
     }
     
     var deposit: Int
+    var timer: Timer?
+    var timerNum: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -140,6 +175,7 @@ final class ReservationAnnouncementViewController: UIViewController {
         super.viewWillAppear(animated)
         
         self.setViewAfterTransition()
+        self.startTimer()
     }
     
     //    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -186,7 +222,9 @@ extension ReservationAnnouncementViewController: EssentialViewMethods {
         ], to: self.view)
         
         SupportingMethods.shared.addSubviews([
-        
+            self.circularProgress,
+            self.timerImageView,
+            self.leftTimeLabel,
         ], to: self.timerView)
         
         SupportingMethods.shared.addSubviews([
@@ -217,6 +255,29 @@ extension ReservationAnnouncementViewController: EssentialViewMethods {
             self.timerView.topAnchor.constraint(equalTo: self.reservationConfirmationLabel.bottomAnchor, constant: 34),
             self.timerView.widthAnchor.constraint(equalToConstant: 112),
             self.timerView.heightAnchor.constraint(equalToConstant: 140),
+        ])
+        
+        // circularProgress
+        NSLayoutConstraint.activate([
+            self.circularProgress.widthAnchor.constraint(equalToConstant: 102),
+            self.circularProgress.heightAnchor.constraint(equalToConstant: 102),
+            self.circularProgress.centerXAnchor.constraint(equalTo: self.timerView.centerXAnchor),
+            self.circularProgress.centerYAnchor.constraint(equalTo: self.timerView.centerYAnchor),
+        ])
+        
+        // timerImageView
+        NSLayoutConstraint.activate([
+            self.timerImageView.centerXAnchor.constraint(equalTo: self.circularProgress.centerXAnchor),
+            self.timerImageView.centerYAnchor.constraint(equalTo: self.circularProgress.centerYAnchor),
+            self.timerImageView.widthAnchor.constraint(equalToConstant: 63),
+            self.timerImageView.heightAnchor.constraint(equalToConstant: 63),
+        ])
+        
+        // leftTimeLabel
+        NSLayoutConstraint.activate([
+            self.leftTimeLabel.topAnchor.constraint(equalTo: self.circularProgress.bottomAnchor, constant: 5),
+            self.leftTimeLabel.centerXAnchor.constraint(equalTo: self.timerView.centerXAnchor),
+            self.leftTimeLabel.heightAnchor.constraint(equalToConstant: 30),
         ])
         
         // priceAnnouncementBaseView
@@ -285,13 +346,34 @@ extension ReservationAnnouncementViewController: EssentialViewMethods {
 
 // MARK: - Extension for methods added
 extension ReservationAnnouncementViewController {
+    func setTimer() {
+        
+    }
     
+    func startTimer() {
+        //기존에 타이머 동작중이면 중지 처리
+        if timer != nil && timer!.isValid {
+            timer!.invalidate()
+        }
+     
+        //타이머 사용값 초기화
+        timerNum = 259200
+        //1초 간격 타이머 시작
+        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timerCallback), userInfo: nil, repeats: true)
+        self.circularProgress.setProgressWithAnimation(duration: 259200, fromValue: 1.0, toVlaue: 0.0)
+    }
 }
 
 // MARK: - Extension for selector methods
 extension ReservationAnnouncementViewController {
     @objc func checkButton(_ sender: UIButton) {
-        self.dismiss(animated: true)
+        self.dismiss(animated: true) {
+            if self.timer != nil && self.timer!.isValid {
+                self.timer!.invalidate()
+                
+            }
+            
+        }
         
     }
     
@@ -299,5 +381,24 @@ extension ReservationAnnouncementViewController {
         UIPasteboard.general.string = self.accountLabel.text
         guard let storedString = UIPasteboard.general.string else { return }
         SupportingMethods.shared.showAlertNoti(title: "\(storedString) 복사되었습니다.")
+    }
+    
+    //타이머 동작 func
+    @objc func timerCallback() {
+        let hour = self.timerNum / 3600
+        let minute = self.timerNum % 3600 / 60
+        let second = self.timerNum % 3600 % 60 % 60
+        self.leftTimeLabel.text = "\(hour < 10 ? "0\(hour)" : "\(hour)"):\(minute < 10 ? "0\(minute)" : "\(minute)"):\(second < 10 ? "0\(second)" : "\(second)")"
+     
+        //timerNum이 0이면(60초 경과) 타이머 종료
+        if(self.timerNum == 0) {
+            self.timer?.invalidate()
+            self.timer = nil
+            
+            //타이머 종료 후 처리...
+        }
+     
+        //timerNum -1 감소시키기
+        self.timerNum -= 1
     }
 }

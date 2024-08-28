@@ -126,7 +126,10 @@ final class EstimateViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.sectionHeaderTopPadding = 0
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        tableView.separatorStyle = .none
+        tableView.layer.borderColor = UIColor.useRGB(red: 255, green: 199, blue: 199).cgColor
+        tableView.layer.borderWidth = 1.0
+        tableView.layer.cornerRadius = 5.0
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         return tableView
@@ -781,8 +784,8 @@ extension EstimateViewController: EssentialViewMethods {
         // addressTableView
         self.addressTableViewTopAnchorConstraint = self.addressTableView.topAnchor.constraint(equalTo: self.departureView.bottomAnchor, constant: 4)
         NSLayoutConstraint.activate([
-            self.addressTableView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor),
-            self.addressTableView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor),
+            self.addressTableView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 16),
+            self.addressTableView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -16),
             self.addressTableViewTopAnchorConstraint,
             self.addressTableView.heightAnchor.constraint(equalToConstant: 166),
         ])
@@ -1133,7 +1136,7 @@ extension EstimateViewController {
     
     func searchDurationRequest(origin: EstimateAddress, destination: EstimateAddress, success: ((Int) -> ())?) {
         self.mainModel.searchDurationRequest(origin: origin, destination: destination) { summary in
-            success?(summary.duration)
+            success?(summary.duration ?? 0)
             
         } failure: { message in
             print("error: \(message)")
@@ -1428,7 +1431,7 @@ extension EstimateViewController {
                 let peopleCount = self.numberTextField.text
                 var busType: BusType?
                 var busCount: Int = 0
-                if peopleCount == "미정" {
+                if peopleCount == "미정" || peopleCount == "" {
                     busType = nil
                     busCount = 0
                     
