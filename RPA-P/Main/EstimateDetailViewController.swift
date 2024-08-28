@@ -25,6 +25,29 @@ final class EstimateDetailViewController: UIViewController {
         return view
     }()
     
+    lazy var emptyImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.isHidden = true
+        imageView.image = .useCustomImage("customerServiceLogo")
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return imageView
+    }()
+    
+    lazy var emptyLabel: UILabel = {
+        let label = UILabel()
+        label.isHidden = true
+        label.text = "전화번호 등록이 되어있지 않습니다!\n전화번호로 로그인 해주세요!"
+        label.textColor = .useRGB(red: 189, green: 189, blue: 189)
+        label.font = .useFont(ofSize: 14, weight: .Medium)
+        label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
     lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.backgroundColor = .white
@@ -122,6 +145,8 @@ extension EstimateDetailViewController: EssentialViewMethods {
         SupportingMethods.shared.addSubviews([
             self.indicatorSizeView,
             self.tableView,
+            self.emptyImageView,
+            self.emptyLabel,
         ], to: self.contentView)
     }
     
@@ -151,12 +176,28 @@ extension EstimateDetailViewController: EssentialViewMethods {
             self.tableView.topAnchor.constraint(equalTo: self.indicatorSizeView.bottomAnchor),
             self.tableView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor),
         ])
+        
+        // emptyImageView
+        NSLayoutConstraint.activate([
+            self.emptyImageView.centerXAnchor.constraint(equalTo: self.tableView.centerXAnchor),
+            self.emptyImageView.centerYAnchor.constraint(equalTo: self.tableView.centerYAnchor),
+            self.emptyImageView.widthAnchor.constraint(equalToConstant: 50),
+            self.emptyImageView.heightAnchor.constraint(equalToConstant: 50)
+        ])
+        
+        // emptyLabel
+        NSLayoutConstraint.activate([
+            self.emptyLabel.topAnchor.constraint(equalTo: self.emptyImageView.bottomAnchor, constant: 5),
+            self.emptyLabel.centerXAnchor.constraint(equalTo: self.emptyImageView.centerXAnchor),
+        ])
     }
     
     func setData() {
         SupportingMethods.shared.turnCoverView(.on)
         self.mainModel.getEstimateData { estimates in
             print(estimates)
+            self.emptyImageView.isHidden = true
+            self.emptyLabel.isHidden = true
             self.estimateList = estimates
             
             DispatchQueue.main.async {
@@ -167,6 +208,8 @@ extension EstimateDetailViewController: EssentialViewMethods {
             
         } failure: { error in
             print("setData Error: \(error)")
+            self.emptyImageView.isHidden = false
+            self.emptyLabel.isHidden = false
             SupportingMethods.shared.turnCoverView(.off)
             
         }

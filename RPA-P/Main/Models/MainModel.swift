@@ -280,14 +280,10 @@ final class MainModel {
                         return
                     }
                     
-                    for document in querySnapshot.documents {
-                        print(document.documentID)
-                    }
-                    
-                    let esimates: [Estimate] = querySnapshot.documents.compactMap { doc -> Estimate? in
+                    let estimates: [Estimate] = querySnapshot.documents.compactMap { doc -> Estimate? in
                         do {
                             let jsonData = try JSONSerialization.data(withJSONObject: doc.data(), options: [])
-                            var estimate = try JSONDecoder().decode(Estimate.self, from: jsonData)
+                            let estimate = try JSONDecoder().decode(Estimate.self, from: jsonData)
                             estimate.documentId = doc.documentID
                             
                             return estimate
@@ -306,12 +302,24 @@ final class MainModel {
                             print("added")
                         case .modified:
                             print("modified")
+                            print("changedId: \(change.document.documentID)")
+                            for estimate in estimates {
+                                if estimate.documentId == change.document.documentID {
+                                    if estimate.isCompletedReservation == true {
+                                        SupportingMethods.shared.sendLocalPush(title: "운행이 확정되었습니다!", body: "지금 알림을 눌러 확인해보세요!", identifier: "CompletedReservation")
+                                        break
+                                        
+                                    }
+                                    
+                                }
+                                
+                            }
                         case .removed:
                             print("removed")
                         }
                     }
                     
-                    success?(esimates)
+                    success?(estimates)
                     
                 }
                 

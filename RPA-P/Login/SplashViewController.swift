@@ -61,6 +61,8 @@ final class SplashViewController: UIViewController {
         return label
     }()
     
+    let mainModel = MainModel()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -180,25 +182,43 @@ extension SplashViewController: EssentialViewMethods {
             print("CallBack")
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 if ReferenceValues.isLaunchedBefore {
-                    let mainVC = CustomizedNavigationController(rootViewController: MainViewController())
-                    
-                    mainVC.modalTransitionStyle = .crossDissolve
-                    mainVC.modalPresentationStyle = .fullScreen
-                    
-                    self.present(mainVC, animated: true)
-                    
-                } else {
-                    self.baseView.isHidden = false
-                    self.gifImageView.animate(withGIFNamed: "Splash", loopCount: 1, animationBlock:  {
+                    if ReferenceValues.uid != "null" {
+                        SupportingMethods.shared.turnCoverView(.on)
+                        self.getEstimateData {
+                            let mainVC = CustomizedNavigationController(rootViewController: MainViewController())
+                            
+                            mainVC.modalTransitionStyle = .crossDissolve
+                            mainVC.modalPresentationStyle = .fullScreen
+                            
+                            self.present(mainVC, animated: true)
+                            
+                        }
+                        
+                    } else {
                         let mainVC = CustomizedNavigationController(rootViewController: MainViewController())
                         
                         mainVC.modalTransitionStyle = .crossDissolve
                         mainVC.modalPresentationStyle = .fullScreen
                         
-                        self.present(mainVC, animated: true) {
-                            ReferenceValues.isLaunchedBefore = true
-                            
-                        }
+                        self.present(mainVC, animated: true)
+                        
+                    }
+                    
+                } else {
+                    self.baseView.isHidden = false
+                    self.gifImageView.animate(withGIFNamed: "Splash", loopCount: 1, animationBlock:  {
+//                        let mainVC = CustomizedNavigationController(rootViewController: MainViewController())
+//                        
+//                        mainVC.modalTransitionStyle = .crossDissolve
+//                        mainVC.modalPresentationStyle = .fullScreen
+//                        
+//                        self.present(mainVC, animated: true) {
+//                            ReferenceValues.isLaunchedBefore = true
+//                            
+//                        }
+                        let clauseVC = ClauseViewController()
+                        
+                        self.present(clauseVC, animated: true)
                         
                     })
                     
@@ -213,7 +233,16 @@ extension SplashViewController: EssentialViewMethods {
 
 // MARK: - Extension for methods added
 extension SplashViewController {
-    
+    func getEstimateData(success: (() -> ())?) {
+        self.mainModel.getEstimateData { estimate in
+            success?()
+            
+        } failure: { message in
+            print("error: \(message)")
+            SupportingMethods.shared.turnCoverView(.off)
+        }
+
+    }
 }
 
 // MARK: - Extension for selector methods

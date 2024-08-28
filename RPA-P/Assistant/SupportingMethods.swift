@@ -1452,6 +1452,17 @@ extension SupportingMethods {
         
         return nil
     }
+    
+    // MARK: Local Push
+    func sendLocalPush(title: String, body: String, identifier: String) {
+        let content = UNMutableNotificationContent()
+
+        content.title = title
+        content.body = body
+        
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: nil)
+        UNUserNotificationCenter.current().add(request)
+    }
 }
 
 // MARK: - Other Extensions

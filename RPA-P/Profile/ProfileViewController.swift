@@ -66,7 +66,7 @@ final class ProfileViewController: UIViewController {
         return tableView
     }()
     
-    let titles: [String] = ["지난 예약 내역", "고객센터"]
+    let titles: [String] = ["지난 예약 내역", "버스 종류 안내", "고객센터"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -215,7 +215,7 @@ extension ProfileViewController {
 // MARK: - Extension for
 extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 2
+        return self.titles.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -229,16 +229,23 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print(self.titles[indexPath.row])
-        if self.titles[indexPath.row] == "지난 예약 내역" {
+        switch indexPath.row {
+        case 0:
             let vc = PastHistoryViewController()
             
             self.navigationController?.pushViewController(vc, animated: true)
+        case 1:
+            let vc = BusViewController()
             
-        } else {
+            self.navigationController?.pushViewController(vc, animated: true)
+        case 2:
             let vc = CustomerServiceViewController()
             
             self.navigationController?.pushViewController(vc, animated: true)
-            
+        default:
+            break
         }
+        
     }
+    
 }
