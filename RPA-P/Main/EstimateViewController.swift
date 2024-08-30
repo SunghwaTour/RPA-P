@@ -632,6 +632,7 @@ extension EstimateViewController: EssentialViewMethods {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(applyDate(_:)), name: Notification.Name("SelectedDate"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(applyDate(_:)), name: Notification.Name("SelectTimeDone"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(initializeData(_:)), name: Notification.Name("InitializeData"), object: nil)
         
     }
@@ -1293,43 +1294,56 @@ extension EstimateViewController {
     }
     
     @objc func departureDateAndTimeButton(_ sender: UIButton) {
-        let vc = CalendarViewController(way: .depart, preselectedDate: self.departureDateLabel.text!)
+        
+        let vc = RenewalCalendarViewController(kindsOfEstimate: self.kindsOfEstimate, date: (departDate: self.departureDateLabel.text!, departTime: String(self.departureTimeLabel.text!.split(separator: " ")[indice: 0]!), arrivalDate: nil, arrivalTime: nil))
         
         self.present(vc, animated: true)
+//        let vc = CalendarViewController(way: .depart, preselectedDate: self.departureDateLabel.text!)
+//        
+//        self.present(vc, animated: true)
     }
     
     @objc func arrivalDateAndTimeButton(_ sender: UIButton) {
-        let vc = CalendarViewController(way: .return, preselectedDate: self.arrivalDateLabel.text!, departDate: self.departureDateLabel.text!, departTime: self.departureTimeLabel.text!)
+        
+        let vc = RenewalCalendarViewController(kindsOfEstimate: self.kindsOfEstimate, date: (departDate: self.departureDateLabel.text!, departTime: String(self.departureTimeLabel.text!.split(separator: " ")[indice: 0]!), arrivalDate: self.arrivalDateLabel.text!, arrivalTime: String(self.arrivalTimeLabel.text!.split(separator: " ")[indice: 0]!)))
         
         self.present(vc, animated: true)
+//        let vc = CalendarViewController(way: .arrival, preselectedDate: self.arrivalDateLabel.text!, departDate: self.departureDateLabel.text!, departTime: self.departureTimeLabel.text!)
+//        
+//        self.present(vc, animated: true)
     }
     
     @objc func applyDate(_ notification: Notification) {
-        guard let way = notification.userInfo?["way"] as? SelectDateWay else { return }
-        guard let date = notification.userInfo?["date"] as? String else { return }
-        guard let time = notification.userInfo?["time"] as? String else { return }
-        
-        switch way {
-        case .depart:
-            self.departureDateLabel.text = date
-            self.departureTimeLabel.text = time
+        guard let kindsOfEstimate = notification.userInfo?["kindsOfEstimate"] as? KindsOfEstimate else { return }
+        if kindsOfEstimate == .roundTrip {
+            guard let departInfo = notification.userInfo?["depart"] as? (departDate: String, departTime: String) else { return }
+            guard let arrivalInfo = notification.userInfo?["arrival"] as? (arrivalDate: String, arrivalTime: String) else { return }
             
-            let departureDate = SupportingMethods.shared.convertString(intoDate: date, "yyyy.MM.dd")
-            let returnDate = SupportingMethods.shared.convertString(intoDate: self.arrivalDateLabel.text!, "yyyy.MM.dd")
+            let splitDepartTime = departInfo.departTime.split(separator: ":")
+            let splitArrivalTime = arrivalInfo.arrivalTime.split(separator: ":")
             
-            if !SupportingMethods.shared.determineIfEqualToOrLaterThanTargetDate(departureDate, forOneDate: returnDate) {
-                self.arrivalDateLabel.text = date
-                let splitTime = time.split(separator: " ") // HH:mm, a
-                let hour = Int(splitTime[0].split(separator: ":")[0])! + 1 // HH
-                let minute = splitTime[0].split(separator: ":")[1]
-                
-                self.arrivalTimeLabel.text = "\(hour < 10 ? "0\(hour)" : "\(hour)"):\(minute) \(splitTime[1])"
-                
-            }
+            let departForExpression = Calendar.current.date(bySettingHour: Int(splitDepartTime[0])!, minute: Int(splitDepartTime[1])!, second: 0, of: SupportingMethods.shared.convertString(intoDate: departInfo.departDate, "yyyy-MM-dd"))!
+            let arrivalForExpression = Calendar.current.date(bySettingHour: Int(splitArrivalTime[0])!, minute: Int(splitArrivalTime[1])!, second: 0, of: SupportingMethods.shared.convertString(intoDate: arrivalInfo.arrivalDate, "yyyy-MM-dd"))!
             
-        case .return:
-            self.arrivalDateLabel.text = date
-            self.arrivalTimeLabel.text = time
+            let depart = SupportingMethods.shared.convertDate(intoString: departForExpression, "yyyy.MM.dd HH:mm a").split(separator: " ")
+            let arrival = SupportingMethods.shared.convertDate(intoString: arrivalForExpression, "yyyy.MM.dd HH:mm a").split(separator: " ")
+            
+            self.departureDateLabel.text = "\(depart[0])"
+            self.departureTimeLabel.text = "\(depart[1]) \(depart[2])"
+            self.arrivalDateLabel.text = "\(arrival[0])"
+            self.arrivalTimeLabel.text = "\(arrival[1]) \(arrival[2])"
+            
+        } else {
+            guard let departInfo = notification.userInfo?["depart"] as? (departDate: String, departTime: String) else { return }
+            
+            let splitDepartTime = departInfo.departTime.split(separator: ":")
+            
+            let departForExpression = Calendar.current.date(bySettingHour: Int(splitDepartTime[0])!, minute: Int(splitDepartTime[1])!, second: 0, of: SupportingMethods.shared.convertString(intoDate: departInfo.departDate, "yyyy-MM-dd"))!
+            
+            let depart = SupportingMethods.shared.convertDate(intoString: departForExpression, "yyyy.MM.dd HH:mm a").split(separator: " ")
+            
+            self.departureDateLabel.text = "\(depart[0])"
+            self.departureTimeLabel.text = "\(depart[1]) \(depart[2])"
             
         }
         

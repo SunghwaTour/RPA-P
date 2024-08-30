@@ -59,6 +59,17 @@ struct ReferenceValues {
         }
     }
     
+    // FCMToken
+    static var fcmToken: String {
+        get {
+            return UserDefaults.standard.string(forKey: "fcmToken") ?? ""
+        }
+        
+        set {
+            UserDefaults.standard.set(newValue, forKey: "fcmToken")
+        }
+    }
+    
     // 전화번호 인증을 통해 얻은 UID
     static var uid: String {
         get {
@@ -77,6 +88,16 @@ struct ReferenceValues {
         
         set {
             UserDefaults.standard.setValue(newValue, forKey: "phoneNumber")
+        }
+    }
+    
+    static var name: String {
+        get {
+            return UserDefaults.standard.string(forKey: "name") ?? "null"
+        }
+        
+        set {
+            UserDefaults.standard.setValue(newValue, forKey: "name")
         }
     }
     

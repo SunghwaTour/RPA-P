@@ -8,6 +8,7 @@
 import Foundation
 import Alamofire
 import FirebaseFirestore
+import FirebaseAuth
 
 final class MainModel {
     // MARK: Server
@@ -20,6 +21,7 @@ final class MainModel {
     private var db = Firestore.firestore()
     
     private(set) var getEstimateData: DataRequest?
+    private(set) var registerUserData: DataRequest?
     
     // MARK: Kakao requests
     private(set) var findKeywordWithTextRequest: DataRequest?
@@ -34,7 +36,7 @@ final class MainModel {
         
         let headers: HTTPHeaders = [
             "Content-Type":"application/json",
-//            "Authorization": User.shared.accessToken
+            //            "Authorization": User.shared.accessToken
         ]
         
         let parameters: Parameters = [
@@ -116,7 +118,7 @@ final class MainModel {
                 "name" : estimate.stopover!.name,
                 "type" : estimate.stopover!.type
             ]
-            ],
+                                                        ],
             "distance": estimate.distance,
             "duration": estimate.duration, // 분
             "departureDate": estimate.departureDate.dateForServer(),
@@ -329,6 +331,22 @@ final class MainModel {
         
     }
     
+    func registerUserData(uid: String, success: (() -> ())?, failure: ((_ message: String) -> ())?) {
+        self.db.collection("\(UserData.Firestore.collectionName)/User").document(uid).setData([
+            UserData.Firestore.fcmTokenField: ReferenceValues.fcmToken,
+            UserData.Firestore.phoneNumberField: ReferenceValues.phoneNumber,
+            UserData.Firestore.uidField: uid,
+        ]) { error in
+            if let error = error {
+                failure?(error.localizedDescription)
+                
+            } else {
+                print("registerUserData: Successfully saved data")
+                success?()
+                
+            }
+        }
+    }
 }
 
 // MARK: Server

@@ -185,12 +185,17 @@ extension SplashViewController: EssentialViewMethods {
                     if ReferenceValues.uid != "null" {
                         SupportingMethods.shared.turnCoverView(.on)
                         self.getEstimateData {
-                            let mainVC = CustomizedNavigationController(rootViewController: MainViewController())
-                            
-                            mainVC.modalTransitionStyle = .crossDissolve
-                            mainVC.modalPresentationStyle = .fullScreen
-                            
-                            self.present(mainVC, animated: true)
+                            self.mainModel.registerUserData(uid: ReferenceValues.uid) {
+                                let mainVC = CustomizedNavigationController(rootViewController: MainViewController())
+                                
+                                mainVC.modalTransitionStyle = .crossDissolve
+                                mainVC.modalPresentationStyle = .fullScreen
+                                
+                                self.present(mainVC, animated: true)
+                                
+                            } failure: { message in
+                                print("Splash registerUserData error: \(message)")
+                            }
                             
                         }
                         

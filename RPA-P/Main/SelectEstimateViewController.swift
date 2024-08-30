@@ -40,10 +40,16 @@ final class SelectEstimateViewController: UIViewController {
     
     lazy var guideLabel: UILabel = {
         let label = UILabel()
-        label.text = "고객님의 추천 인승은 \(self.estimate.busType?.rawValue ?? "기본")인승, \(self.estimate.busCount)대이며\n추후 전화로 변경 가능합니다."
         label.textColor = .useRGB(red: 115, green: 115, blue: 115)
         label.font = .useFont(ofSize: 14, weight: .Regular)
-        label.asFontColor(targetString: "\(self.estimate.busType?.rawValue ?? "기본")인승, \(self.estimate.busCount)대", font: .useFont(ofSize: 14, weight: .Bold), color: .black)
+        if let busType = self.estimate.busType {
+            label.text = "고객님의 추천 인승은 \(busType.rawValue)인승, \(self.estimate.busCount)대이며\n추후 전화로 변경 가능합니다."
+            label.asFontColor(targetString: "\(busType.rawValue)인승, \(self.estimate.busCount)대", font: .useFont(ofSize: 14, weight: .Bold), color: .black)
+        } else {
+            label.text = "인원수 미정으로, 이용하실 버스 종류는\n추후 예약에 따라 결정됩니다."
+            label.asFontColor(targetString: "\(self.estimate.busType?.rawValue ?? "기본")인승, \(self.estimate.busCount)대", font: .useFont(ofSize: 14, weight: .Bold), color: .black)
+        }
+        
         label.numberOfLines = 2
         label.translatesAutoresizingMaskIntoConstraints = false
         

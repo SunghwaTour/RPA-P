@@ -7,6 +7,7 @@
 
 import UIKit
 import FirebaseCore
+import FirebaseMessaging
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,6 +17,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FirebaseApp.configure()
         
         UNUserNotificationCenter.current().delegate = self
+        
+        //MARK: Messaging
+        Messaging.messaging().delegate = self
+        
+        Messaging.messaging().token { token, error in
+            if let error = error {
+                print("Error FCM 등록 토큰 가져오기: \(error.localizedDescription)")
+                
+            } else if let token = token {
+                print("FCM 등록 토큰: \(token)")
+                ReferenceValues.fcmToken = token
+                
+            } else {
+                print("토큰이 없습니다.")
+                
+            }
+        }
+        
+        application.registerForRemoteNotifications()
         
         return true
     }
@@ -38,6 +58,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        Messaging.messaging().apnsToken = deviceToken
+        
+    }
+    
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         print("Push >> willPresent")
         
@@ -63,5 +88,14 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         
         print(userInfo)
         completionHandler()
+    }
+}
+
+extension AppDelegate: MessagingDelegate {
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        guard let token = fcmToken else { return }
+        print("FCM 등록토큰: \(token)")
+        ReferenceValues.fcmToken = token
+        
     }
 }

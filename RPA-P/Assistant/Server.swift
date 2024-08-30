@@ -33,13 +33,13 @@ struct Server {
         var imageServerFactor: String {
             switch self {
             case .DEV:
-                return "dev"
+                return "Dev"
                 
             case .QA:
                 return "qa"
                 
             case .RELEASE:
-                return "prod"
+                return "Sunghwatour"
             }
         }
         

@@ -247,9 +247,7 @@ final class ReservationCompletedViewController: UIViewController {
     
     lazy var infoControlButton: UIButton = {
         let button = UIButton()
-        button.setTitle("더보기", for: .normal)
-        button.setTitleColor(.black , for: .normal)
-        button.titleLabel?.font = .useFont(ofSize: 12, weight: .Medium)
+        button.setImage(.useCustomImage("moreImage"), for: .normal)
         button.addTarget(self, action: #selector(infoControlButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
@@ -258,7 +256,7 @@ final class ReservationCompletedViewController: UIViewController {
     
     lazy var findOtherEstimateButton: UIButton = {
         let button = UIButton()
-        button.setTitle("다른 견적 보기", for: .normal)
+        button.setTitle("다른 견적 내기", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = .useFont(ofSize: 16, weight: .Bold)
         button.backgroundColor = .useRGB(red: 184, green: 0, blue: 0)
@@ -277,6 +275,15 @@ final class ReservationCompletedViewController: UIViewController {
     init(estimate: PreEstimate) {
         self.estimate = estimate
         
+        if let number = estimate.number {
+            self.moreInfoList.append("\(estimate.busCount)대")
+            self.moreInfoList.append("\(estimate.busType!.rawValue)")
+            self.moreInfoList.append("\(number)명")
+            
+        } else {
+            self.moreInfoList.append("미정")
+            
+        }
         self.moreInfoList.append(estimate.pay?.payWay?.rawValue ?? "")
         if let virtualEstimate = estimate.virtualEstimate {
             for category in virtualEstimate.category {
@@ -535,14 +542,14 @@ extension ReservationCompletedViewController: EssentialViewMethods {
             self.companyNumberLabel.topAnchor.constraint(equalTo: self.accountLabel.bottomAnchor, constant: 5),
             self.companyNumberLabel.bottomAnchor.constraint(equalTo: self.accountBaseView.bottomAnchor, constant: -15),
         ])
-        
+
         // infoControlButton
         NSLayoutConstraint.activate([
             self.infoControlButton.topAnchor.constraint(equalTo: self.infoStackView.bottomAnchor),
             self.infoControlButton.bottomAnchor.constraint(equalTo: self.estimateBaseView.bottomAnchor, constant: -6),
             self.infoControlButton.leadingAnchor.constraint(equalTo: self.estimateBaseView.leadingAnchor),
             self.infoControlButton.trailingAnchor.constraint(equalTo: self.estimateBaseView.trailingAnchor),
-            self.infoControlButton.heightAnchor.constraint(equalToConstant: 16),
+            self.infoControlButton.heightAnchor.constraint(equalToConstant: 30),
         ])
         
         // findOtherEstimateButton
@@ -598,11 +605,11 @@ extension ReservationCompletedViewController {
         print("infoControlButton")
         if self.moreInfoBaseView.isHidden {
             self.moreInfoBaseView.isHidden = false
-            self.infoControlButton.setTitle("닫기", for: .normal)
+            self.infoControlButton.setImage(.useCustomImage("closeImage"), for: .normal)
             
         } else {
             self.moreInfoBaseView.isHidden = true
-            self.infoControlButton.setTitle("더보기", for: .normal)
+            self.infoControlButton.setImage(.useCustomImage("moreImage"), for: .normal)
             
         }
         

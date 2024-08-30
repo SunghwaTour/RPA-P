@@ -307,6 +307,12 @@ extension MainViewController: EssentialViewMethods {
         
         self.navigationItem.title = "킹버스"
         
+        let leftBarButtonItem = UIBarButtonItem(title: ReferenceValues.name == "null" ? "방문자" : "\(ReferenceValues.name)님", style: .plain, target: self, action: nil)
+        leftBarButtonItem.setTitleTextAttributes([
+            .foregroundColor: UIColor.black,
+            .font: UIFont.useFont(ofSize: 14, weight: .Medium)
+        ], for: .normal)
+        self.navigationItem.leftBarButtonItem = leftBarButtonItem
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "Profile")?.withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(rightBarButtonItem(_:)))
     }
     

@@ -16,3 +16,13 @@ final class User {
         
     }
 }
+
+// MARK: Firebase
+struct UserData {
+    struct Firestore {
+        static let collectionName = Server.server.firebaseServerURL
+        static let fcmTokenField = "fcmToken"
+        static let phoneNumberField = "phoneNumber"
+        static let uidField = "uid"
+    }
+}
