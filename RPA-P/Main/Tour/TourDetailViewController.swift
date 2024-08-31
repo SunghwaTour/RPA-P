@@ -13,6 +13,7 @@ final class TourDetailViewController: UIViewController {
         let tableView = UITableView()
         tableView.backgroundColor = .white
         tableView.bounces = false
+        tableView.keyboardDismissMode = .onDrag
         tableView.showsVerticalScrollIndicator = false
         tableView.register(BasicInfoTableViewCell.self, forCellReuseIdentifier: "BasicInfoTableViewCell")
         tableView.register(AddressTourTableViewCell.self, forCellReuseIdentifier: "AddressTourTableViewCell")
@@ -155,19 +156,19 @@ extension TourDetailViewController: UITableViewDelegate, UITableViewDataSource {
             
             return cell
         case 1:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "BasicInfoTableViewCell", for: indexPath) as! BasicInfoTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "AddressTourTableViewCell", for: indexPath) as! AddressTourTableViewCell
             
             return cell
         case 2:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "BasicInfoTableViewCell", for: indexPath) as! BasicInfoTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ReservationTourTableViewCell", for: indexPath) as! ReservationTourTableViewCell
             
             return cell
         case 3:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "BasicInfoTableViewCell", for: indexPath) as! BasicInfoTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "GuideTableViewCell", for: indexPath) as! GuideTableViewCell
             
             return cell
         case 4:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "BasicInfoTableViewCell", for: indexPath) as! BasicInfoTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ReservationButtonTableViewCell", for: indexPath) as! ReservationButtonTableViewCell
             
             return cell
         default: return UITableViewCell()

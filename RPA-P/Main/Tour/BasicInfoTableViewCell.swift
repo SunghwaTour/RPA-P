@@ -195,8 +195,14 @@ extension BasicInfoTableViewCell {
         NSLayoutConstraint.activate([
             self.areaButton.trailingAnchor.constraint(equalTo: self.backgroundImageView.trailingAnchor, constant: -20),
             self.areaButton.topAnchor.constraint(equalTo: self.backgroundImageView.topAnchor, constant: 16),
+            self.areaButton.widthAnchor.constraint(equalToConstant: 57),
             self.areaButton.heightAnchor.constraint(equalToConstant: 25)
-            
+        ])
+        
+        // priceLabel
+        NSLayoutConstraint.activate([
+            self.priceLabel.leadingAnchor.constraint(equalTo: self.backgroundImageView.leadingAnchor, constant: 20),
+            self.priceLabel.bottomAnchor.constraint(equalTo: self.backgroundImageView.bottomAnchor, constant: -17),
         ])
         
         // nameLabel

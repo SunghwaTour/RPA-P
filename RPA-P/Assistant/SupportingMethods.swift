@@ -1783,7 +1783,7 @@ extension PHAsset {
 extension UITextField {
     func setPlaceholder(placeholder: String) {
         self.attributedPlaceholder = NSAttributedString(string: placeholder, attributes: [
-            NSAttributedString.Key.foregroundColor:UIColor.useRGB(red: 0, green: 0, blue: 0, alpha: 0.2),
+            NSAttributedString.Key.foregroundColor:UIColor.useRGB(red: 228, green: 228, blue: 228),
             .font:UIFont.useFont(ofSize: 14, weight: .Regular)
         ])
     }

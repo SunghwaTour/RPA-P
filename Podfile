@@ -12,4 +12,5 @@ target 'RPA-P' do
   pod 'FirebaseAuth'
   pod 'FirebaseFirestore'
   pod 'FirebaseMessaging'
+  pod 'ImageSlideshow', '~> 1.9.0'
 end
