@@ -16,7 +16,6 @@
 		059949132C7EAD40000F7028 /* BusImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 059949122C7EAD40000F7028 /* BusImageCollectionViewCell.swift */; };
 		059949152C7EBB52000F7028 /* ClauseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 059949142C7EBB52000F7028 /* ClauseViewController.swift */; };
 		059949172C7EBE4A000F7028 /* ClauseTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 059949162C7EBE4A000F7028 /* ClauseTableViewCell.swift */; };
-		0599491B2C7EC40D000F7028 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0599491A2C7EC40D000F7028 /* GoogleService-Info.plist */; };
 		05DD11732C64482C0005B073 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DD11722C64482C0005B073 /* Server.swift */; };
 		05EDA1382C7D8C5B00966E6F /* PastHistoryMoreInfoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05EDA1372C7D8C5B00966E6F /* PastHistoryMoreInfoCollectionViewCell.swift */; };
 		05EDA13A2C7D9BFE00966E6F /* FAQTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05EDA1392C7D9BFE00966E6F /* FAQTableViewCell.swift */; };
@@ -38,6 +37,13 @@
 		2D5342132C47E79000B74FBF /* MoreInfoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5342122C47E79000B74FBF /* MoreInfoCollectionViewCell.swift */; };
 		2D6882922C49095700F9A9CD /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6882912C49095700F9A9CD /* CalendarViewController.swift */; };
 		2D835A472C465D7000DF9054 /* CategoryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D835A462C465D7000DF9054 /* CategoryCollectionViewCell.swift */; };
+		2D8EFEF92C831E7A00ACD818 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2D8EFEF82C831E7A00ACD818 /* GoogleService-Info.plist */; };
+		2D8EFEFC2C831ED900ACD818 /* TourDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D8EFEFB2C831ED900ACD818 /* TourDetailViewController.swift */; };
+		2D8EFEFE2C8321F900ACD818 /* BasicInfoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D8EFEFD2C8321F900ACD818 /* BasicInfoTableViewCell.swift */; };
+		2D8EFF002C83220100ACD818 /* AddressTourTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D8EFEFF2C83220100ACD818 /* AddressTourTableViewCell.swift */; };
+		2D8EFF022C83221200ACD818 /* ReservationTourTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D8EFF012C83221200ACD818 /* ReservationTourTableViewCell.swift */; };
+		2D8EFF042C83221A00ACD818 /* GuideTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D8EFF032C83221A00ACD818 /* GuideTableViewCell.swift */; };
+		2D8EFF062C83222300ACD818 /* ReservationButtonTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D8EFF052C83222300ACD818 /* ReservationButtonTableViewCell.swift */; };
 		2DA8211B2C41491A000EF1D9 /* EstimateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DA8211A2C41491A000EF1D9 /* EstimateViewController.swift */; };
 		2DA8211D2C414967000EF1D9 /* EstimateDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DA8211C2C414967000EF1D9 /* EstimateDetailViewController.swift */; };
 		2DA8211F2C415172000EF1D9 /* ViewPagerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DA8211E2C415172000EF1D9 /* ViewPagerCollectionViewCell.swift */; };
@@ -71,7 +77,6 @@
 		059949122C7EAD40000F7028 /* BusImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusImageCollectionViewCell.swift; sourceTree = "<group>"; };
 		059949142C7EBB52000F7028 /* ClauseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClauseViewController.swift; sourceTree = "<group>"; };
 		059949162C7EBE4A000F7028 /* ClauseTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClauseTableViewCell.swift; sourceTree = "<group>"; };
-		0599491A2C7EC40D000F7028 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../GoogleService-Info.plist"; sourceTree = "<group>"; };
 		05AD2ADF2C7EE86D000E1827 /* RPA-P.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "RPA-P.entitlements"; sourceTree = "<group>"; };
 		05DD11722C64482C0005B073 /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
 		05EDA1372C7D8C5B00966E6F /* PastHistoryMoreInfoCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PastHistoryMoreInfoCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -98,6 +103,13 @@
 		2D5342122C47E79000B74FBF /* MoreInfoCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreInfoCollectionViewCell.swift; sourceTree = "<group>"; };
 		2D6882912C49095700F9A9CD /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
 		2D835A462C465D7000DF9054 /* CategoryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCollectionViewCell.swift; sourceTree = "<group>"; };
+		2D8EFEF82C831E7A00ACD818 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		2D8EFEFB2C831ED900ACD818 /* TourDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TourDetailViewController.swift; sourceTree = "<group>"; };
+		2D8EFEFD2C8321F900ACD818 /* BasicInfoTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicInfoTableViewCell.swift; sourceTree = "<group>"; };
+		2D8EFEFF2C83220100ACD818 /* AddressTourTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressTourTableViewCell.swift; sourceTree = "<group>"; };
+		2D8EFF012C83221200ACD818 /* ReservationTourTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReservationTourTableViewCell.swift; sourceTree = "<group>"; };
+		2D8EFF032C83221A00ACD818 /* GuideTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuideTableViewCell.swift; sourceTree = "<group>"; };
+		2D8EFF052C83222300ACD818 /* ReservationButtonTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReservationButtonTableViewCell.swift; sourceTree = "<group>"; };
 		2DA8211A2C41491A000EF1D9 /* EstimateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EstimateViewController.swift; sourceTree = "<group>"; };
 		2DA8211C2C414967000EF1D9 /* EstimateDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EstimateDetailViewController.swift; sourceTree = "<group>"; };
 		2DA8211E2C415172000EF1D9 /* ViewPagerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewPagerCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -175,8 +187,8 @@
 				05AD2ADF2C7EE86D000E1827 /* RPA-P.entitlements */,
 				2D46F5922C3DAF7100C711E2 /* LaunchScreen.storyboard */,
 				2D46F5902C3DAF7100C711E2 /* Assets.xcassets */,
-				0599491A2C7EC40D000F7028 /* GoogleService-Info.plist */,
 				2D46F5952C3DAF7100C711E2 /* Info.plist */,
+				2D8EFEF82C831E7A00ACD818 /* GoogleService-Info.plist */,
 				2DC277952C57666A0073E4A3 /* PrivacyInfo.xcprivacy */,
 				2D46F5872C3DAF6F00C711E2 /* AppDelegate.swift */,
 				2D46F5892C3DAF6F00C711E2 /* SceneDelegate.swift */,
@@ -235,6 +247,7 @@
 				2DCC4EA72C47B84A0035FD24 /* CheckPaymentViewController.swift */,
 				2D5342102C47C9D700B74FBF /* ReservationCompletedViewController.swift */,
 				2D5342122C47E79000B74FBF /* MoreInfoCollectionViewCell.swift */,
+				2D8EFEFA2C831ECB00ACD818 /* Tour */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -245,6 +258,19 @@
 				2D46F5A72C3E42F500C711E2 /* PretendardVariable.ttf */,
 			);
 			path = Fonts;
+			sourceTree = "<group>";
+		};
+		2D8EFEFA2C831ECB00ACD818 /* Tour */ = {
+			isa = PBXGroup;
+			children = (
+				2D8EFEFB2C831ED900ACD818 /* TourDetailViewController.swift */,
+				2D8EFEFD2C8321F900ACD818 /* BasicInfoTableViewCell.swift */,
+				2D8EFEFF2C83220100ACD818 /* AddressTourTableViewCell.swift */,
+				2D8EFF012C83221200ACD818 /* ReservationTourTableViewCell.swift */,
+				2D8EFF032C83221A00ACD818 /* GuideTableViewCell.swift */,
+				2D8EFF052C83222300ACD818 /* ReservationButtonTableViewCell.swift */,
+			);
+			path = Tour;
 			sourceTree = "<group>";
 		};
 		2DB4ADBD2C5FCCFA00813097 /* Animation */ = {
@@ -361,7 +387,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D46F5942C3DAF7100C711E2 /* LaunchScreen.storyboard in Resources */,
-				0599491B2C7EC40D000F7028 /* GoogleService-Info.plist in Resources */,
+				2D8EFEF92C831E7A00ACD818 /* GoogleService-Info.plist in Resources */,
 				2DB4ADC22C5FCDBD00813097 /* CompletedReservation.gif in Resources */,
 				2D46F5912C3DAF7100C711E2 /* Assets.xcassets in Resources */,
 				2DB4ADC32C5FCDBD00813097 /* EstimateRequest.gif in Resources */,
@@ -424,6 +450,7 @@
 				2D5342132C47E79000B74FBF /* MoreInfoCollectionViewCell.swift in Sources */,
 				2D46F5AC2C3E448100C711E2 /* MainViewController.swift in Sources */,
 				2DEF5FE82C719D730089C020 /* PastHistoryViewController.swift in Sources */,
+				2D8EFF002C83220100ACD818 /* AddressTourTableViewCell.swift in Sources */,
 				05EDA1382C7D8C5B00966E6F /* PastHistoryMoreInfoCollectionViewCell.swift in Sources */,
 				2D5342112C47C9D700B74FBF /* ReservationCompletedViewController.swift in Sources */,
 				2DEF5FE22C7193910089C020 /* ProfileDetailInfoTableViewCell.swift in Sources */,
@@ -431,19 +458,23 @@
 				2D6882922C49095700F9A9CD /* CalendarViewController.swift in Sources */,
 				059949152C7EBB52000F7028 /* ClauseViewController.swift in Sources */,
 				2DEF5FDD2C718C240089C020 /* ContractViewController.swift in Sources */,
+				2D8EFF062C83222300ACD818 /* ReservationButtonTableViewCell.swift in Sources */,
 				2DA8211D2C414967000EF1D9 /* EstimateDetailViewController.swift in Sources */,
 				2DCC4EA12C4663270035FD24 /* SelectEstimateTableViewCell.swift in Sources */,
 				2D0F91FF2C48FD480014A87D /* ReservationAnnouncementViewController.swift in Sources */,
 				059949172C7EBE4A000F7028 /* ClauseTableViewCell.swift in Sources */,
 				2D46F5AA2C3E445800C711E2 /* CustomizedNavigationController.swift in Sources */,
 				2DDE4B572C4258DD00CA644F /* SelectEstimateViewController.swift in Sources */,
+				2D8EFEFC2C831ED900ACD818 /* TourDetailViewController.swift in Sources */,
 				2D46F5882C3DAF6F00C711E2 /* AppDelegate.swift in Sources */,
+				2D8EFF042C83221A00ACD818 /* GuideTableViewCell.swift in Sources */,
 				2D835A472C465D7000DF9054 /* CategoryCollectionViewCell.swift in Sources */,
 				050099C82C800D040091ED23 /* RenewalCalendarViewController.swift in Sources */,
 				057806EB2C80388E007BDA7F /* SelectDatesCustomCalendarCell.swift in Sources */,
 				05437B452C52210700963271 /* AddressSearchTableViewCell.swift in Sources */,
 				2D0F91FD2C48F4200014A87D /* EstimateDetailTableViewCell.swift in Sources */,
 				2DCC4EA42C46672D0035FD24 /* MainModel.swift in Sources */,
+				2D8EFF022C83221200ACD818 /* ReservationTourTableViewCell.swift in Sources */,
 				2DCC4EA82C47B84A0035FD24 /* CheckPaymentViewController.swift in Sources */,
 				2DEF5FE02C718D5D0089C020 /* ProfileViewController.swift in Sources */,
 				2D46F5AE2C3E536000C711E2 /* PaymentViewController.swift in Sources */,
@@ -453,6 +484,7 @@
 				056E05672C7DC05000582D15 /* CircularProgress.swift in Sources */,
 				2D46F58A2C3DAF6F00C711E2 /* SceneDelegate.swift in Sources */,
 				2DA8211B2C41491A000EF1D9 /* EstimateViewController.swift in Sources */,
+				2D8EFEFE2C8321F900ACD818 /* BasicInfoTableViewCell.swift in Sources */,
 				2D46F5A02C3DB0DD00C711E2 /* ReferenceValues.swift in Sources */,
 				059949112C7EA9E3000F7028 /* KindsOfBusCollectionViewCell.swift in Sources */,
 				05EDA13A2C7D9BFE00966E6F /* FAQTableViewCell.swift in Sources */,

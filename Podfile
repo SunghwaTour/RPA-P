@@ -7,9 +7,9 @@ target 'RPA-P' do
 
   # Pods for RPA-P
   pod 'FSCalendar'
+  pod 'Alamofire'
+  pod 'Gifu'
   pod 'FirebaseAuth'
   pod 'FirebaseFirestore'
   pod 'FirebaseMessaging'
-  pod 'Alamofire'
-  pod 'Gifu'
 end

@@ -357,7 +357,10 @@ extension MainViewController {
     }
     
     @objc func rightBarButtonItem(_ barButtonItem: UIBarButtonItem) {
-        let vc = ProfileViewController()
+//        let vc = ProfileViewController()
+//        
+//        self.navigationController?.pushViewController(vc, animated: true)
+        let vc = TourDetailViewController()
         
         self.navigationController?.pushViewController(vc, animated: true)
     }
