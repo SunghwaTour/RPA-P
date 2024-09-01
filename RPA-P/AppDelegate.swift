@@ -7,6 +7,7 @@
 
 import UIKit
 import FirebaseCore
+import FirebaseAuth
 import FirebaseMessaging
 
 @main
@@ -20,20 +21,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         //MARK: Messaging
         Messaging.messaging().delegate = self
-        
-        Messaging.messaging().token { token, error in
-            if let error = error {
-                print("Error FCM 등록 토큰 가져오기: \(error.localizedDescription)")
-                
-            } else if let token = token {
-                print("FCM 등록 토큰: \(token)")
-                ReferenceValues.fcmToken = token
-                
-            } else {
-                print("토큰이 없습니다.")
-                
-            }
-        }
         
         application.registerForRemoteNotifications()
         
@@ -59,6 +46,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        Auth.auth().setAPNSToken(deviceToken, type: AuthAPNSTokenType.sandbox)
         Messaging.messaging().apnsToken = deviceToken
         
     }

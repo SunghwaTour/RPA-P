@@ -7,8 +7,65 @@
 
 import UIKit
 import CoreLocation
+import ImageSlideshow
 
 final class EstimateViewController: UIViewController {
+    
+    lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.bounces = false
+        scrollView.backgroundColor = .white
+        scrollView.keyboardDismissMode = .onDrag
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return scrollView
+    }()
+    
+    lazy var baseView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .red
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var imageSlideShow: ImageSlideshow = {
+        let pageIndicator = UIPageControl()
+        pageIndicator.currentPage = 0
+        pageIndicator.currentPageIndicatorTintColor = .useRGB(red: 189, green: 189, blue: 189)
+        pageIndicator.pageIndicatorTintColor = .useRGB(red: 224, green: 224, blue: 224)
+        pageIndicator.hidesForSinglePage = true
+        pageIndicator.numberOfPages = 4
+        pageIndicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        let imageSlideShow = ImageSlideshow()
+        imageSlideShow.contentScaleMode = .scaleToFill
+        imageSlideShow.circular = true
+        imageSlideShow.scrollView.bounces = false
+        imageSlideShow.slideshowInterval = 3
+        imageSlideShow.pageIndicator = pageIndicator
+        imageSlideShow.pageIndicatorPosition = .init(vertical: .bottom)
+        imageSlideShow.delegate = self
+        imageSlideShow.translatesAutoresizingMaskIntoConstraints = false
+        
+        var imageResources: [ImageSource] = [
+            ImageSource(image: .useCustomImage("Mureung_1")),
+            ImageSource(image: .useCustomImage("Mureung_2")),
+            ImageSource(image: .useCustomImage("Mureung_3")),
+            ImageSource(image: .useCustomImage("Mureung_4")),
+            ImageSource(image: .useCustomImage("Seorak_5")),
+            ImageSource(image: .useCustomImage("Seorak_6")),
+            ImageSource(image: .useCustomImage("Naejangsan_7")),
+            ImageSource(image: .useCustomImage("Naejangsan_8")),
+        ]
+        imageSlideShow.setImageInputs(imageResources)
+        
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(imageSlideShow(_:)))
+        imageSlideShow.addGestureRecognizer(gesture)
+        
+        return imageSlideShow
+    }()
     
     lazy var contentView: UIView = {
         let view = UIView()
@@ -32,15 +89,6 @@ final class EstimateViewController: UIViewController {
         imageView.image = .useCustomImage("announcementBGImage")
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        return imageView
-    }()
-    
-    lazy var backgroundImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = .useCustomImage("HomeBackground")
-        imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         return imageView
@@ -565,6 +613,7 @@ final class EstimateViewController: UIViewController {
     ]
     
     let mainModel = MainModel()
+    var tourId: Int = 1
     var selectedAddressIndex: Int? {
         didSet {
             guard oldValue != self.selectedAddressIndex else {
@@ -639,11 +688,19 @@ extension EstimateViewController: EssentialViewMethods {
     
     func setSubviews() {
         SupportingMethods.shared.addSubviews([
-            self.contentView,
+            self.scrollView,
         ], to: self.view)
         
         SupportingMethods.shared.addSubviews([
-            self.backgroundImageView,
+            self.baseView,
+        ], to: self.scrollView)
+        
+        SupportingMethods.shared.addSubviews([
+            self.contentView,
+            self.imageSlideShow,
+        ], to: self.baseView)
+        
+        SupportingMethods.shared.addSubviews([
             self.annoucementImageView,
             self.indicatorSizeView,
             self.kindsOfEstimateStackView,
@@ -716,21 +773,39 @@ extension EstimateViewController: EssentialViewMethods {
     func setLayouts() {
         let safeArea = self.view.safeAreaLayoutGuide
         
-        // contentView
-        self.contentViewTopAnchorConstraint = self.contentView.topAnchor.constraint(equalTo: safeArea.topAnchor)
+        // scrollView
         NSLayoutConstraint.activate([
-            self.contentView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-            self.contentViewTopAnchorConstraint,
-            self.contentView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
-            self.contentView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
+            self.scrollView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+            self.scrollView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
+            self.scrollView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+            self.scrollView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
         ])
         
-        // backgroundImageView
+        // baseView
         NSLayoutConstraint.activate([
-            self.backgroundImageView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor),
-            self.backgroundImageView.topAnchor.constraint(equalTo: self.contentView.topAnchor),
-            self.backgroundImageView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor),
-            self.backgroundImageView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor),
+            self.baseView.leadingAnchor.constraint(equalTo: self.scrollView.leadingAnchor),
+            self.baseView.trailingAnchor.constraint(equalTo: self.scrollView.trailingAnchor),
+            self.baseView.topAnchor.constraint(equalTo: self.scrollView.topAnchor),
+            self.baseView.bottomAnchor.constraint(equalTo: self.scrollView.bottomAnchor),
+            self.baseView.widthAnchor.constraint(equalTo: self.scrollView.widthAnchor),
+            self.baseView.heightAnchor.constraint(equalToConstant: 1000)
+        ])
+        
+        // imageSlideShow
+        self.contentViewTopAnchorConstraint = self.imageSlideShow.topAnchor.constraint(equalTo: self.baseView.topAnchor, constant: -(self.navigationController?.navigationBar.frame.height)!)
+        NSLayoutConstraint.activate([
+            self.imageSlideShow.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor),
+            self.imageSlideShow.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor),
+            self.contentViewTopAnchorConstraint,
+            self.imageSlideShow.heightAnchor.constraint(equalToConstant: ReferenceValues.Size.Device.width * 329/360),
+        ])
+        
+        // contentView
+        NSLayoutConstraint.activate([
+            self.contentView.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor),
+            self.contentView.topAnchor.constraint(equalTo: self.imageSlideShow.bottomAnchor),
+            self.contentView.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor),
+            self.contentView.bottomAnchor.constraint(equalTo: self.baseView.bottomAnchor),
         ])
         
         // indicatorSizeView
@@ -1146,6 +1221,16 @@ extension EstimateViewController {
         }
 
     }
+    
+    func loadTourDataRequest(success: (([Tour]) -> ())?) {
+        self.mainModel.loadTourDataRequest { tourList in
+            success?(tourList)
+            
+        } failure: { message in
+            print("loadTourDataRequest error: \(message)")
+        }
+
+    }
 }
 
 // MARK: - Extension for selector methods
@@ -1223,15 +1308,16 @@ extension EstimateViewController {
             let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double {
             
             UIView.animate(withDuration: duration) {
-                if self.numberTextField.isEditing {
-                    let screenSize = self.view.safeAreaLayoutGuide.layoutFrame.height
-                    let bottomHeight = screenSize - self.numberView.frame.maxY
-                    let height = keyboardSize.height - bottomHeight
-                    
-                    self.contentViewTopAnchorConstraint.constant = height > 0 ? -(height + 5) : 0
-                    
-                }
-                
+//                if self.numberTextField.isEditing {
+//                    let screenSize = self.view.safeAreaLayoutGuide.layoutFrame.height
+//                    let bottomHeight = screenSize - self.numberView.frame.maxY
+//                    let height = keyboardSize.height - bottomHeight
+//                    
+//                    self.contentViewTopAnchorConstraint.constant = height > 0 ? -(height + 5) : 0
+//                    
+//                }
+//                
+                self.contentViewTopAnchorConstraint.constant = -keyboardSize.height
                 
                 self.view.layoutIfNeeded()
                 
@@ -1516,6 +1602,25 @@ extension EstimateViewController {
         NotificationCenter.default.post(name: Notification.Name("SaveEstimateData"), object: nil, userInfo: ["estimate": estimate])
         
     }
+    
+    @objc func imageSlideShow(_ gesture: UITapGestureRecognizer) {
+        self.loadTourDataRequest { tourList in
+            let tour = tourList[self.tourId - 1]
+            self.mainModel.loadMyTourDataRequest(tourId: self.tourId) { MyTour in
+                let vc = TourDetailViewController(tour: tour, myTour: MyTour)
+
+                self.navigationController?.pushViewController(vc, animated: true)
+            } failure: { message in
+                let vc = TourDetailViewController(tour: tour)
+
+                self.navigationController?.pushViewController(vc, animated: true)
+                
+            }
+            
+        }
+        
+    }
+    
 }
 
 // MARK: - Extension for UITextFieldDelegate
@@ -1804,4 +1909,13 @@ extension EstimateViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
     }
+}
+
+// MARK: - Extension for ImageSlideshowDelegate
+extension EstimateViewController: ImageSlideshowDelegate {
+    func imageSlideshow(_ imageSlideshow: ImageSlideshow, didChangeCurrentPageTo page: Int) {
+        self.tourId = page + 1
+        
+    }
+    
 }

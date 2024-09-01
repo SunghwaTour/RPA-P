@@ -11,7 +11,7 @@ final class GuideTableViewCell: UITableViewCell {
     
     lazy var topBorderView: UIView = {
         let view = UIView()
-        view.backgroundColor = .useRGB(red: 167, green: 167, blue: 167)
+        view.backgroundColor = .useRGB(red: 203, green: 203, blue: 203, alpha: 0.5)
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view

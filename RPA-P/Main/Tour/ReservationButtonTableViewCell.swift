@@ -11,7 +11,7 @@ final class ReservationButtonTableViewCell: UITableViewCell {
     
     lazy var topBorderView: UIView = {
         let view = UIView()
-        view.backgroundColor = .useRGB(red: 167, green: 167, blue: 167)
+        view.backgroundColor = .useRGB(red: 203, green: 203, blue: 203, alpha: 0.5)
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -19,10 +19,12 @@ final class ReservationButtonTableViewCell: UITableViewCell {
     
     lazy var requestButton: UIButton = {
         let button = UIButton()
+        button.isEnabled = false
         button.setTitle("예약하기", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = .useFont(ofSize: 16, weight: .Medium)
         button.backgroundColor = .useRGB(red: 217, green: 217, blue: 217)
+        button.addTarget(self, action: #selector(requestButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -111,7 +113,30 @@ extension ReservationButtonTableViewCell {
 
 // MARK: - Extension for methods added
 extension ReservationButtonTableViewCell {
-    func setCell() {
+    func setCell(status: String) {
+        if status == "on" {
+            self.requestButton.isEnabled = true
+            self.requestButton.backgroundColor = .white
+            self.requestButton.setTitleColor(.useRGB(red: 184, green: 0, blue: 0), for: .normal)
+            self.requestButton.layer.borderColor = UIColor.useRGB(red: 184, green: 0, blue: 0).cgColor
+            self.requestButton.layer.borderWidth = 1.0
+            
+        } else {
+            self.requestButton.isEnabled = false
+            self.requestButton.backgroundColor = .useRGB(red: 217, green: 217, blue: 217)
+            self.requestButton.setTitleColor(.white, for: .normal)
+            self.requestButton.layer.borderWidth = 0.0
+            
+        }
+        
+    }
+    
+}
+
+// MARK: Extension for selector added
+extension ReservationButtonTableViewCell {
+    @objc func requestButton(_ sender: UIButton) {
+        NotificationCenter.default.post(name: Notification.Name("SendTourData"), object: nil)
         
     }
 }

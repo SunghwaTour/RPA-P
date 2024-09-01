@@ -216,8 +216,18 @@ extension AddressTourTableViewCell {
 
 // MARK: - Extension for methods added
 extension AddressTourTableViewCell {
-    func setCell() {
+    func setCell(tour: Tour) {
+        let formattedDepartureDate = SupportingMethods.shared.convertString(intoDate: tour.departureTime, "yyyy-MM-dd HH:mm")
+        let departure = SupportingMethods.shared.convertDate(intoString: formattedDepartureDate, "yyyy.MM.dd(EE) HH:mm a")
         
+        let formattedArrivalDate = SupportingMethods.shared.convertString(intoDate: tour.arrivalTime, "yyyy-MM-dd HH:mm")
+        let arrival = SupportingMethods.shared.convertDate(intoString: formattedArrivalDate, "yyyy.MM.dd(EE) HH:mm a")
+        
+        self.departureLabel.text = "출발 - \(tour.departureAddress)"
+        self.departureTimeLabel.text = "\(departure)"
+        
+        self.arrivalLabel.text = "도착 - \(tour.arrivalAddress)"
+        self.arrivalTimeLabel.text = "\(arrival)"
     }
 }
 

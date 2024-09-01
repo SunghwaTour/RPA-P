@@ -12,7 +12,7 @@ final class ReservationTourTableViewCell: UITableViewCell {
     
     lazy var topBorderView: UIView = {
         let view = UIView()
-        view.backgroundColor = .useRGB(red: 167, green: 167, blue: 167)
+        view.backgroundColor = .useRGB(red: 203, green: 203, blue: 203, alpha: 0.5)
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -269,12 +269,14 @@ extension ReservationTourTableViewCell {
         NSLayoutConstraint.activate([
             self.infoTitleLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
             self.infoTitleLabel.topAnchor.constraint(equalTo: self.topBorderView.bottomAnchor, constant: 30),
+            self.infoTitleLabel.heightAnchor.constraint(equalToConstant: 20),
         ])
         
         // bankTitleLabel
         NSLayoutConstraint.activate([
             self.bankTitleLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 23),
             self.bankTitleLabel.topAnchor.constraint(equalTo: self.infoTitleLabel.bottomAnchor, constant: 20),
+            self.bankTitleLabel.heightAnchor.constraint(equalToConstant: 20),
         ])
         
         // bankTextField
@@ -289,6 +291,7 @@ extension ReservationTourTableViewCell {
         NSLayoutConstraint.activate([
             self.nameTitleLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 23),
             self.nameTitleLabel.topAnchor.constraint(equalTo: self.bankTextField.bottomAnchor, constant: 15),
+            self.nameTitleLabel.heightAnchor.constraint(equalToConstant: 20),
         ])
         
         // nameTextField
@@ -350,14 +353,34 @@ extension ReservationTourTableViewCell {
 
 // MARK: - Extension for methods added
 extension ReservationTourTableViewCell {
-    func setCell() {
+    func setCell(myTour: MyTour?) {
+        guard let myTour = myTour else { return }
+        self.bankTextField.text = myTour.bank
+        self.nameTextField.text = myTour.name
+        self.numberTextField.text = myTour.phoneNumber
         
+        self.bankTextField.isEnabled = false
+        self.bankTextField.backgroundColor = .useRGB(red: 189, green: 189, blue: 189)
+        self.nameTextField.isEnabled = false
+        self.nameTextField.backgroundColor = .useRGB(red: 189, green: 189, blue: 189)
+        self.numberTextField.isEnabled = false
+        self.numberTextField.backgroundColor = .useRGB(red: 189, green: 189, blue: 189)
+        
+        self.sendAuthenticationButton.isEnabled = false
     }
 }
 
 // MARK: - Extension for selector added
 extension ReservationTourTableViewCell {
     @objc func sendAuthenticationButton(_ sender: UIButton) {
+        guard self.bankTextField.text != "" else {
+            SupportingMethods.shared.showAlertNoti(title: "입금 은행을 입력해주세요.")
+            return
+        }
+        guard self.nameTextField.text != "" else {
+            SupportingMethods.shared.showAlertNoti(title: "입금자명을 입력해주세요.")
+            return
+        }
         guard let phoneNumber = self.numberTextField.text else {
             SupportingMethods.shared.showAlertNoti(title: "핸드폰 번호를 입력해주세요.")
             return
@@ -380,6 +403,13 @@ extension ReservationTourTableViewCell {
                 self.doneAuthenticationButton.isHidden = false
                 self.alertLabel.isHidden = false
                 
+                NotificationCenter.default.post(name: Notification.Name("reloadDataForDesgin"), object: nil)
+                
+                self.bankTextField.isEnabled = false
+                self.bankTextField.backgroundColor = .useRGB(red: 189, green: 189, blue: 189)
+                
+                self.nameTextField.isEnabled = false
+                self.nameTextField.backgroundColor = .useRGB(red: 189, green: 189, blue: 189)
             }
             
         }
@@ -407,6 +437,7 @@ extension ReservationTourTableViewCell {
                 self.sendAuthenticationButton.isEnabled = false
                 
                 self.authenticationTextField.isEnabled = false
+                self.authenticationTextField.backgroundColor = .useRGB(red: 189, green: 189, blue: 189)
                 self.doneAuthenticationButton.isEnabled = false
                 
                 self.doneAuthenticationButton.backgroundColor = .useRGB(red: 255, green: 186, blue: 186)
@@ -420,9 +451,13 @@ extension ReservationTourTableViewCell {
                 ReferenceValues.phoneNumber = self.numberTextField.text ?? phoneNumber
                 ReferenceValues.name = self.nameTextField.text!
                 
+                self.numberTextField.isEnabled = false
+                self.numberTextField.backgroundColor = .useRGB(red: 189, green: 189, blue: 189)
+                
                 self.mainModel.registerUserData(uid: uid) {
                     print("PaymentViewController registerUserData Success")
-
+                    NotificationCenter.default.post(name: Notification.Name("reservationButtonOn"), object: nil, userInfo: ["bank": self.bankTextField.text!, "name": self.nameTextField.text!])
+                    
                 } failure: { message in
                     print("error: \(message)")
 
@@ -434,4 +469,3 @@ extension ReservationTourTableViewCell {
 
     }
 }
-

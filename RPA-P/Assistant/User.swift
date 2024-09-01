@@ -24,5 +24,11 @@ struct UserData {
         static let fcmTokenField = "fcmToken"
         static let phoneNumberField = "phoneNumber"
         static let uidField = "uid"
+        
+        static let isCompletetdDepostField = "isCompletedDeposit"
+        static let tourIdField = "tourId"
+        static let placeNameField = "placeName"
+        static let nameField = "name"
+        static let bankField = "bank"
     }
 }

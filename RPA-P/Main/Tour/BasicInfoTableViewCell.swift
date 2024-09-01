@@ -61,6 +61,20 @@ final class BasicInfoTableViewCell: UITableViewCell {
         return label
     }()
     
+    lazy var reservationStatusButton: UIButton = {
+        let button = UIButton()
+        button.isHidden = true
+        button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = .useFont(ofSize: 12, weight: .Regular)
+        button.layer.cornerRadius = 15
+        button.layer.borderWidth = 1.0
+        button.layer.borderColor = UIColor.white.cgColor
+        button.backgroundColor = .useRGB(red: 255, green: 255, blue: 255, alpha: 0.5)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
     lazy var nameLabel: UILabel = {
         let label = UILabel()
         label.text = "내장산국립공원"
@@ -160,6 +174,7 @@ extension BasicInfoTableViewCell {
             self.durationDateLabel,
             self.areaButton,
             self.priceLabel,
+            self.reservationStatusButton,
             self.nameLabel,
             self.addressLabel,
             self.copyButton,
@@ -169,7 +184,7 @@ extension BasicInfoTableViewCell {
     
     // Set layouts
     func setLayouts() {
-        let safeArea = self.safeAreaLayoutGuide
+//        let safeArea = self.safeAreaLayoutGuide
         
         // backgroundImageView
         NSLayoutConstraint.activate([
@@ -205,6 +220,14 @@ extension BasicInfoTableViewCell {
             self.priceLabel.bottomAnchor.constraint(equalTo: self.backgroundImageView.bottomAnchor, constant: -17),
         ])
         
+        // reservationStatusButton
+        NSLayoutConstraint.activate([
+            self.reservationStatusButton.trailingAnchor.constraint(equalTo: self.backgroundImageView.trailingAnchor, constant: -18),
+            self.reservationStatusButton.bottomAnchor.constraint(equalTo: self.backgroundImageView.bottomAnchor, constant: -24),
+            self.reservationStatusButton.widthAnchor.constraint(equalToConstant: 82),
+            self.reservationStatusButton.heightAnchor.constraint(equalToConstant: 30),
+        ])
+        
         // nameLabel
         NSLayoutConstraint.activate([
             self.nameLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
@@ -235,7 +258,36 @@ extension BasicInfoTableViewCell {
 
 // MARK: - Extension for methods added
 extension BasicInfoTableViewCell {
-    func setCell() {
+    func setCell(tour: Tour, myTour: MyTour?) {
+        self.backgroundImageView.image = .useCustomImage(tour.imageName)
+        self.statusLabel.text = "\(tour.status == "0" ? "모집중" : "모집 완료") - 참여자 \(tour.min)명 이상부터 확정"
+        self.durationDateLabel.text = "\(tour.startTime.split(separator: " ")[0]) ~ \(tour.endTime.split(separator: " ")[0])"
+        self.priceLabel.text = "\(Int(tour.individualPrice)!.withCommaString ?? "0")원"
+        self.areaButton.setTitle("\(tour.arrivalAddress.split(separator: " ")[0])", for: .normal)
+        
+        self.nameLabel.text = "\(tour.placeName)"
+        self.addressLabel.text = "\(tour.departureAddress)"
+        
+        let tags = tour.tag.split(separator: ",")
+        var newTags: String = ""
+        for tag in tags {
+            newTags += "#\(tag) "
+        }
+        
+        self.tagLabel.text = newTags
+        
+        guard let myTour = myTour else {
+            self.reservationStatusButton.isHidden = true
+            return
+        }
+        self.reservationStatusButton.isHidden = false
+        if myTour.isCompletedDeposit {
+            self.reservationStatusButton.setTitle("예약완료", for: .normal)
+            
+        } else {
+            self.reservationStatusButton.setTitle("예약확인중", for: .normal)
+            
+        }
         
     }
 }

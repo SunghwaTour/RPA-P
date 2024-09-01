@@ -16,12 +16,16 @@ final class MainModel {
     private(set) var sendEstimateDataRequest: DataRequest?
     private(set) var sendConfirmReservationRequest: DataRequest?
     private(set) var getContractRequest: DataRequest?
+    private(set) var sendTourRequest: DataRequest?
     
     // MARK: Firebase
     private var db = Firestore.firestore()
     
     private(set) var getEstimateData: DataRequest?
+    private(set) var loadTourDataRequest: DataRequest?
+    private(set) var loadMyTourDataRequest: DataRequest?
     private(set) var registerUserData: DataRequest?
+    private(set) var registerTourData: DataRequest?
     
     // MARK: Kakao requests
     private(set) var findKeywordWithTextRequest: DataRequest?
@@ -265,6 +269,50 @@ final class MainModel {
         
     }
     
+    func sendTourRequest(tourId: String, name: String, phone: String, bank: String, success: (() -> ())?, failure: ((_ message: String) -> ())?) {
+        let url = Server.server.URL + "/dispatch/tour"
+        
+        let headers: HTTPHeaders = [
+            "accept": "application/json",
+            "Authorization": User.shared.accessToken
+        ]
+        
+        let parameters: Parameters = [
+            "user_uid": ReferenceValues.uid,
+            "tour_uid": tourId,
+            "name": name,
+            "phone": phone,
+            "bank": bank,
+        ]
+        
+        self.sendTourRequest = AF.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+        
+        self.sendTourRequest?.responseData { (response) in
+            switch response.result {
+            case .success(_):
+                guard let statusCode = response.response?.statusCode else {
+                    print("sendTourRequest failure: statusCode nil")
+                    failure?("statusCodeNil")
+                    
+                    return
+                }
+                
+                guard statusCode >= 200 && statusCode < 300 else {
+                    print("sendTourRequest failure: statusCode(\(statusCode))")
+                    failure?("statusCodeError")
+                    
+                    return
+                }
+                
+                success?()
+                
+            case .failure(let error):
+                print("sendTourRequest error: \(error.localizedDescription)")
+                failure?(error.localizedDescription)
+            }
+        }
+    }
+    
     // MARK: Firebase
     func getEstimateData(success: (([Estimate]) -> ())?, failure: ((String) -> ())?) {
         let uid = ReferenceValues.uid
@@ -331,6 +379,72 @@ final class MainModel {
         
     }
     
+    func loadTourDataRequest(success: (([Tour]) -> ())?, failure: ((_ message: String) -> ())?) {
+        self.db.collection("\(Server.server.firebaseServerURL)/Sunghwatour").order(by: "id").addSnapshotListener { querySnapshot, error in
+            if let error = error {
+                failure?("loadTourDataRequest Error: \(error.localizedDescription)")
+                
+            } else {
+                guard let querySnapshot = querySnapshot else {
+                    failure?("loadTourDataRequest Error: Empty Data")
+                    return
+                }
+                
+                let tours: [Tour] = querySnapshot.documents.compactMap { doc -> Tour? in
+                    do {
+                        let jsonData = try JSONSerialization.data(withJSONObject: doc.data(), options: [])
+                        let tour = try JSONDecoder().decode(Tour.self, from: jsonData)
+                        
+                        return tour
+                        
+                    } catch let error {
+                        failure?(error.localizedDescription)
+                        return nil
+                        
+                    }
+                    
+                }
+                
+                success?(tours)
+                
+            }
+            
+        }
+    }
+    
+    func loadMyTourDataRequest(tourId: Int, success: ((MyTour) -> ())?, failure: ((_ message: String) -> ())?) {
+        self.db.collection("\(UserData.Firestore.collectionName)/Sunghwatour/\(tourId)/Admin").document(ReferenceValues.uid).addSnapshotListener { querySnapshot, error in
+            if let error = error {
+                failure?("loadMyTourDataRequest Error: \(error.localizedDescription)")
+                
+            } else {
+                guard let querySnapshot = querySnapshot else {
+                    failure?("loadMyTourDataRequest Error: Empty Data")
+                    return
+                }
+                
+                do {
+                    if querySnapshot.exists {
+                        let jsonData = try JSONSerialization.data(withJSONObject: querySnapshot.data(), options: [])
+                        let tour = try JSONDecoder().decode(MyTour.self, from: jsonData)
+                        success?(tour)
+                        
+                    } else {
+                        failure?("Empty Data")
+                        
+                    }
+                    
+                    
+                } catch let error {
+                    failure?(error.localizedDescription)
+                    
+                }
+                
+            }
+            
+        }
+    }
+    
     func registerUserData(uid: String, success: (() -> ())?, failure: ((_ message: String) -> ())?) {
         self.db.collection("\(UserData.Firestore.collectionName)/User").document(uid).setData([
             UserData.Firestore.fcmTokenField: ReferenceValues.fcmToken,
@@ -342,6 +456,26 @@ final class MainModel {
                 
             } else {
                 print("registerUserData: Successfully saved data")
+                success?()
+                
+            }
+        }
+    }
+    
+    func registerTourData(tourId: Int, name: String, bank: String, placeName: String, success: (() -> ())?, failure: ((_ message: String) -> ())?) {
+        self.db.collection("\(UserData.Firestore.collectionName)/Sunghwatour/\(tourId)/Admin").document(ReferenceValues.uid).setData([
+            UserData.Firestore.tourIdField: tourId,
+            UserData.Firestore.nameField: name,
+            UserData.Firestore.bankField: bank,
+            UserData.Firestore.phoneNumberField: ReferenceValues.phoneNumber,
+            UserData.Firestore.placeNameField: placeName,
+            UserData.Firestore.isCompletetdDepostField: false,
+        ]) { error in
+            if let error = error {
+                failure?(error.localizedDescription)
+                
+            } else {
+                print("registerTourData: Successfully saved data")
                 success?()
                 
             }
@@ -566,6 +700,33 @@ class Estimate: Codable {
         case departureIndex
         case phone
     }
+}
+
+struct Tour: Codable {
+    let id: Int
+    let placeName: String
+    let individualPrice: String
+    let status: String
+    let min: String
+    let max: String
+    let departureAddress: String
+    let arrivalAddress: String
+    let tag: String
+    let departureTime: String
+    let arrivalTime: String
+    let startTime: String
+    let endTime: String
+    let busTag: String
+    let imageName: String
+}
+
+struct MyTour: Codable {
+    let tourId: Int
+    let name: String
+    let bank: String
+    let phoneNumber: String
+    let placeName: String
+    let isCompletedDeposit: Bool
 }
 
 // MARK: - Kakao API

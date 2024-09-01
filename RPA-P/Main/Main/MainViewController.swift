@@ -7,11 +7,12 @@
 
 import UIKit
 import Gifu
+import ImageSlideshow
 
-enum SelectTab: Int {
-    case estimate
-    case detail
-}
+//enum SelectTab: Int {
+//    case estimate
+//    case detail
+//}
 
 final class MainViewController: UIViewController {
     
@@ -134,6 +135,9 @@ final class MainViewController: UIViewController {
     var subControllers: [UIViewController] = []
     var currentIndex: Int = 0
     
+    let mainModel = MainModel()
+    var tourId: Int = 1
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -191,6 +195,7 @@ extension MainViewController: EssentialViewMethods {
     
     func setSubviews() {
         SupportingMethods.shared.addSubviews([
+//            self.imageSlideShow,
             self.contentView,
             self.collectionView,
             self.completedRequestReservationBaseView,
@@ -213,6 +218,14 @@ extension MainViewController: EssentialViewMethods {
     
     func setLayouts() {
         let safeArea = self.view.safeAreaLayoutGuide
+        
+        // imageSlideShow
+//        NSLayoutConstraint.activate([
+//            self.imageSlideShow.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+//            self.imageSlideShow.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
+//            self.imageSlideShow.topAnchor.constraint(equalTo: self.view.topAnchor),
+//            self.imageSlideShow.heightAnchor.constraint(equalToConstant: ReferenceValues.Size.Device.width * 329/360),
+//        ])
         
         // completedRequestReservationBaseView
         NSLayoutConstraint.activate([
@@ -261,7 +274,7 @@ extension MainViewController: EssentialViewMethods {
         // contentView
         NSLayoutConstraint.activate([
             self.contentView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-            self.contentView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+            self.contentView.topAnchor.constraint(equalTo: self.view.topAnchor),
             self.contentView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
             self.contentView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
         ])
@@ -289,12 +302,20 @@ extension MainViewController: EssentialViewMethods {
     }
     
     
-    func setUpNavigationItem() {
+    private func setUpNavigationTitle(isDetail: Bool = true) -> UIImageView {
+        let navigationTitleImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 107, height: 18))
+        navigationTitleImageView.image = UIImage(named: isDetail ? "RedNavigationLogo" : "NavigationLogo")
+        navigationTitleImageView.contentMode = .scaleAspectFit
+        
+        return navigationTitleImageView
+    }
+    
+    func setUpNavigationItem(isDetail: Bool = true) {
         self.view.backgroundColor = .white
         
         let appearance = UINavigationBarAppearance()
         appearance.configureWithTransparentBackground()
-        appearance.backgroundColor = .white // Navigation bar is transparent and root view appears on it.
+        appearance.backgroundColor = .clear // Navigation bar is transparent and root view appears on it.
         appearance.titleTextAttributes = [
             NSAttributedString.Key.foregroundColor:UIColor.useRGB(red: 184, green: 0, blue: 0),
             .font:UIFont.useFont(ofSize: 16, weight: .Bold)
@@ -305,7 +326,7 @@ extension MainViewController: EssentialViewMethods {
         self.navigationItem.standardAppearance = appearance
         self.navigationItem.compactAppearance = appearance
         
-        self.navigationItem.title = "킹버스"
+        self.navigationItem.titleView = self.setUpNavigationTitle(isDetail: isDetail)
         
         let leftBarButtonItem = UIBarButtonItem(title: ReferenceValues.name == "null" ? "방문자" : "\(ReferenceValues.name)님", style: .plain, target: self, action: nil)
         leftBarButtonItem.setTitleTextAttributes([
@@ -313,11 +334,12 @@ extension MainViewController: EssentialViewMethods {
             .font: UIFont.useFont(ofSize: 14, weight: .Medium)
         ], for: .normal)
         self.navigationItem.leftBarButtonItem = leftBarButtonItem
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "Profile")?.withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(rightBarButtonItem(_:)))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: isDetail ? "RedProfile" : "Profile")?.withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(rightBarButtonItem(_:)))
     }
     
     func setPageViewController() {
         self.pageViewController.setViewControllers([self.subControllers[self.currentIndex]], direction: .forward, animated: true)
+        
     }
 }
 
@@ -342,6 +364,17 @@ extension MainViewController {
         }
         
     }
+    
+//    func loadTourDataRequest(success: (([Tour]) -> ())?) {
+//        self.mainModel.loadTourDataRequest { tourList in
+//            success?(tourList)
+//            
+//        } failure: { message in
+//            print("loadTourDataRequest error: \(message)")
+//        }
+//
+//    }
+
 }
 
 // MARK: - Extension for selector methods
@@ -357,12 +390,12 @@ extension MainViewController {
     }
     
     @objc func rightBarButtonItem(_ barButtonItem: UIBarButtonItem) {
-//        let vc = ProfileViewController()
-//        
-//        self.navigationController?.pushViewController(vc, animated: true)
-        let vc = TourDetailViewController()
+        let vc = ProfileViewController()
         
         self.navigationController?.pushViewController(vc, animated: true)
+//        let vc = TourDetailViewController()
+//        
+//        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     // MARK: 예약 완료 애니메이션
@@ -406,6 +439,24 @@ extension MainViewController {
             self.select(index: .detail)
         })
     }
+    
+//    @objc func imageSlideShow(_ gesture: UITapGestureRecognizer) {
+//        self.loadTourDataRequest { tourList in
+//            let tour = tourList[self.tourId - 1]
+//            self.mainModel.loadMyTourDataRequest(tourId: self.tourId) { MyTour in
+//                let vc = TourDetailViewController(tour: tour, myTour: MyTour)
+//
+//                self.navigationController?.pushViewController(vc, animated: true)
+//            } failure: { message in
+//                let vc = TourDetailViewController(tour: tour)
+//
+//                self.navigationController?.pushViewController(vc, animated: true)
+//                
+//            }
+//            
+//        }
+//        
+//    }
 }
 
 // MARK: - Extension for UIPageViewControllerDataSource, UIPageViewControllerDelegate
@@ -437,12 +488,12 @@ extension MainViewController: UIPageViewControllerDataSource, UIPageViewControll
             }
             self.currentIndex = self.subControllers.firstIndex(of: vc) ?? 0
             
-            
             DispatchQueue.main.async {
                 self.collectionView.reloadData()
             }
         }
     }
+    
 }
 
 // MARK: - Extension for UICollectionViewDelegateFlowLayout, UICollectionViewDataSource

@@ -10,6 +10,11 @@
 		050099C82C800D040091ED23 /* RenewalCalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050099C72C800D040091ED23 /* RenewalCalendarViewController.swift */; };
 		05437B452C52210700963271 /* AddressSearchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05437B442C52210700963271 /* AddressSearchTableViewCell.swift */; };
 		055F31E92C83A36E0023D38B /* RenewalEstimateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055F31E82C83A36E0023D38B /* RenewalEstimateViewController.swift */; };
+		055F31EC2C84038C0023D38B /* ImageSlideShowTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055F31EB2C84038C0023D38B /* ImageSlideShowTableViewCell.swift */; };
+		055F31EE2C8403940023D38B /* MainContentsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055F31ED2C8403940023D38B /* MainContentsTableViewCell.swift */; };
+		055F31F02C8404740023D38B /* RenewalMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055F31EF2C8404740023D38B /* RenewalMainViewController.swift */; };
+		055F31F22C840BB10023D38B /* RefactoringMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055F31F12C840BB10023D38B /* RefactoringMainViewController.swift */; };
+		056C684E2C844472004638DC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 056C684D2C844471004638DC /* GoogleService-Info.plist */; };
 		056E05672C7DC05000582D15 /* CircularProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056E05662C7DC05000582D15 /* CircularProgress.swift */; };
 		057806EB2C80388E007BDA7F /* SelectDatesCustomCalendarCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057806EA2C80388E007BDA7F /* SelectDatesCustomCalendarCell.swift */; };
 		0599490F2C7EA945000F7028 /* BusViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0599490E2C7EA945000F7028 /* BusViewController.swift */; };
@@ -17,7 +22,6 @@
 		059949132C7EAD40000F7028 /* BusImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 059949122C7EAD40000F7028 /* BusImageCollectionViewCell.swift */; };
 		059949152C7EBB52000F7028 /* ClauseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 059949142C7EBB52000F7028 /* ClauseViewController.swift */; };
 		059949172C7EBE4A000F7028 /* ClauseTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 059949162C7EBE4A000F7028 /* ClauseTableViewCell.swift */; };
-		05B6BCEE2C8386D10068261C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 05B6BCED2C8386D10068261C /* GoogleService-Info.plist */; };
 		05DD11732C64482C0005B073 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05DD11722C64482C0005B073 /* Server.swift */; };
 		05EDA1382C7D8C5B00966E6F /* PastHistoryMoreInfoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05EDA1372C7D8C5B00966E6F /* PastHistoryMoreInfoCollectionViewCell.swift */; };
 		05EDA13A2C7D9BFE00966E6F /* FAQTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05EDA1392C7D9BFE00966E6F /* FAQTableViewCell.swift */; };
@@ -72,6 +76,11 @@
 		050099C72C800D040091ED23 /* RenewalCalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenewalCalendarViewController.swift; sourceTree = "<group>"; };
 		05437B442C52210700963271 /* AddressSearchTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressSearchTableViewCell.swift; sourceTree = "<group>"; };
 		055F31E82C83A36E0023D38B /* RenewalEstimateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenewalEstimateViewController.swift; sourceTree = "<group>"; };
+		055F31EB2C84038C0023D38B /* ImageSlideShowTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSlideShowTableViewCell.swift; sourceTree = "<group>"; };
+		055F31ED2C8403940023D38B /* MainContentsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainContentsTableViewCell.swift; sourceTree = "<group>"; };
+		055F31EF2C8404740023D38B /* RenewalMainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenewalMainViewController.swift; sourceTree = "<group>"; };
+		055F31F12C840BB10023D38B /* RefactoringMainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefactoringMainViewController.swift; sourceTree = "<group>"; };
+		056C684D2C844471004638DC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		056E05662C7DC05000582D15 /* CircularProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgress.swift; sourceTree = "<group>"; };
 		057806EA2C80388E007BDA7F /* SelectDatesCustomCalendarCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectDatesCustomCalendarCell.swift; sourceTree = "<group>"; };
 		0599490E2C7EA945000F7028 /* BusViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusViewController.swift; sourceTree = "<group>"; };
@@ -80,7 +89,6 @@
 		059949142C7EBB52000F7028 /* ClauseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClauseViewController.swift; sourceTree = "<group>"; };
 		059949162C7EBE4A000F7028 /* ClauseTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClauseTableViewCell.swift; sourceTree = "<group>"; };
 		05AD2ADF2C7EE86D000E1827 /* RPA-P.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "RPA-P.entitlements"; sourceTree = "<group>"; };
-		05B6BCED2C8386D10068261C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		05DD11722C64482C0005B073 /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
 		05EDA1372C7D8C5B00966E6F /* PastHistoryMoreInfoCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PastHistoryMoreInfoCollectionViewCell.swift; sourceTree = "<group>"; };
 		05EDA1392C7D9BFE00966E6F /* FAQTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQTableViewCell.swift; sourceTree = "<group>"; };
@@ -147,6 +155,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		055F31EA2C8403730023D38B /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				055F31EF2C8404740023D38B /* RenewalMainViewController.swift */,
+				055F31F12C840BB10023D38B /* RefactoringMainViewController.swift */,
+				2D46F5AB2C3E448100C711E2 /* MainViewController.swift */,
+				055F31EB2C84038C0023D38B /* ImageSlideShowTableViewCell.swift */,
+				055F31ED2C8403940023D38B /* MainContentsTableViewCell.swift */,
+				2DA8211A2C41491A000EF1D9 /* EstimateViewController.swift */,
+				055F31E82C83A36E0023D38B /* RenewalEstimateViewController.swift */,
+				057806EC2C8038BD007BDA7F /* Calendar */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
 		057806EC2C8038BD007BDA7F /* Calendar */ = {
 			isa = PBXGroup;
 			children = (
@@ -189,8 +212,8 @@
 				05AD2ADF2C7EE86D000E1827 /* RPA-P.entitlements */,
 				2D46F5922C3DAF7100C711E2 /* LaunchScreen.storyboard */,
 				2D46F5902C3DAF7100C711E2 /* Assets.xcassets */,
-				05B6BCED2C8386D10068261C /* GoogleService-Info.plist */,
 				2D46F5952C3DAF7100C711E2 /* Info.plist */,
+				056C684D2C844471004638DC /* GoogleService-Info.plist */,
 				2DC277952C57666A0073E4A3 /* PrivacyInfo.xcprivacy */,
 				2D46F5872C3DAF6F00C711E2 /* AppDelegate.swift */,
 				2D46F5892C3DAF6F00C711E2 /* SceneDelegate.swift */,
@@ -230,11 +253,8 @@
 		2D46F5A12C3E114400C711E2 /* Main */ = {
 			isa = PBXGroup;
 			children = (
+				055F31EA2C8403730023D38B /* Main */,
 				2DCC4EA22C46671E0035FD24 /* Models */,
-				2D46F5AB2C3E448100C711E2 /* MainViewController.swift */,
-				2DA8211A2C41491A000EF1D9 /* EstimateViewController.swift */,
-				055F31E82C83A36E0023D38B /* RenewalEstimateViewController.swift */,
-				057806EC2C8038BD007BDA7F /* Calendar */,
 				05437B442C52210700963271 /* AddressSearchTableViewCell.swift */,
 				2DA8211E2C415172000EF1D9 /* ViewPagerCollectionViewCell.swift */,
 				2DA8211C2C414967000EF1D9 /* EstimateDetailViewController.swift */,
@@ -390,13 +410,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D46F5942C3DAF7100C711E2 /* LaunchScreen.storyboard in Resources */,
+				056C684E2C844472004638DC /* GoogleService-Info.plist in Resources */,
 				2DB4ADC22C5FCDBD00813097 /* CompletedReservation.gif in Resources */,
 				2D46F5912C3DAF7100C711E2 /* Assets.xcassets in Resources */,
 				2DB4ADC32C5FCDBD00813097 /* EstimateRequest.gif in Resources */,
 				2DB4ADC12C5FCDBD00813097 /* Splash.gif in Resources */,
 				2DC277962C5766D40073E4A3 /* PrivacyInfo.xcprivacy in Resources */,
 				2D46F5AF2C3E553600C711E2 /* PretendardVariable.ttf in Resources */,
-				05B6BCEE2C8386D10068261C /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -457,7 +477,9 @@
 				05EDA1382C7D8C5B00966E6F /* PastHistoryMoreInfoCollectionViewCell.swift in Sources */,
 				2D5342112C47C9D700B74FBF /* ReservationCompletedViewController.swift in Sources */,
 				2DEF5FE22C7193910089C020 /* ProfileDetailInfoTableViewCell.swift in Sources */,
+				055F31EE2C8403940023D38B /* MainContentsTableViewCell.swift in Sources */,
 				2DA8211F2C415172000EF1D9 /* ViewPagerCollectionViewCell.swift in Sources */,
+				055F31F22C840BB10023D38B /* RefactoringMainViewController.swift in Sources */,
 				2D6882922C49095700F9A9CD /* CalendarViewController.swift in Sources */,
 				059949152C7EBB52000F7028 /* ClauseViewController.swift in Sources */,
 				2DEF5FDD2C718C240089C020 /* ContractViewController.swift in Sources */,
@@ -485,6 +507,7 @@
 				2DCC4EA62C47B01F0035FD24 /* PaymentMethodTableViewCell.swift in Sources */,
 				0599490F2C7EA945000F7028 /* BusViewController.swift in Sources */,
 				2D46F59E2C3DB0D300C711E2 /* SupportingMethods.swift in Sources */,
+				055F31F02C8404740023D38B /* RenewalMainViewController.swift in Sources */,
 				056E05672C7DC05000582D15 /* CircularProgress.swift in Sources */,
 				2D46F58A2C3DAF6F00C711E2 /* SceneDelegate.swift in Sources */,
 				2DA8211B2C41491A000EF1D9 /* EstimateViewController.swift in Sources */,
@@ -497,6 +520,7 @@
 				2DEF5FE62C719CBD0089C020 /* FAQViewController.swift in Sources */,
 				2DB4ADC72C7066EF00813097 /* User.swift in Sources */,
 				2D46F5A32C3E3FB300C711E2 /* SplashViewController.swift in Sources */,
+				055F31EC2C84038C0023D38B /* ImageSlideShowTableViewCell.swift in Sources */,
 				059949132C7EAD40000F7028 /* BusImageCollectionViewCell.swift in Sources */,
 				2D0F91FB2C4841CB0014A87D /* EstimateConfirmationViewController.swift in Sources */,
 			);
