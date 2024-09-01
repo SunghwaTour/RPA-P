@@ -413,7 +413,7 @@ final class MainModel {
     }
     
     func loadMyTourDataRequest(tourId: Int, success: ((MyTour) -> ())?, failure: ((_ message: String) -> ())?) {
-        self.db.collection("\(UserData.Firestore.collectionName)/Sunghwatour/\(tourId)/Admin").document(ReferenceValues.uid).addSnapshotListener { querySnapshot, error in
+        self.db.collection("\(UserData.Firestore.collectionName)/Sunghwatour/\(tourId)/Admin").document(ReferenceValues.uid).getDocument { querySnapshot, error in
             if let error = error {
                 failure?("loadMyTourDataRequest Error: \(error.localizedDescription)")
                 

@@ -545,10 +545,12 @@ final class EstimateViewController: UIViewController {
     lazy var nextButton: UIButton = {
         let button = UIButton()
         button.setTitle("다음", for: .normal)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.useRGB(red: 184, green: 0, blue: 0), for: .normal)
         button.titleLabel?.font = .useFont(ofSize: 16, weight: .Bold)
-        button.backgroundColor = .useRGB(red: 184, green: 0, blue: 0)
-        button.layer.cornerRadius = 24
+        button.backgroundColor = .white
+        button.layer.cornerRadius = 2
+        button.layer.borderWidth = 1.0
+        button.layer.borderColor = UIColor.useRGB(red: 184, green: 0, blue: 0).cgColor
         button.addTarget(self, action: #selector(nextButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
@@ -1084,10 +1086,10 @@ extension EstimateViewController: EssentialViewMethods {
         
         // nextButton
         NSLayoutConstraint.activate([
-            self.nextButton.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 95),
-            self.nextButton.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -95),
-            self.nextButton.topAnchor.constraint(equalTo: self.numberView.bottomAnchor, constant: 38),
-            self.nextButton.heightAnchor.constraint(equalToConstant: 48)
+            self.nextButton.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
+            self.nextButton.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -20),
+            self.nextButton.topAnchor.constraint(equalTo: self.numberView.bottomAnchor, constant: 40),
+            self.nextButton.heightAnchor.constraint(equalToConstant: 44)
         ])
         
         // estimateDetailButton
