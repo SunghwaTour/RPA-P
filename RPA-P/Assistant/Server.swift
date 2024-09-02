@@ -26,7 +26,7 @@ struct Server {
                 return ""
                 
             case .RELEASE:
-                return ""
+                return "http://api.kingbuserp.link"
             }
         }
         
