@@ -8,9 +8,9 @@
 import Foundation
 
 struct Server {
-    static let server: Server = .DEV
+    static let server: Server = .RELEASE
     
-    // MARK: DEV v1.0.0 - 2024/08/06
+    // MARK: RELEASE v1.0.1 - 2024/09/03
     
     enum Server: String {
         case DEV
