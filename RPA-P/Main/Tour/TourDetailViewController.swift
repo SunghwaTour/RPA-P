@@ -352,6 +352,9 @@ extension TourDetailViewController {
     @objc func callButton(_ sender: UIButton) {
         self.sendTourRequest(tourId: "\(self.tour.id)", name: self.bankInfo.name, phone: ReferenceValues.phoneNumber, bank: self.bankInfo.bank) {
             print("success sendTourData")
+            self.guideBackgroudView.isHidden = true
+            self.navigationController?.popViewController(animated: true)
+            
             let url = "tel://1522-9821"
             
             if let openApp = URL(string: url), UIApplication.shared.canOpenURL(openApp) {
