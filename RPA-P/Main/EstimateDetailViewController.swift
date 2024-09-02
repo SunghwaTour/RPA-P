@@ -39,7 +39,7 @@ final class EstimateDetailViewController: UIViewController {
     lazy var emptyLabel: UILabel = {
         let label = UILabel()
         label.isHidden = true
-        label.text = "전화번호 등록이 되어있지 않습니다!\n전화번호로 로그인 해주세요!"
+        label.text = "견적을 신청해보세요!"
         label.textColor = .useRGB(red: 189, green: 189, blue: 189)
         label.font = .useFont(ofSize: 14, weight: .Medium)
         label.numberOfLines = 0
@@ -196,8 +196,16 @@ extension EstimateDetailViewController: EssentialViewMethods {
         SupportingMethods.shared.turnCoverView(.on)
         self.mainModel.getEstimateData { estimates in
             print(estimates)
-            self.emptyImageView.isHidden = true
-            self.emptyLabel.isHidden = true
+            if estimates.isEmpty {
+                self.emptyImageView.isHidden = false
+                self.emptyLabel.isHidden = false
+                
+            } else {
+                self.emptyImageView.isHidden = true
+                self.emptyLabel.isHidden = true
+                
+            }
+            
             self.estimateList = estimates
             
             DispatchQueue.main.async {
