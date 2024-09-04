@@ -1606,16 +1606,20 @@ extension EstimateViewController {
     }
     
     @objc func imageSlideShow(_ gesture: UITapGestureRecognizer) {
+        SupportingMethods.shared.turnCoverView(.on)
         self.loadTourDataRequest { tourList in
             let tour = tourList[self.tourId - 1]
             self.mainModel.loadMyTourDataRequest(tourId: self.tourId) { MyTour in
                 let vc = TourDetailViewController(tour: tour, myTour: MyTour)
 
                 self.navigationController?.pushViewController(vc, animated: true)
+                SupportingMethods.shared.turnCoverView(.off)
+                
             } failure: { message in
                 let vc = TourDetailViewController(tour: tour)
 
                 self.navigationController?.pushViewController(vc, animated: true)
+                SupportingMethods.shared.turnCoverView(.off)
                 
             }
             

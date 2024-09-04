@@ -221,6 +221,11 @@
 			<key>orderHint</key>
 			<integer>29</integer>
 		</dict>
+		<key>ImageSlideshow.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>46</integer>
+		</dict>
 		<key>Pods-RPA-P.xcscheme</key>
 		<dict>
 			<key>isShown</key>
