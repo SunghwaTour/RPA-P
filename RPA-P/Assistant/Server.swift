@@ -10,7 +10,7 @@ import Foundation
 struct Server {
     static let server: Server = .RELEASE
     
-    // MARK: RELEASE v1.0.1 - 2024/09/03
+    // MARK: RELEASE v1.0.2 - 2024/09/04
     
     enum Server: String {
         case DEV
