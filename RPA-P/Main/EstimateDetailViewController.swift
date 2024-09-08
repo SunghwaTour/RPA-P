@@ -53,6 +53,7 @@ final class EstimateDetailViewController: UIViewController {
         tableView.backgroundColor = .white
         tableView.showsVerticalScrollIndicator = false
         tableView.bounces = false
+        tableView.register(EstimateTourTableViewCell.self, forCellReuseIdentifier: "EstimateTourTableViewCell")
         tableView.register(EstimateDetailTableViewCell.self, forCellReuseIdentifier: "EstimateDetailTableViewCell")
         tableView.delegate = self
         tableView.dataSource = self
@@ -65,6 +66,7 @@ final class EstimateDetailViewController: UIViewController {
     
     private let mainModel = MainModel()
     var estimateList: [Estimate] = []
+    var tourList: [(tour: Tour, status: Bool)] = []
     var deposit: Double = 0
     
     init() {
@@ -208,9 +210,12 @@ extension EstimateDetailViewController: EssentialViewMethods {
             
             self.estimateList = estimates
             
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-                SupportingMethods.shared.turnCoverView(.off)
+            self.loadMyTourListDataRequest {
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                    SupportingMethods.shared.turnCoverView(.off)
+                    
+                }
                 
             }
             
@@ -241,6 +246,51 @@ extension EstimateDetailViewController {
             SupportingMethods.shared.turnCoverView(.off)
             
         }
+
+    }
+    
+    func loadMyTourListDataRequest(success: (() -> ())?) {
+        self.loadTourDataRequest { tourList in
+            self.getTokenRequest {
+                self.mainModel.loadTourRequest(phone: ReferenceValues.phoneNumber) { myTourList in
+                    let tourIdList: [(id: Int, status: Bool)] = myTourList.map({ ($0.tourId, $0.payDatetime == "" ? false : true ) })
+                    for tourId in tourIdList {
+                        for tour in tourList {
+                            if tour.id == tourId.id {
+                                self.tourList.append((tour: tour, status: tourId.status))
+                                break
+                                
+                            }
+                            
+                        }
+                        
+                    }
+                    
+                    success?()
+                    
+                } failure: { message in
+                    print("loadMyTourListDataRequest error: \(message)")
+                    self.tableView.reloadData()
+                    SupportingMethods.shared.turnCoverView(.off)
+                    
+                }
+                
+            }
+            
+        }
+        
+    }
+    
+    func loadTourDataRequest(success: (([Tour]) -> ())?) {
+        self.mainModel.loadTourDataRequest { tourList in
+            success?(tourList)
+            
+        } failure: { message in
+            print("loadTourDataRequest error: \(message)")
+            SupportingMethods.shared.turnCoverView(.off)
+            
+        }
+        
 
     }
     
@@ -354,17 +404,40 @@ extension EstimateDetailViewController {
 
 // MARK: - Extension for UITableViewDelegate, UITableViewDataSource {
 extension EstimateDetailViewController: UITableViewDelegate, UITableViewDataSource {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+        
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.estimateList.count
+        if section == 0 {
+            return 1
+            
+        } else {
+            return self.estimateList.count
+            
+        }
+        
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "EstimateDetailTableViewCell", for: indexPath) as! EstimateDetailTableViewCell
-        let estimate = self.estimateList[indexPath.row]
+        if indexPath.section == 0 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "EstimateTourTableViewCell", for: indexPath) as! EstimateTourTableViewCell
+            
+            cell.setCell(tourList: self.tourList)
+            
+            return cell
+            
+        } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "EstimateDetailTableViewCell", for: indexPath) as! EstimateDetailTableViewCell
+            let estimate = self.estimateList[indexPath.row]
+            
+            cell.setCell(estimate: estimate)
+            
+            return cell
+            
+        }
         
-        cell.setCell(estimate: estimate)
-        
-        return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

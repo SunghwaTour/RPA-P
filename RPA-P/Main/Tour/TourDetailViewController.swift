@@ -93,12 +93,12 @@ final class TourDetailViewController: UIViewController {
     
     let mainModel = MainModel()
     var tour: Tour
-    var myTour: MyTour?
+    var myTour: MyTourItem?
     var status: String = "off"
     
     var bankInfo: (bank: String, name: String) = ("", "")
     
-    init(tour: Tour, myTour: MyTour? = nil) {
+    init(tour: Tour, myTour: MyTourItem? = nil) {
         self.tour = tour
         self.myTour = myTour
         super.init(nibName: nil, bundle: nil)

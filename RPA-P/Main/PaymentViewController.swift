@@ -287,6 +287,17 @@ final class PaymentViewController: UIViewController {
         return button
     }()
     
+    lazy var failedCertificationImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.isHidden = false
+        imageView.image = .useCustomImage("failedCertification")
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return imageView
+    }()
+    
     lazy var authenticationNumberView: UIView = {
         let view = UIView()
         view.isHidden = true
@@ -488,6 +499,7 @@ extension PaymentViewController: EssentialViewMethods {
             self.authenticationGuideLabel,
             self.nameView,
             self.authenticationStackView,
+            self.failedCertificationImageView,
             self.paymentMethodTitleLabel,
             self.paymentMethodTableView,
             self.doneButton,
@@ -701,6 +713,14 @@ extension PaymentViewController: EssentialViewMethods {
             self.numberButton.topAnchor.constraint(equalTo: self.numberView.topAnchor),
         ])
         
+        // failedCertificationImageView
+        NSLayoutConstraint.activate([
+            self.failedCertificationImageView.leadingAnchor.constraint(equalTo: self.numberView.leadingAnchor, constant: 46),
+            self.failedCertificationImageView.topAnchor.constraint(equalTo: self.numberView.bottomAnchor, constant: 1),
+            self.failedCertificationImageView.widthAnchor.constraint(equalToConstant: 268),
+            self.failedCertificationImageView.heightAnchor.constraint(equalToConstant: 38),
+        ])
+        
         // authenticationNumberView
         NSLayoutConstraint.activate([
             self.authenticationNumberView.heightAnchor.constraint(equalToConstant: 44)
@@ -884,6 +904,7 @@ extension PaymentViewController {
                 SupportingMethods.shared.turnCoverView(.off)
                 self.sendAuthenticationNumberButton.setTitle("다시 보내기", for: .normal)
                 
+                self.failedCertificationImageView.isHidden = true
                 self.authenticationNumberView.isHidden = false
                 
             }
@@ -982,9 +1003,9 @@ extension PaymentViewController {
                                 if let mainView = viewController as? MainViewController {
                                     
                                     self.navigationController?.popToViewController(mainView, animated: true)
-                                    
-                                    mainView.navigationController?.setNavigationBarHidden(true, animated: false)
-                                    mainView.completedRequestReservationBaseView.isHidden = false
+//                                    
+//                                    mainView.navigationController?.setNavigationBarHidden(true, animated: false)
+//                                    mainView.completedRequestReservationBaseView.isHidden = false
                                     ReferenceValues.useCount += 1
                                     SupportingMethods.shared.turnCoverView(.off)
                                     

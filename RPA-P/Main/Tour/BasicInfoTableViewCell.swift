@@ -258,7 +258,7 @@ extension BasicInfoTableViewCell {
 
 // MARK: - Extension for methods added
 extension BasicInfoTableViewCell {
-    func setCell(tour: Tour, myTour: MyTour?) {
+    func setCell(tour: Tour, myTour: MyTourItem?) {
         self.backgroundImageView.image = .useCustomImage(tour.imageName)
         self.statusLabel.text = "\(tour.status == "0" ? "모집중" : "모집 완료") - 참여자 \(tour.min)명 이상부터 확정"
         self.durationDateLabel.text = "\(tour.startTime.split(separator: " ")[0]) ~ \(tour.endTime.split(separator: " ")[0])"
@@ -281,7 +281,7 @@ extension BasicInfoTableViewCell {
             return
         }
         self.reservationStatusButton.isHidden = false
-        if myTour.isCompletedDeposit {
+        if myTour.payDatetime != "" {
             self.reservationStatusButton.setTitle("예약완료", for: .normal)
             
         } else {

@@ -190,7 +190,7 @@ extension MainViewController: EssentialViewMethods {
         NotificationCenter.default.addObserver(self, selector: #selector(moveEstimateDetail(_:)), name: Notification.Name("MoveEstimateDetail"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(moveEstimate(_:)), name: Notification.Name("MoveEstimate"), object: nil)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(completedReqeustReservation(_:)), name: Notification.Name("CompletedReqeustReservation"), object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(completedReqeustReservation(_:)), name: Notification.Name("CompletedReqeustReservation"), object: nil)
     }
     
     func setSubviews() {
@@ -299,6 +299,17 @@ extension MainViewController: EssentialViewMethods {
     func setViewAfterTransition() {
 //        self.navigationController?.setNavigationBarHidden(false, animated: true)
         //self.tabBarController?.tabBar.isHidden = false
+        self.getEstimateDataAtOnlyOnce { estimates in
+            for estimate in estimates {
+                if estimate.isCompletedReservation == false {
+                    SupportingMethods.shared.showAlertNoti(title: "진행중인 견적이 있습니다.")
+                    break
+                    
+                }
+                
+            }
+            
+        }
     }
     
     
@@ -374,6 +385,17 @@ extension MainViewController {
 //        }
 //
 //    }
+    
+    func getEstimateDataAtOnlyOnce(success: (([Estimate]) -> ())?) {
+        self.mainModel.getEstimateDataAtOnlyOnce { estimate in
+            success?(estimate)
+            
+        } failure: { message in
+            print("error: \(message)")
+            SupportingMethods.shared.turnCoverView(.off)
+        }
+
+    }
 
 }
 

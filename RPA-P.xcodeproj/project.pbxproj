@@ -41,6 +41,8 @@
 		2D46F5AF2C3E553600C711E2 /* PretendardVariable.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2D46F5A72C3E42F500C711E2 /* PretendardVariable.ttf */; };
 		2D5342112C47C9D700B74FBF /* ReservationCompletedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5342102C47C9D700B74FBF /* ReservationCompletedViewController.swift */; };
 		2D5342132C47E79000B74FBF /* MoreInfoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5342122C47E79000B74FBF /* MoreInfoCollectionViewCell.swift */; };
+		2D5A98722C8D55C800C06480 /* EstimateTourCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5A98712C8D55C800C06480 /* EstimateTourCollectionViewCell.swift */; };
+		2D5A98742C8D55D000C06480 /* EstimateTourTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5A98732C8D55D000C06480 /* EstimateTourTableViewCell.swift */; };
 		2D6882922C49095700F9A9CD /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D6882912C49095700F9A9CD /* CalendarViewController.swift */; };
 		2D835A472C465D7000DF9054 /* CategoryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D835A462C465D7000DF9054 /* CategoryCollectionViewCell.swift */; };
 		2D8EFEFC2C831ED900ACD818 /* TourDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D8EFEFB2C831ED900ACD818 /* TourDetailViewController.swift */; };
@@ -112,6 +114,8 @@
 		2D46F5AD2C3E536000C711E2 /* PaymentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentViewController.swift; sourceTree = "<group>"; };
 		2D5342102C47C9D700B74FBF /* ReservationCompletedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReservationCompletedViewController.swift; sourceTree = "<group>"; };
 		2D5342122C47E79000B74FBF /* MoreInfoCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreInfoCollectionViewCell.swift; sourceTree = "<group>"; };
+		2D5A98712C8D55C800C06480 /* EstimateTourCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EstimateTourCollectionViewCell.swift; sourceTree = "<group>"; };
+		2D5A98732C8D55D000C06480 /* EstimateTourTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EstimateTourTableViewCell.swift; sourceTree = "<group>"; };
 		2D6882912C49095700F9A9CD /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
 		2D835A462C465D7000DF9054 /* CategoryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCollectionViewCell.swift; sourceTree = "<group>"; };
 		2D8EFEFB2C831ED900ACD818 /* TourDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TourDetailViewController.swift; sourceTree = "<group>"; };
@@ -158,13 +162,9 @@
 		055F31EA2C8403730023D38B /* Main */ = {
 			isa = PBXGroup;
 			children = (
-				055F31EF2C8404740023D38B /* RenewalMainViewController.swift */,
-				055F31F12C840BB10023D38B /* RefactoringMainViewController.swift */,
+				2D0E9D3E2C8BAC5300581E70 /* Deprecated */,
 				2D46F5AB2C3E448100C711E2 /* MainViewController.swift */,
-				055F31EB2C84038C0023D38B /* ImageSlideShowTableViewCell.swift */,
-				055F31ED2C8403940023D38B /* MainContentsTableViewCell.swift */,
 				2DA8211A2C41491A000EF1D9 /* EstimateViewController.swift */,
-				055F31E82C83A36E0023D38B /* RenewalEstimateViewController.swift */,
 				057806EC2C8038BD007BDA7F /* Calendar */,
 			);
 			path = Main;
@@ -184,6 +184,18 @@
 			isa = PBXGroup;
 			children = (
 				2D6882912C49095700F9A9CD /* CalendarViewController.swift */,
+			);
+			path = Deprecated;
+			sourceTree = "<group>";
+		};
+		2D0E9D3E2C8BAC5300581E70 /* Deprecated */ = {
+			isa = PBXGroup;
+			children = (
+				055F31EF2C8404740023D38B /* RenewalMainViewController.swift */,
+				055F31F12C840BB10023D38B /* RefactoringMainViewController.swift */,
+				055F31EB2C84038C0023D38B /* ImageSlideShowTableViewCell.swift */,
+				055F31ED2C8403940023D38B /* MainContentsTableViewCell.swift */,
+				055F31E82C83A36E0023D38B /* RenewalEstimateViewController.swift */,
 			);
 			path = Deprecated;
 			sourceTree = "<group>";
@@ -258,6 +270,8 @@
 				05437B442C52210700963271 /* AddressSearchTableViewCell.swift */,
 				2DA8211E2C415172000EF1D9 /* ViewPagerCollectionViewCell.swift */,
 				2DA8211C2C414967000EF1D9 /* EstimateDetailViewController.swift */,
+				2D5A98732C8D55D000C06480 /* EstimateTourTableViewCell.swift */,
+				2D5A98712C8D55C800C06480 /* EstimateTourCollectionViewCell.swift */,
 				2DEF5FDC2C718C240089C020 /* ContractViewController.swift */,
 				2D0F91FC2C48F4200014A87D /* EstimateDetailTableViewCell.swift */,
 				2D0F91FA2C4841CB0014A87D /* EstimateConfirmationViewController.swift */,
@@ -474,11 +488,13 @@
 				2D46F5AC2C3E448100C711E2 /* MainViewController.swift in Sources */,
 				2DEF5FE82C719D730089C020 /* PastHistoryViewController.swift in Sources */,
 				2D8EFF002C83220100ACD818 /* AddressTourTableViewCell.swift in Sources */,
+				2D5A98722C8D55C800C06480 /* EstimateTourCollectionViewCell.swift in Sources */,
 				05EDA1382C7D8C5B00966E6F /* PastHistoryMoreInfoCollectionViewCell.swift in Sources */,
 				2D5342112C47C9D700B74FBF /* ReservationCompletedViewController.swift in Sources */,
 				2DEF5FE22C7193910089C020 /* ProfileDetailInfoTableViewCell.swift in Sources */,
 				055F31EE2C8403940023D38B /* MainContentsTableViewCell.swift in Sources */,
 				2DA8211F2C415172000EF1D9 /* ViewPagerCollectionViewCell.swift in Sources */,
+				2D5A98742C8D55D000C06480 /* EstimateTourTableViewCell.swift in Sources */,
 				055F31F22C840BB10023D38B /* RefactoringMainViewController.swift in Sources */,
 				2D6882922C49095700F9A9CD /* CalendarViewController.swift in Sources */,
 				059949152C7EBB52000F7028 /* ClauseViewController.swift in Sources */,

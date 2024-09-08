@@ -17,13 +17,14 @@ final class MainModel {
     private(set) var sendConfirmReservationRequest: DataRequest?
     private(set) var getContractRequest: DataRequest?
     private(set) var sendTourRequest: DataRequest?
+    private(set) var loadTourRequest: DataRequest?
     
     // MARK: Firebase
     private var db = Firestore.firestore()
     
     private(set) var getEstimateData: DataRequest?
     private(set) var loadTourDataRequest: DataRequest?
-    private(set) var loadMyTourDataRequest: DataRequest?
+//    private(set) var loadMyTourDataRequest: DataRequest?
     private(set) var registerUserData: DataRequest?
     private(set) var registerTourData: DataRequest?
     
@@ -313,6 +314,53 @@ final class MainModel {
         }
     }
     
+    func loadTourRequest(phone: String, success: (([MyTourItem]) -> ())?, failure: ((_ message: String) -> ())?) {
+        let url = Server.server.URL + "/dispatch/tour"
+        
+        let headers: HTTPHeaders = [
+            "accept":"application/json",
+            "Authorization": User.shared.accessToken
+        ]
+        
+        let parameters: Parameters = [
+            "phone": phone,
+        ]
+        
+        self.loadTourRequest = AF.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+        
+        self.loadTourRequest?.responseData { (response) in
+            switch response.result {
+            case .success(let data):
+                guard let statusCode = response.response?.statusCode else {
+                    print("loadTourRequest failure: statusCode nil")
+                    failure?("statusCodeNil")
+                    
+                    return
+                }
+                
+                guard statusCode >= 200 && statusCode < 300 else {
+                    print("loadTourRequest failure: statusCode(\(statusCode))")
+                    failure?("statusCodeError")
+                    
+                    return
+                }
+                
+                if let decodedData = try? JSONDecoder().decode(MyTour.self, from: data) {
+                    print("loadTourRequest succeeded")
+                    success?(decodedData.data)
+                    
+                } else {
+                    print("loadTourRequest failure: API 성공, Parsing 실패")
+                    failure?("API 성공, Parsing 실패")
+                }
+                
+            case .failure(let error):
+                print("loadTourRequest error: \(error.localizedDescription)")
+                failure?(error.localizedDescription)
+            }
+        }
+    }
+    
     // MARK: Firebase
     func getEstimateData(success: (([Estimate]) -> ())?, failure: ((String) -> ())?) {
         let uid = ReferenceValues.uid
@@ -353,22 +401,63 @@ final class MainModel {
                         case .modified:
                             print("modified")
                             print("changedId: \(change.document.documentID)")
-                            for estimate in estimates {
-                                if estimate.documentId == change.document.documentID {
-                                    if estimate.isCompletedReservation == true {
-                                        SupportingMethods.shared.sendLocalPush(title: "운행이 확정되었습니다!", body: "지금 알림을 눌러 확인해보세요!", identifier: "CompletedReservation")
-                                        break
-                                        
-                                    }
-                                    
-                                }
-                                
-                            }
+//                            for estimate in estimates {
+//                                if estimate.documentId == change.document.documentID {
+//                                    if estimate.isCompletedReservation == true {
+//                                        SupportingMethods.shared.sendLocalPush(title: "운행이 확정되었습니다!", body: "지금 알림을 눌러 확인해보세요!", identifier: "CompletedReservation")
+//                                        break
+//                                        
+//                                    }
+//                                    
+//                                }
+//                                
+//                            }
                         case .removed:
                             print("removed")
                         }
                     }
                     
+                    success?(estimates)
+                    
+                }
+                
+            }
+            
+        }
+        
+    }
+    
+    func getEstimateDataAtOnlyOnce(success: (([Estimate]) -> ())?, failure: ((String) -> ())?) {
+        let uid = ReferenceValues.uid
+        
+        if uid == "null" {
+            failure?("전화번호 인증 필요.")
+        } else {
+            self.db.collection("\(Server.server.firebaseServerURL)/User/\(uid)/Estimate").order(by: "departureIndex").getDocuments { querySnapshot, error in
+                if let error = error {
+                    failure?("getEstimateData Error: \(error.localizedDescription)")
+                    
+                } else {
+                    guard let querySnapshot = querySnapshot else {
+                        failure?("getEstimateData Error: Empty Data")
+                        return
+                    }
+                    
+                    let estimates: [Estimate] = querySnapshot.documents.compactMap { doc -> Estimate? in
+                        do {
+                            let jsonData = try JSONSerialization.data(withJSONObject: doc.data(), options: [])
+                            let estimate = try JSONDecoder().decode(Estimate.self, from: jsonData)
+                            estimate.documentId = doc.documentID
+                            
+                            return estimate
+                            
+                        } catch let error {
+                            failure?(error.localizedDescription)
+                            return nil
+                            
+                        }
+                        
+                    }
                     success?(estimates)
                     
                 }
@@ -412,38 +501,38 @@ final class MainModel {
         }
     }
     
-    func loadMyTourDataRequest(tourId: Int, success: ((MyTour) -> ())?, failure: ((_ message: String) -> ())?) {
-        self.db.collection("\(UserData.Firestore.collectionName)/Sunghwatour/\(tourId)/Admin").document(ReferenceValues.uid).getDocument { querySnapshot, error in
-            if let error = error {
-                failure?("loadMyTourDataRequest Error: \(error.localizedDescription)")
-                
-            } else {
-                guard let querySnapshot = querySnapshot else {
-                    failure?("loadMyTourDataRequest Error: Empty Data")
-                    return
-                }
-                
-                do {
-                    if querySnapshot.exists {
-                        let jsonData = try JSONSerialization.data(withJSONObject: querySnapshot.data(), options: [])
-                        let tour = try JSONDecoder().decode(MyTour.self, from: jsonData)
-                        success?(tour)
-                        
-                    } else {
-                        failure?("Empty Data")
-                        
-                    }
-                    
-                    
-                } catch let error {
-                    failure?(error.localizedDescription)
-                    
-                }
-                
-            }
-            
-        }
-    }
+//    func loadMyTourDataRequest(tourId: Int, success: ((MyTour) -> ())?, failure: ((_ message: String) -> ())?) {
+//        self.db.collection("\(UserData.Firestore.collectionName)/Sunghwatour/\(tourId)/Admin").document(ReferenceValues.uid).getDocument { querySnapshot, error in
+//            if let error = error {
+//                failure?("loadMyTourDataRequest Error: \(error.localizedDescription)")
+//                
+//            } else {
+//                guard let querySnapshot = querySnapshot else {
+//                    failure?("loadMyTourDataRequest Error: Empty Data")
+//                    return
+//                }
+//                
+//                do {
+//                    if querySnapshot.exists {
+//                        let jsonData = try JSONSerialization.data(withJSONObject: querySnapshot.data(), options: [])
+//                        let tour = try JSONDecoder().decode(MyTour.self, from: jsonData)
+//                        success?(tour)
+//                        
+//                    } else {
+//                        failure?("Empty Data")
+//                        
+//                    }
+//                    
+//                    
+//                } catch let error {
+//                    failure?(error.localizedDescription)
+//                    
+//                }
+//                
+//            }
+//            
+//        }
+//    }
     
     func registerUserData(uid: String, success: (() -> ())?, failure: ((_ message: String) -> ())?) {
         self.db.collection("\(UserData.Firestore.collectionName)/User").document(uid).setData([
@@ -720,13 +809,40 @@ struct Tour: Codable {
     let imageName: String
 }
 
+//struct MyTour: Codable {
+//    let tourId: Int
+//    let name: String
+//    let bank: String
+//    let phoneNumber: String
+//    let placeName: String
+//    let isCompletedDeposit: Bool
+//}
+
 struct MyTour: Codable {
-    let tourId: Int
+    let data: [MyTourItem]
+    
+}
+
+struct MyTourItem: Codable {
+    let id: Int
+    let userUid: String
     let name: String
+    let phone: String
     let bank: String
-    let phoneNumber: String
-    let placeName: String
-    let isCompletedDeposit: Bool
+    let payDatetime: String
+    let paymentStatus: String
+    let tourId: Int
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case userUid = "user_uid"
+        case name
+        case phone
+        case bank
+        case payDatetime = "pay_datetime"
+        case paymentStatus = "payment_status"
+        case tourId = "tour_id"
+    }
 }
 
 // MARK: - Kakao API

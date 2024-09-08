@@ -53,6 +53,31 @@ final class ReservationTourTableViewCell: UITableViewCell {
         return textField
     }()
     
+    lazy var accountTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "*계좌번호"
+        label.textColor = .black
+        label.font = .useFont(ofSize: 14, weight: .Regular)
+        label.asFontColor(targetString: "*", font: .useFont(ofSize: 14, weight: .Regular), color: .red)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var accountTextField: UITextField = {
+        let textField = UITextField()
+        textField.addLeftPadding()
+        textField.setPlaceholder(placeholder: "계좌번호를 입력해주세요.")
+        textField.font = .useFont(ofSize: 14, weight: .Regular)
+        textField.borderStyle = .none
+        textField.layer.borderColor = UIColor.useRGB(red: 224, green: 224, blue: 224).cgColor
+        textField.layer.borderWidth = 1.0
+        textField.layer.cornerRadius = 2
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        
+        return textField
+    }()
+    
     lazy var nameTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "*입금자명"
@@ -181,6 +206,17 @@ final class ReservationTourTableViewCell: UITableViewCell {
         return label
     }()
     
+    lazy var failedCertificationImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.isHidden = false
+        imageView.image = .useCustomImage("failedCertification")
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return imageView
+    }()
+    
     var isAuthenticated: Bool = false
     var verificationID: String = ""
     
@@ -243,6 +279,8 @@ extension ReservationTourTableViewCell {
             self.infoTitleLabel,
             self.bankTitleLabel,
             self.bankTextField,
+            self.accountTitleLabel,
+            self.accountTextField,
             self.nameTitleLabel,
             self.nameTextField,
             self.numberAuthenticationTitleLabel,
@@ -250,6 +288,7 @@ extension ReservationTourTableViewCell {
             self.numberAuthenticationStackView,
             self.sendAuthenticationButton,
             self.doneAuthenticationButton,
+            self.failedCertificationImageView,
         ], to: self)
     }
     
@@ -287,10 +326,25 @@ extension ReservationTourTableViewCell {
             self.bankTextField.heightAnchor.constraint(equalToConstant: 44),
         ])
         
+        // accountTitleLabel
+        NSLayoutConstraint.activate([
+            self.accountTitleLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 23),
+            self.accountTitleLabel.topAnchor.constraint(equalTo: self.bankTextField.bottomAnchor, constant: 20),
+            self.accountTitleLabel.heightAnchor.constraint(equalToConstant: 20),
+        ])
+        
+        // accountTextField
+        NSLayoutConstraint.activate([
+            self.accountTextField.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
+            self.accountTextField.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20),
+            self.accountTextField.topAnchor.constraint(equalTo: self.accountTitleLabel.bottomAnchor, constant: 5),
+            self.accountTextField.heightAnchor.constraint(equalToConstant: 44),
+        ])
+        
         // nameTitleLabel
         NSLayoutConstraint.activate([
             self.nameTitleLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 23),
-            self.nameTitleLabel.topAnchor.constraint(equalTo: self.bankTextField.bottomAnchor, constant: 15),
+            self.nameTitleLabel.topAnchor.constraint(equalTo: self.accountTextField.bottomAnchor, constant: 15),
             self.nameTitleLabel.heightAnchor.constraint(equalToConstant: 20),
         ])
         
@@ -348,23 +402,37 @@ extension ReservationTourTableViewCell {
             self.doneAuthenticationButton.heightAnchor.constraint(equalToConstant: 30),
         ])
         
+        // failedCertificationImageView
+        NSLayoutConstraint.activate([
+            self.failedCertificationImageView.leadingAnchor.constraint(equalTo: self.numberTextField.leadingAnchor, constant: 63),
+            self.failedCertificationImageView.topAnchor.constraint(equalTo: self.numberTextField.bottomAnchor, constant: 7),
+            self.failedCertificationImageView.widthAnchor.constraint(equalToConstant: 268),
+            self.failedCertificationImageView.heightAnchor.constraint(equalToConstant: 38),
+        ])
     }
 }
 
 // MARK: - Extension for methods added
 extension ReservationTourTableViewCell {
-    func setCell(myTour: MyTour?) {
+    func setCell(myTour: MyTourItem?) {
         guard let myTour = myTour else { return }
-        self.bankTextField.text = myTour.bank
+        let bank = myTour.bank.split(separator: " ")
+        
+        self.bankTextField.text = String(bank[0])
+        self.accountTextField.text = bank.count >= 2 ? String(bank[1]) : "계좌번호 없음"
         self.nameTextField.text = myTour.name
-        self.numberTextField.text = myTour.phoneNumber
+        self.numberTextField.text = myTour.phone
         
         self.bankTextField.isEnabled = false
         self.bankTextField.backgroundColor = .useRGB(red: 189, green: 189, blue: 189)
+        self.accountTextField.isEnabled = false
+        self.accountTextField.backgroundColor = .useRGB(red: 189, green: 189, blue: 189)
         self.nameTextField.isEnabled = false
         self.nameTextField.backgroundColor = .useRGB(red: 189, green: 189, blue: 189)
         self.numberTextField.isEnabled = false
         self.numberTextField.backgroundColor = .useRGB(red: 189, green: 189, blue: 189)
+        
+        self.failedCertificationImageView.isHidden = true
         
         self.sendAuthenticationButton.isEnabled = false
     }
@@ -375,6 +443,10 @@ extension ReservationTourTableViewCell {
     @objc func sendAuthenticationButton(_ sender: UIButton) {
         guard self.bankTextField.text != "" else {
             SupportingMethods.shared.showAlertNoti(title: "입금 은행을 입력해주세요.")
+            return
+        }
+        guard self.accountTextField.text != "" else {
+            SupportingMethods.shared.showAlertNoti(title: "계좌번호를 입력해주세요.")
             return
         }
         guard self.nameTextField.text != "" else {
@@ -402,11 +474,15 @@ extension ReservationTourTableViewCell {
                 self.authenticationTextField.isHidden = false
                 self.doneAuthenticationButton.isHidden = false
                 self.alertLabel.isHidden = false
+                self.failedCertificationImageView.isHidden = true
                 
                 NotificationCenter.default.post(name: Notification.Name("reloadDataForDesgin"), object: nil)
                 
                 self.bankTextField.isEnabled = false
                 self.bankTextField.backgroundColor = .useRGB(red: 189, green: 189, blue: 189)
+                
+                self.accountTextField.isEnabled = false
+                self.accountTextField.backgroundColor = .useRGB(red: 189, green: 189, blue: 189)
                 
                 self.nameTextField.isEnabled = false
                 self.nameTextField.backgroundColor = .useRGB(red: 189, green: 189, blue: 189)
@@ -456,7 +532,20 @@ extension ReservationTourTableViewCell {
                 
                 self.mainModel.registerUserData(uid: uid) {
                     print("PaymentViewController registerUserData Success")
-                    NotificationCenter.default.post(name: Notification.Name("reservationButtonOn"), object: nil, userInfo: ["bank": self.bankTextField.text!, "name": self.nameTextField.text!])
+                    var account = ""
+                    if self.accountTextField.text!.contains("-") {
+                        let tempString = self.accountTextField.text!.split(separator: "-")
+                        for temp in tempString {
+                            account += temp
+                            
+                        }
+                        
+                    } else {
+                        account = self.accountTextField.text!.trimmingCharacters(in: .whitespacesAndNewlines)
+                        
+                    }
+                    
+                    NotificationCenter.default.post(name: Notification.Name("reservationButtonOn"), object: nil, userInfo: ["bank": "\(self.bankTextField.text!.trimmingCharacters(in: .whitespaces)) \(account)", "name": self.nameTextField.text!])
                     
                 } failure: { message in
                     print("error: \(message)")

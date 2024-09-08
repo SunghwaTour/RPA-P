@@ -33,7 +33,7 @@ final class EstimateViewController: UIViewController {
     lazy var imageSlideShow: ImageSlideshow = {
         let pageIndicator = UIPageControl()
         pageIndicator.currentPage = 0
-        pageIndicator.currentPageIndicatorTintColor = .useRGB(red: 189, green: 189, blue: 189)
+        pageIndicator.currentPageIndicatorTintColor = .useRGB(red: 184, green: 0, blue: 0)
         pageIndicator.pageIndicatorTintColor = .useRGB(red: 224, green: 224, blue: 224)
         pageIndicator.hidesForSinglePage = true
         pageIndicator.numberOfPages = 4
@@ -1126,6 +1126,7 @@ extension EstimateViewController: EssentialViewMethods {
     func setViewAfterTransition() {
         //self.navigationController?.setNavigationBarHidden(false, animated: true)
         //self.tabBarController?.tabBar.isHidden = false
+        
     }
 }
 
@@ -1233,6 +1234,19 @@ extension EstimateViewController {
         }
 
     }
+    
+    func getTokenRequest(success: (() -> ())?) {
+        self.mainModel.getTokenRequest {
+            success?()
+            
+        } failure: { message in
+            print("error: \(message)")
+            SupportingMethods.shared.turnCoverView(.off)
+            
+        }
+
+    }
+    
 }
 
 // MARK: - Extension for selector methods
@@ -1538,8 +1552,9 @@ extension EstimateViewController {
                     busCount = 0
                     
                 } else if Int(peopleCount!)! <= 25 {
-                    guard Int(peopleCount!)! > 10 else {
+                    guard Int(peopleCount!)! >= 10 else {
                         SupportingMethods.shared.showAlertNoti(title: "인원은 10명 이상이어야 합니다.")
+                        SupportingMethods.shared.turnCoverView(.off)
                         return
                     }
                     busType = .twentyFive
@@ -1609,18 +1624,30 @@ extension EstimateViewController {
         SupportingMethods.shared.turnCoverView(.on)
         self.loadTourDataRequest { tourList in
             let tour = tourList[self.tourId - 1]
-            self.mainModel.loadMyTourDataRequest(tourId: self.tourId) { MyTour in
-                let vc = TourDetailViewController(tour: tour, myTour: MyTour)
-
-                self.navigationController?.pushViewController(vc, animated: true)
-                SupportingMethods.shared.turnCoverView(.off)
-                
-            } failure: { message in
+            // FIXME: Server에서 받은 mytour로 데이터 넘겨주기
+            if ReferenceValues.phoneNumber == "null" {
                 let vc = TourDetailViewController(tour: tour)
 
                 self.navigationController?.pushViewController(vc, animated: true)
                 SupportingMethods.shared.turnCoverView(.off)
                 
+            } else {
+                self.getTokenRequest {
+                    self.mainModel.loadTourRequest(phone: ReferenceValues.phoneNumber) { myTourList in
+                        let myTour = myTourList.filter({ $0.tourId == self.tourId }).first
+                        let vc = TourDetailViewController(tour: tour, myTour: myTour)
+
+                        self.navigationController?.pushViewController(vc, animated: true)
+                        SupportingMethods.shared.turnCoverView(.off)
+                        
+                    } failure: { message in
+                        print("loadTourRequest error: \(message)")
+                        SupportingMethods.shared.turnCoverView(.off)
+                        
+                    }
+                    
+                }
+
             }
             
         }
