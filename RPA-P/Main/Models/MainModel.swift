@@ -433,7 +433,7 @@ final class MainModel {
         if uid == "null" {
             failure?("전화번호 인증 필요.")
         } else {
-            self.db.collection("\(Server.server.firebaseServerURL)/User/\(uid)/Estimate").order(by: "departureIndex").getDocuments { querySnapshot, error in
+            self.db.collection("\(Server.server.firebaseServerURL)/User/\(uid)/Estimate").order(by: "departureIndex").addSnapshotListener { querySnapshot, error in
                 if let error = error {
                     failure?("getEstimateData Error: \(error.localizedDescription)")
                     
