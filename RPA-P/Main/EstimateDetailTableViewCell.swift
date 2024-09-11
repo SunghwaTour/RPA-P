@@ -503,7 +503,7 @@ extension EstimateDetailTableViewCell {
             self.reservationConfirmButton.layer.borderColor = UIColor.useRGB(red: 184, green: 0, blue: 0).cgColor
             
             if estimate.isCompletedReservation {
-                self.reservationConfirmButton.setTitle("계약서 보기", for: .normal)
+                self.reservationConfirmButton.setTitle("견적서&계약서 보기", for: .normal)
                 self.distanceButton.setTitleColor(.useRGB(red: 184, green: 0, blue: 0), for: .normal)
                 self.distanceButton.layer.borderColor = UIColor.useRGB(red: 184, green: 0, blue: 0).cgColor
                 self.kindsOfEstimateButton.backgroundColor = .useRGB(red: 184, green: 0, blue: 0)
@@ -517,11 +517,11 @@ extension EstimateDetailTableViewCell {
             }
             
         } else {
-            self.reservationConfirmButton.isEnabled = false
-            self.reservationConfirmButton.setTitle("견적 내는 중", for: .normal)
-            self.reservationConfirmButton.setTitleColor(.useRGB(red: 167, green: 167, blue: 167), for: .normal)
-            self.reservationConfirmButton.backgroundColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.6)
-            self.reservationConfirmButton.layer.borderColor = UIColor.useRGB(red: 167, green: 167, blue: 167).cgColor
+            self.reservationConfirmButton.isEnabled = true
+            self.reservationConfirmButton.setTitle("견적서 보기", for: .normal)
+//            self.reservationConfirmButton.setTitleColor(.useRGB(red: 167, green: 167, blue: 167), for: .normal)
+//            self.reservationConfirmButton.backgroundColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.6)
+//            self.reservationConfirmButton.layer.borderColor = UIColor.useRGB(red: 167, green: 167, blue: 167).cgColor
             
             self.kindsOfEstimateButton.backgroundColor = .useRGB(red: 255, green: 199, blue: 199)
             self.distanceButton.setTitleColor(.useRGB(red: 255, green: 199, blue: 199), for: .normal)

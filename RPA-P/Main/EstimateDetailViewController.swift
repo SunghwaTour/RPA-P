@@ -370,6 +370,18 @@ extension EstimateDetailViewController {
                 
             }
             
+        } else {
+            // 견적서 보기
+            SupportingMethods.shared.turnCoverView(.on)
+            self.getTokenRequest {
+                self.getContractRequest(estimateId: estimate.documentId) { html in
+                    let vc = ContractViewController(html: html)
+                    
+                    self.navigationController?.pushViewController(vc, animated: true)
+                    SupportingMethods.shared.turnCoverView(.off)
+                }
+                
+            }
         }
         
         

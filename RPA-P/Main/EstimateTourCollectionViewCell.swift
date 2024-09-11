@@ -76,6 +76,51 @@ final class EstimateTourCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
+    lazy var accountStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [self.accountView, self.infoControlImageView])
+        stackView.axis = .vertical
+        stackView.spacing = 8
+        stackView.distribution = .fill
+        stackView.alignment = .fill
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return stackView
+    }()
+    
+    lazy var accountView: UIView = {
+        let view = UIView()
+        view.isHidden = true
+        view.backgroundColor = .useRGB(red: 255, green: 243, blue: 243)
+        view.layer.cornerRadius = 10
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var infoControlButton: UIButton = {
+        let button = UIButton()
+//        button.setTitle("더보기", for: .normal)
+//        button.setTitleColor(.black , for: .normal)
+//        button.titleLabel?.font = .useFont(ofSize: 12, weight: .Medium)
+        button.addTarget(self, action: #selector(infoControlButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    lazy var infoControlImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.isHidden = true
+        imageView.image = .useCustomImage("moreImage")
+        imageView.contentMode = .scaleAspectFit
+        imageView.clipsToBounds = true
+        imageView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        imageView.layer.cornerRadius = 10
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return imageView
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -110,6 +155,8 @@ extension EstimateTourCollectionViewCell: EssentialCellHeaderMethods {
             self.departureLabel,
             self.priceTitleLabel,
             self.priceLabel,
+            self.accountStackView,
+            self.infoControlButton,
         ], to: self.baseView)
     }
     
@@ -161,6 +208,34 @@ extension EstimateTourCollectionViewCell: EssentialCellHeaderMethods {
             self.priceLabel.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor, constant: 15),
             self.priceLabel.topAnchor.constraint(equalTo: self.priceTitleLabel.bottomAnchor, constant: 5),
         ])
+        
+        // accountStackView
+        NSLayoutConstraint.activate([
+            self.accountStackView.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor),
+            self.accountStackView.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor),
+            self.accountStackView.topAnchor.constraint(equalTo: self.priceLabel.bottomAnchor, constant: 24),
+            self.accountStackView.bottomAnchor.constraint(equalTo: self.baseView.bottomAnchor),
+        ])
+        
+        // accountView
+        NSLayoutConstraint.activate([
+            self.accountView.widthAnchor.constraint(equalToConstant: 251),
+            self.accountView.heightAnchor.constraint(equalToConstant: 68),
+        ])
+        
+        // infoControlImageView
+        NSLayoutConstraint.activate([
+            self.infoControlImageView.widthAnchor.constraint(equalToConstant: 30),
+            self.infoControlImageView.heightAnchor.constraint(equalToConstant: 16),
+        ])
+        
+        // infoControlButton
+        NSLayoutConstraint.activate([
+            self.infoControlButton.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor),
+            self.infoControlButton.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor),
+            self.infoControlButton.topAnchor.constraint(equalTo: self.infoControlImageView.topAnchor),
+            self.infoControlButton.bottomAnchor.constraint(equalTo: self.baseView.bottomAnchor),
+        ])
     }
 }
 
@@ -196,4 +271,15 @@ extension EstimateTourCollectionViewCell {
         self.priceLabel.asFontColor(targetString: "원", font: .useFont(ofSize: 14, weight: .Light), color: .useRGB(red: 184, green: 0, blue: 0))
         
     }
+}
+
+// MARK: Extension for selector added
+extension EstimateTourCollectionViewCell {
+    @objc func infoControlButton(_ sender: UIButton) {
+        print("infoControlButton")
+//        self.accountView.isHidden.toggle()
+//        NotificationCenter.default.post(name: Notification.Name("ToureInfoControl"), object: nil)
+        
+    }
+    
 }

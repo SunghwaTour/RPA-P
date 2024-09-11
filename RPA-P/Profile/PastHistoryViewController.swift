@@ -19,6 +19,32 @@ final class PastHistoryViewController: UIViewController {
         return label
     }()
     
+    lazy var emptyBaseView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var pastNoEstimateImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = .useCustomImage("PastNoEstimateImage")
+        imageView.clipsToBounds = true
+        imageView.contentMode = .scaleAspectFill
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return imageView
+    }()
+    
+    lazy var emptyLabel: UILabel = {
+        let label = UILabel()
+        label.text = "본 견적이 없습니다."
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
     lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.backgroundColor = .white

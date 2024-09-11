@@ -9,6 +9,55 @@ import UIKit
 
 final class ReservationCompletedViewController: UIViewController {
     
+    lazy var backgroundView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.2)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var baseView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var depositGuideTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "계약금을 입금해주세요."
+        label.textColor = .black
+        label.font = .useFont(ofSize: 18, weight: .Medium)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var depositGuideImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = .useCustomImage("DepositGuide")
+        imageView.contentMode = .scaleAspectFit
+        imageView.clipsToBounds = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return imageView
+    }()
+    
+    lazy var checkButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("다음", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = .useFont(ofSize: 16, weight: .Medium)
+        button.backgroundColor = .useRGB(red: 184, green: 0, blue: 0)
+        button.layer.cornerRadius = 22
+        button.addTarget(self, action: #selector(checkButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
     lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.bounces = false
@@ -355,7 +404,15 @@ extension ReservationCompletedViewController: EssentialViewMethods {
     func setSubviews() {
         SupportingMethods.shared.addSubviews([
             self.scrollView,
+            self.backgroundView,
         ], to: self.view)
+        
+        SupportingMethods.shared.addSubviews([
+            self.baseView,
+            self.depositGuideTitleLabel,
+            self.depositGuideImageView,
+            self.checkButton,
+        ], to: self.backgroundView)
         
         SupportingMethods.shared.addSubviews([
             self.contentView,
@@ -399,6 +456,44 @@ extension ReservationCompletedViewController: EssentialViewMethods {
     func setLayouts() {
         let safeArea = self.view.safeAreaLayoutGuide
         
+        // backgroundView
+        NSLayoutConstraint.activate([
+            self.backgroundView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            self.backgroundView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            self.backgroundView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            self.backgroundView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+        ])
+        
+        // baseView
+        NSLayoutConstraint.activate([
+            self.baseView.leadingAnchor.constraint(equalTo: self.backgroundView.leadingAnchor, constant: 35),
+            self.baseView.trailingAnchor.constraint(equalTo: self.backgroundView.trailingAnchor, constant: -35),
+            self.baseView.centerYAnchor.constraint(equalTo: self.backgroundView.centerYAnchor),
+            self.baseView.heightAnchor.constraint(equalToConstant: 350),
+        ])
+        
+        // depositGuideTitleLabel
+        NSLayoutConstraint.activate([
+            self.depositGuideTitleLabel.topAnchor.constraint(equalTo: self.baseView.topAnchor, constant: 30),
+            self.depositGuideTitleLabel.centerXAnchor.constraint(equalTo: self.baseView.centerXAnchor),
+        ])
+        
+        // depositGuideImageView
+        NSLayoutConstraint.activate([
+            self.depositGuideImageView.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor, constant: 16),
+            self.depositGuideImageView.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor, constant: -16),
+            self.depositGuideImageView.topAnchor.constraint(equalTo: self.depositGuideTitleLabel.bottomAnchor, constant: 30),
+            self.depositGuideImageView.heightAnchor.constraint(equalToConstant: 150),
+        ])
+        
+        // checkButton
+        NSLayoutConstraint.activate([
+            self.checkButton.bottomAnchor.constraint(equalTo: self.baseView.bottomAnchor, constant: -12),
+            self.checkButton.centerXAnchor.constraint(equalTo: self.baseView.centerXAnchor),
+            self.checkButton.heightAnchor.constraint(equalToConstant: 44),
+            self.checkButton.widthAnchor.constraint(equalToConstant: 180),
+        ])
+        
         // scrollView
         NSLayoutConstraint.activate([
             self.scrollView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
@@ -407,7 +502,7 @@ extension ReservationCompletedViewController: EssentialViewMethods {
             self.scrollView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
         ])
         
-        // backgroundView
+        // contentView
         NSLayoutConstraint.activate([
             self.contentView.leadingAnchor.constraint(equalTo: self.scrollView.leadingAnchor),
             self.contentView.trailingAnchor.constraint(equalTo: self.scrollView.trailingAnchor),
@@ -636,6 +731,11 @@ extension ReservationCompletedViewController {
         
         guard let storedString = UIPasteboard.general.string else { return }
         SupportingMethods.shared.showAlertNoti(title: "\(storedString) 복사되었습니다.")
+    }
+    
+    @objc func checkButton(_ sender: UIButton) {
+        self.backgroundView.isHidden = true
+        
     }
     
 }
