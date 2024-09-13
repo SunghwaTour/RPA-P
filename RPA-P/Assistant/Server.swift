@@ -8,7 +8,7 @@
 import Foundation
 
 struct Server {
-    static let server: Server = .DEV
+    static let server: Server = .RELEASE
     
     // MARK: DEV v1.0.0 - 2024/08/06
     

@@ -46,7 +46,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        Auth.auth().setAPNSToken(deviceToken, type: AuthAPNSTokenType.sandbox)
+        Auth.auth().setAPNSToken(deviceToken, type: AuthAPNSTokenType.prod)
         Messaging.messaging().apnsToken = deviceToken
         
     }
