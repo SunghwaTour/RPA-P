@@ -21,6 +21,7 @@ final class PastHistoryViewController: UIViewController {
     
     lazy var emptyBaseView: UIView = {
         let view = UIView()
+        view.isHidden = true
         view.backgroundColor = .white
         view.translatesAutoresizingMaskIntoConstraints = false
         
@@ -37,12 +38,21 @@ final class PastHistoryViewController: UIViewController {
         return imageView
     }()
     
-    lazy var emptyLabel: UILabel = {
-        let label = UILabel()
-        label.text = "본 견적이 없습니다."
-        label.translatesAutoresizingMaskIntoConstraints = false
+    lazy var emptyButton: UIButton = {
+        let button = UIButton()
+        button.isEnabled = false
+        button.setTitle("신청한 견적이 없습니다.\n견적을 추가해보세요!", for: .normal)
+        button.setTitleColor(.useRGB(red: 184, green: 0, blue: 0), for: .normal)
+        button.titleLabel?.font = .useFont(ofSize: 16, weight: .Medium)
+        button.titleLabel?.numberOfLines = 0
+        button.titleLabel?.textAlignment = .center
+        button.layer.cornerRadius = 24
+        button.layer.borderColor = UIColor.useRGB(red: 184, green: 0, blue: 0).cgColor
+        button.layer.borderWidth = 0
+        button.addTarget(self, action: #selector(emptyButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
         
-        return label
+        return button
     }()
     
     lazy var tableView: UITableView = {
@@ -112,13 +122,20 @@ extension PastHistoryViewController: EssentialViewMethods {
     
     func setNotificationCenters() {
         NotificationCenter.default.addObserver(self, selector: #selector(reload(_:)), name:  Notification.Name("ReloadDataForMoreInfo"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(loginDone(_:)), name:  Notification.Name("LoginDone"), object: nil)
     }
     
     func setSubviews() {
         SupportingMethods.shared.addSubviews([
             self.dateLabel,
             self.tableView,
+            self.emptyBaseView,
         ], to: self.view)
+        
+        SupportingMethods.shared.addSubviews([
+            self.pastNoEstimateImageView,
+            self.emptyButton,
+        ], to: self.emptyBaseView)
     }
     
     func setLayouts() {
@@ -136,6 +153,30 @@ extension PastHistoryViewController: EssentialViewMethods {
             self.tableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
             self.tableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
             self.tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+        ])
+        
+        // emptyBaseView
+        NSLayoutConstraint.activate([
+            self.emptyBaseView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+            self.emptyBaseView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
+            self.emptyBaseView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+            self.emptyBaseView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+        ])
+        
+        // pastNoEstimateImageView
+        NSLayoutConstraint.activate([
+            self.pastNoEstimateImageView.topAnchor.constraint(equalTo: self.emptyBaseView.topAnchor, constant: 116),
+            self.pastNoEstimateImageView.widthAnchor.constraint(equalToConstant: 153),
+            self.pastNoEstimateImageView.heightAnchor.constraint(equalToConstant: 142),
+            self.pastNoEstimateImageView.centerXAnchor.constraint(equalTo: self.emptyBaseView.centerXAnchor),
+        ])
+        
+        // emptyButton
+        NSLayoutConstraint.activate([
+            self.emptyButton.topAnchor.constraint(equalTo: self.pastNoEstimateImageView.bottomAnchor, constant: 56),
+            self.emptyButton.centerXAnchor.constraint(equalTo: self.pastNoEstimateImageView.centerXAnchor),
+            self.emptyButton.widthAnchor.constraint(equalToConstant: 156),
+            self.emptyButton.heightAnchor.constraint(equalToConstant: 48),
         ])
     }
     
@@ -169,23 +210,48 @@ extension PastHistoryViewController: EssentialViewMethods {
     func setData() {
         SupportingMethods.shared.turnCoverView(.on)
         self.mainModel.getEstimateData { estimates in
-            for estimate in estimates {
-                if estimate.isCompletedReservation {
-                    self.estimateList.append(estimate)
+            if estimates.isEmpty {
+                self.emptyBaseView.isHidden = false
+                self.emptyButton.isEnabled = false
+                self.emptyButton.setTitle("신청한 견적이 없습니다.\n견적을 추가해보세요!", for: .normal)
+                self.emptyButton.layer.borderWidth = 0.0
+                self.pastNoEstimateImageView.image = .useCustomImage("PastNoEstimateImage")
+                SupportingMethods.shared.turnCoverView(.off)
+                
+            } else {
+                self.emptyBaseView.isHidden = true
+                for estimate in estimates {
+                    if estimate.isCompletedReservation {
+                        self.estimateList.append(estimate)
+                        
+                    }
+                    
+                }
+                
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                    SupportingMethods.shared.turnCoverView(.off)
                     
                 }
                 
             }
             
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
+        } failure: { error in
+            if error == "noLogin" {
+                print("\(error)")
+                self.emptyBaseView.isHidden = false
+                self.emptyButton.isEnabled = true
+                self.emptyButton.setTitle("전화번호 인증이 필요합니다!", for: .normal)
+                self.emptyButton.layer.borderWidth = 2.0
+                self.pastNoEstimateImageView.image = .useCustomImage("customerServiceLogo")
+                
+                SupportingMethods.shared.turnCoverView(.off)
+                
+            } else {
+                print("setData Error: \(error)")
                 SupportingMethods.shared.turnCoverView(.off)
                 
             }
-            
-        } failure: { error in
-            print("setData Error: \(error)")
-            SupportingMethods.shared.turnCoverView(.off)
             
         }
 
@@ -208,6 +274,18 @@ extension PastHistoryViewController {
         self.tableView.reloadData()
         
     }
+    
+    @objc func emptyButton(_ sender: UIButton) {
+        let vc = LoginViewController()
+        
+        self.present(vc, animated: true)
+    }
+    
+    @objc func loginDone(_ notification: Notification) {
+        self.setData()
+        
+    }
+    
 }
 
 extension PastHistoryViewController: UITableViewDelegate, UITableViewDataSource {

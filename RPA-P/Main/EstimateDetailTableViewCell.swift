@@ -154,7 +154,7 @@ final class EstimateDetailTableViewCell: UITableViewCell {
     
     lazy var priceTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "총 금액"
+        label.text = "금액"
         label.textColor = .useRGB(red: 255, green: 144, blue: 144)
         label.font = .useFont(ofSize: 12, weight: .Medium)
         label.translatesAutoresizingMaskIntoConstraints = false

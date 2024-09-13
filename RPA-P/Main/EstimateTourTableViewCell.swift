@@ -23,15 +23,7 @@ private enum Index {
 }
 
 final class EstimateTourTableViewCell: UITableViewCell {
-    
-    lazy var accountButton: UIButton = {
-        let button = UIButton()
-        button.setImage(.useCustomImage("account"), for: .normal)
-        button.addTarget(self, action: #selector(accountButton(_:)), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
+
     lazy var collectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.itemSize = CGSize(width: 300, height: 360)
@@ -116,7 +108,6 @@ extension EstimateTourTableViewCell {
     // Set subviews
     func setSubviews() {
         SupportingMethods.shared.addSubviews([
-            self.accountButton,
             self.collectionView,
         ], to: self)
     }
@@ -125,20 +116,12 @@ extension EstimateTourTableViewCell {
     func setLayouts() {
         //let safeArea = self.safeAreaLayoutGuide
         
-        // accountButton
-        NSLayoutConstraint.activate([
-            self.accountButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 5),
-            self.accountButton.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -5),
-            self.accountButton.topAnchor.constraint(equalTo: self.topAnchor, constant: 10),
-            self.accountButton.heightAnchor.constraint(equalToConstant: 68),
-        ])
-        
         // collectionView
         NSLayoutConstraint.activate([
-            self.collectionView.heightAnchor.constraint(equalToConstant: 380),
+            self.collectionView.heightAnchor.constraint(equalToConstant: 400),
             self.collectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             self.collectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            self.collectionView.topAnchor.constraint(equalTo: self.accountButton.bottomAnchor, constant: 5),
+            self.collectionView.topAnchor.constraint(equalTo: self.topAnchor, constant: 5),
             self.collectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
         ])
     }

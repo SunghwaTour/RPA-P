@@ -339,7 +339,7 @@ extension MainViewController: EssentialViewMethods {
         
         self.navigationItem.titleView = self.setUpNavigationTitle(isDetail: isDetail)
         
-        let leftBarButtonItem = UIBarButtonItem(title: ReferenceValues.name == "null" ? "방문자" : "\(ReferenceValues.name)님", style: .plain, target: self, action: nil)
+        let leftBarButtonItem = UIBarButtonItem(title: ReferenceValues.phoneNumber == "null" ? "방문자" : "\(ReferenceValues.phoneNumber.suffix(4))님", style: .plain, target: self, action: nil)
         leftBarButtonItem.setTitleTextAttributes([
             .foregroundColor: UIColor.black,
             .font: UIFont.useFont(ofSize: 14, weight: .Medium)

@@ -366,7 +366,7 @@ final class MainModel {
         let uid = ReferenceValues.uid
         
         if uid == "null" {
-            failure?("전화번호 인증 필요.")
+            failure?("noLogin")
         } else {
             self.db.collection("\(Server.server.firebaseServerURL)/User/\(uid)/Estimate").order(by: "departureIndex").addSnapshotListener { querySnapshot, error in
                 if let error = error {

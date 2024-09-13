@@ -58,6 +58,7 @@
 		2DB4ADC22C5FCDBD00813097 /* CompletedReservation.gif in Resources */ = {isa = PBXBuildFile; fileRef = 2DB4ADBF2C5FCDBD00813097 /* CompletedReservation.gif */; };
 		2DB4ADC32C5FCDBD00813097 /* EstimateRequest.gif in Resources */ = {isa = PBXBuildFile; fileRef = 2DB4ADC02C5FCDBD00813097 /* EstimateRequest.gif */; };
 		2DB4ADC72C7066EF00813097 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DB4ADC62C7066EF00813097 /* User.swift */; };
+		2DB745E12C94438800EA99F3 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DB745E02C94438800EA99F3 /* LoginViewController.swift */; };
 		2DC277962C5766D40073E4A3 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 2DC277952C57666A0073E4A3 /* PrivacyInfo.xcprivacy */; };
 		2DCC4EA12C4663270035FD24 /* SelectEstimateTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DCC4EA02C4663270035FD24 /* SelectEstimateTableViewCell.swift */; };
 		2DCC4EA42C46672D0035FD24 /* MainModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DCC4EA32C46672D0035FD24 /* MainModel.swift */; };
@@ -131,6 +132,7 @@
 		2DB4ADBF2C5FCDBD00813097 /* CompletedReservation.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = CompletedReservation.gif; sourceTree = "<group>"; };
 		2DB4ADC02C5FCDBD00813097 /* EstimateRequest.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = EstimateRequest.gif; sourceTree = "<group>"; };
 		2DB4ADC62C7066EF00813097 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		2DB745E02C94438800EA99F3 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		2DC277952C57666A0073E4A3 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		2DCC4EA02C4663270035FD24 /* SelectEstimateTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectEstimateTableViewCell.swift; sourceTree = "<group>"; };
 		2DCC4EA32C46672D0035FD24 /* MainModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainModel.swift; sourceTree = "<group>"; };
@@ -258,6 +260,7 @@
 				2D46F5A22C3E3FB300C711E2 /* SplashViewController.swift */,
 				059949142C7EBB52000F7028 /* ClauseViewController.swift */,
 				059949162C7EBE4A000F7028 /* ClauseTableViewCell.swift */,
+				2DB745E02C94438800EA99F3 /* LoginViewController.swift */,
 			);
 			path = Login;
 			sourceTree = "<group>";
@@ -525,6 +528,7 @@
 				2D46F59E2C3DB0D300C711E2 /* SupportingMethods.swift in Sources */,
 				055F31F02C8404740023D38B /* RenewalMainViewController.swift in Sources */,
 				056E05672C7DC05000582D15 /* CircularProgress.swift in Sources */,
+				2DB745E12C94438800EA99F3 /* LoginViewController.swift in Sources */,
 				2D46F58A2C3DAF6F00C711E2 /* SceneDelegate.swift in Sources */,
 				2DA8211B2C41491A000EF1D9 /* EstimateViewController.swift in Sources */,
 				2D8EFEFE2C8321F900ACD818 /* BasicInfoTableViewCell.swift in Sources */,
@@ -684,7 +688,7 @@
 				CODE_SIGN_ENTITLEMENTS = "RPA-P/RPA-P.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 3C347T67DV;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "RPA-P/Info.plist";
@@ -720,7 +724,7 @@
 				CODE_SIGN_ENTITLEMENTS = "RPA-P/RPA-P.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 3C347T67DV;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "RPA-P/Info.plist";

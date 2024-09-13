@@ -48,6 +48,21 @@ final class EstimateDetailViewController: UIViewController {
         return label
     }()
     
+    lazy var emptyButton: UIButton = {
+        let button = UIButton()
+        button.isHidden = true
+        button.setTitle("견적 불러오기", for: .normal)
+        button.setTitleColor(.useRGB(red: 184, green: 0, blue: 0), for: .normal)
+        button.titleLabel?.font = .useFont(ofSize: 16, weight: .Medium)
+        button.layer.cornerRadius = 22
+        button.layer.borderWidth = 2.0
+        button.layer.borderColor = UIColor.useRGB(red: 184, green: 0, blue: 0).cgColor
+        button.addTarget(self, action: #selector(emptyButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
     lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.backgroundColor = .white
@@ -136,6 +151,7 @@ extension EstimateDetailViewController: EssentialViewMethods {
         NotificationCenter.default.addObserver(self, selector: #selector(estimateConfirm(_:)), name:  Notification.Name("EstimateConfirmation"), object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(saveEstimateData(_:)), name:  Notification.Name("SaveEstimateData"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(loginDone(_:)), name:  Notification.Name("LoginDone"), object: nil)
         
     }
     
@@ -149,6 +165,7 @@ extension EstimateDetailViewController: EssentialViewMethods {
             self.tableView,
             self.emptyImageView,
             self.emptyLabel,
+            self.emptyButton,
         ], to: self.contentView)
     }
     
@@ -182,7 +199,7 @@ extension EstimateDetailViewController: EssentialViewMethods {
         // emptyImageView
         NSLayoutConstraint.activate([
             self.emptyImageView.centerXAnchor.constraint(equalTo: self.tableView.centerXAnchor),
-            self.emptyImageView.centerYAnchor.constraint(equalTo: self.tableView.centerYAnchor),
+            self.emptyImageView.centerYAnchor.constraint(equalTo: self.tableView.centerYAnchor, constant: -20),
             self.emptyImageView.widthAnchor.constraint(equalToConstant: 50),
             self.emptyImageView.heightAnchor.constraint(equalToConstant: 50)
         ])
@@ -191,6 +208,14 @@ extension EstimateDetailViewController: EssentialViewMethods {
         NSLayoutConstraint.activate([
             self.emptyLabel.topAnchor.constraint(equalTo: self.emptyImageView.bottomAnchor, constant: 5),
             self.emptyLabel.centerXAnchor.constraint(equalTo: self.emptyImageView.centerXAnchor),
+        ])
+        
+        // emptyButton
+        NSLayoutConstraint.activate([
+            self.emptyButton.topAnchor.constraint(equalTo: self.emptyLabel.bottomAnchor, constant: 10),
+            self.emptyButton.heightAnchor.constraint(equalToConstant: 44),
+            self.emptyButton.widthAnchor.constraint(equalToConstant: 120),
+            self.emptyButton.centerXAnchor.constraint(equalTo: self.emptyImageView.centerXAnchor),
         ])
     }
     
@@ -201,10 +226,14 @@ extension EstimateDetailViewController: EssentialViewMethods {
             if estimates.isEmpty {
                 self.emptyImageView.isHidden = false
                 self.emptyLabel.isHidden = false
+                self.emptyButton.isHidden = false
+                self.tableView.isHidden = true
                 
             } else {
+                self.tableView.isHidden = false
                 self.emptyImageView.isHidden = true
                 self.emptyLabel.isHidden = true
+                self.emptyButton.isHidden = true
                 
             }
             
@@ -223,6 +252,8 @@ extension EstimateDetailViewController: EssentialViewMethods {
             print("setData Error: \(error)")
             self.emptyImageView.isHidden = false
             self.emptyLabel.isHidden = false
+            self.emptyButton.isHidden = false
+            self.tableView.isHidden = true
             SupportingMethods.shared.turnCoverView(.off)
             
         }
@@ -409,6 +440,17 @@ extension EstimateDetailViewController {
             self.tableView.reloadData()
             
         }
+        
+    }
+    
+    @objc func emptyButton(_ sender: UIButton) {
+        let vc = LoginViewController()
+        
+        self.present(vc, animated: true)
+    }
+    
+    @objc func loginDone(_ sender: UIButton) {
+        self.setData()
         
     }
     

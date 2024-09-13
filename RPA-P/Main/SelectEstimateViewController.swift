@@ -182,11 +182,11 @@ final class SelectEstimateViewController: UIViewController {
     
     lazy var estimateTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "다양한 견적을 비교해보세요!\n출발일 기준 일주일을 기준으로 견적이 추천됩니다."
+        label.text = "다양한 견적을 비교해보세요!\n아래 견적은 1대 기준 견적입니다."
         label.numberOfLines = 2
         label.textColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.87)
         label.font = .useFont(ofSize: 18, weight: .Medium)
-        label.asFontColor(targetString: "출발일 기준 일주일을 기준으로 견적이 추천됩니다.", font: .useFont(ofSize: 14, weight: .Medium), color: .useRGB(red: 91, green: 91, blue: 91))
+        label.asFontColor(targetString: "아래 견적은 1대 기준 견적입니다.", font: .useFont(ofSize: 14, weight: .Medium), color: .useRGB(red: 91, green: 91, blue: 91))
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label

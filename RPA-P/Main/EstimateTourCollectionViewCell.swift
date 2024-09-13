@@ -59,7 +59,7 @@ final class EstimateTourCollectionViewCell: UICollectionViewCell {
     
     lazy var priceTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "총 금액"
+        label.text = "금액"
         label.textColor = .black
         label.font = .useFont(ofSize: 14, weight: .Medium)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -76,20 +76,23 @@ final class EstimateTourCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    lazy var accountStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [self.accountView, self.infoControlImageView])
-        stackView.axis = .vertical
-        stackView.spacing = 8
-        stackView.distribution = .fill
-        stackView.alignment = .fill
-        stackView.translatesAutoresizingMaskIntoConstraints = false
+    lazy var contractButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("계약서 보기", for: .normal)
+        button.setTitleColor(.useRGB(red: 184, green: 0, blue: 0), for: .normal)
+        button.titleLabel?.font = .useFont(ofSize: 16, weight: .Medium)
+        button.layer.borderColor = UIColor.useRGB(red: 184, green: 0, blue: 0).cgColor
+        button.layer.borderWidth = 2.0
+        button.layer.cornerRadius = 22
+        button.addTarget(self, action: #selector(contractButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
         
-        return stackView
+        return button
     }()
     
     lazy var accountView: UIView = {
         let view = UIView()
-        view.isHidden = true
+        view.isHidden = false
         view.backgroundColor = .useRGB(red: 255, green: 243, blue: 243)
         view.layer.cornerRadius = 10
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -97,28 +100,33 @@ final class EstimateTourCollectionViewCell: UICollectionViewCell {
         return view
     }()
     
-    lazy var infoControlButton: UIButton = {
+    lazy var accountTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "성화투어 계좌번호"
+        label.textColor = .useRGB(red: 184, green: 0, blue: 0)
+        label.font = .useFont(ofSize: 14, weight: .Regular)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var accountLabel: UILabel = {
+        let label = UILabel()
+        label.text = "기업은행 331-011771-01-011"
+        label.textColor = .black
+        label.font = .useFont(ofSize: 16, weight: .Medium)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var copyButton: UIButton = {
         let button = UIButton()
-//        button.setTitle("더보기", for: .normal)
-//        button.setTitleColor(.black , for: .normal)
-//        button.titleLabel?.font = .useFont(ofSize: 12, weight: .Medium)
-        button.addTarget(self, action: #selector(infoControlButton(_:)), for: .touchUpInside)
+        button.setImage(.useCustomImage("CopyImage"), for: .normal)
+        button.addTarget(self, action: #selector(copyButton(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
-    }()
-    
-    lazy var infoControlImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.isHidden = true
-        imageView.image = .useCustomImage("moreImage")
-        imageView.contentMode = .scaleAspectFit
-        imageView.clipsToBounds = true
-        imageView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-        imageView.layer.cornerRadius = 10
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        return imageView
     }()
     
     override init(frame: CGRect) {
@@ -155,8 +163,11 @@ extension EstimateTourCollectionViewCell: EssentialCellHeaderMethods {
             self.departureLabel,
             self.priceTitleLabel,
             self.priceLabel,
-            self.accountStackView,
-            self.infoControlButton,
+            self.contractButton,
+            self.accountView,
+            self.accountTitleLabel,
+            self.accountLabel,
+            self.copyButton,
         ], to: self.baseView)
     }
     
@@ -176,7 +187,7 @@ extension EstimateTourCollectionViewCell: EssentialCellHeaderMethods {
             self.tourImageView.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor),
             self.tourImageView.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor),
             self.tourImageView.topAnchor.constraint(equalTo: self.baseView.topAnchor),
-            self.tourImageView.heightAnchor.constraint(equalToConstant: 200)
+            self.tourImageView.heightAnchor.constraint(equalToConstant: 124)
         ])
         
         // statusLabel
@@ -207,36 +218,49 @@ extension EstimateTourCollectionViewCell: EssentialCellHeaderMethods {
         NSLayoutConstraint.activate([
             self.priceLabel.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor, constant: 15),
             self.priceLabel.topAnchor.constraint(equalTo: self.priceTitleLabel.bottomAnchor, constant: 5),
+            self.priceLabel.heightAnchor.constraint(equalToConstant: 20),
+        ])
+        
+        // contractButton
+        NSLayoutConstraint.activate([
+            self.contractButton.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor, constant: -14),
+            self.contractButton.centerYAnchor.constraint(equalTo: self.priceLabel.centerYAnchor),
+            self.contractButton.widthAnchor.constraint(equalToConstant: 126),
+            self.contractButton.heightAnchor.constraint(equalToConstant: 44),
         ])
         
         // accountStackView
         NSLayoutConstraint.activate([
-            self.accountStackView.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor),
-            self.accountStackView.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor),
-            self.accountStackView.topAnchor.constraint(equalTo: self.priceLabel.bottomAnchor, constant: 24),
-            self.accountStackView.bottomAnchor.constraint(equalTo: self.baseView.bottomAnchor),
-        ])
-        
-        // accountView
-        NSLayoutConstraint.activate([
+            self.accountView.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor, constant: 10),
+            self.accountView.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor, constant: -10),
+            self.accountView.topAnchor.constraint(equalTo: self.priceLabel.bottomAnchor, constant: 24),
+            self.accountView.bottomAnchor.constraint(equalTo: self.baseView.bottomAnchor, constant: -10),
             self.accountView.widthAnchor.constraint(equalToConstant: 251),
             self.accountView.heightAnchor.constraint(equalToConstant: 68),
         ])
         
-        // infoControlImageView
+        // accountTitleLabel
         NSLayoutConstraint.activate([
-            self.infoControlImageView.widthAnchor.constraint(equalToConstant: 30),
-            self.infoControlImageView.heightAnchor.constraint(equalToConstant: 16),
+            self.accountTitleLabel.leadingAnchor.constraint(equalTo: self.accountView.leadingAnchor, constant: 15),
+            self.accountTitleLabel.topAnchor.constraint(equalTo: self.accountView.topAnchor, constant: 11),
         ])
         
-        // infoControlButton
+        // accountLabel
         NSLayoutConstraint.activate([
-            self.infoControlButton.leadingAnchor.constraint(equalTo: self.baseView.leadingAnchor),
-            self.infoControlButton.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor),
-            self.infoControlButton.topAnchor.constraint(equalTo: self.infoControlImageView.topAnchor),
-            self.infoControlButton.bottomAnchor.constraint(equalTo: self.baseView.bottomAnchor),
+            self.accountLabel.leadingAnchor.constraint(equalTo: self.accountView.leadingAnchor, constant: 15),
+            self.accountLabel.topAnchor.constraint(equalTo: self.accountTitleLabel.bottomAnchor, constant: 3),
         ])
+        
+        // copyButton
+        NSLayoutConstraint.activate([
+            self.copyButton.leadingAnchor.constraint(equalTo: self.accountLabel.trailingAnchor, constant: 4),
+            self.copyButton.centerYAnchor.constraint(equalTo: self.accountLabel.centerYAnchor),
+            self.copyButton.widthAnchor.constraint(equalToConstant: 20),
+            self.copyButton.heightAnchor.constraint(equalToConstant: 13),
+        ])
+        
     }
+    
 }
 
 // MARK: - Extension for methods added
@@ -275,10 +299,24 @@ extension EstimateTourCollectionViewCell {
 
 // MARK: Extension for selector added
 extension EstimateTourCollectionViewCell {
-    @objc func infoControlButton(_ sender: UIButton) {
-        print("infoControlButton")
-//        self.accountView.isHidden.toggle()
-//        NotificationCenter.default.post(name: Notification.Name("ToureInfoControl"), object: nil)
+    @objc func contractButton(_ sender: UIButton) {
+//        SupportingMethods.shared.turnCoverView(.on)
+//        self.getTokenRequest {
+//            self.getContractRequest(estimateId: estimate.documentId) { html in
+//                let vc = ContractViewController(html: html)
+//                
+//                self.navigationController?.pushViewController(vc, animated: true)
+//                SupportingMethods.shared.turnCoverView(.off)
+//            }
+//            
+//        }
+        
+    }
+    
+    @objc func copyButton(_ sender: UIButton) {
+        UIPasteboard.general.string = "기업은행 331-011771-01-011"
+        guard let storedString = UIPasteboard.general.string else { return }
+        SupportingMethods.shared.showAlertNoti(title: "\(storedString) 복사되었습니다.")
         
     }
     
