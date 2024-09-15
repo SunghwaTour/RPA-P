@@ -70,6 +70,7 @@ final class ReservationTourTableViewCell: UITableViewCell {
         textField.setPlaceholder(placeholder: "계좌번호를 입력해주세요.")
         textField.font = .useFont(ofSize: 14, weight: .Regular)
         textField.borderStyle = .none
+        textField.keyboardType = .numberPad
         textField.layer.borderColor = UIColor.useRGB(red: 224, green: 224, blue: 224).cgColor
         textField.layer.borderWidth = 1.0
         textField.layer.cornerRadius = 2
@@ -529,6 +530,8 @@ extension ReservationTourTableViewCell {
                 
                 self.numberTextField.isEnabled = false
                 self.numberTextField.backgroundColor = .useRGB(red: 189, green: 189, blue: 189)
+                
+                NotificationCenter.default.post(name: Notification.Name("LoginDone"), object: nil)
                 
                 self.mainModel.registerUserData(uid: uid) {
                     print("PaymentViewController registerUserData Success")

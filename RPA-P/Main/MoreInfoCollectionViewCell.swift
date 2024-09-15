@@ -68,6 +68,7 @@ extension MoreInfoCollectionViewCell: EssentialCellHeaderMethods {
             self.categoryView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             self.categoryView.topAnchor.constraint(equalTo: self.topAnchor),
             self.categoryView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            self.categoryView.heightAnchor.constraint(equalToConstant: 26),
         ])
         
         // categoryLabel
@@ -76,7 +77,6 @@ extension MoreInfoCollectionViewCell: EssentialCellHeaderMethods {
             self.categoryLabel.trailingAnchor.constraint(equalTo: self.categoryView.trailingAnchor, constant: -16),
             self.categoryLabel.topAnchor.constraint(equalTo: self.categoryView.topAnchor, constant: 3),
             self.categoryLabel.bottomAnchor.constraint(equalTo: self.categoryView.bottomAnchor, constant: -4),
-            self.categoryLabel.heightAnchor.constraint(equalToConstant: 25),
         ])
     }
 }

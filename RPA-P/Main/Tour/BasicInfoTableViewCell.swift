@@ -266,7 +266,7 @@ extension BasicInfoTableViewCell {
         self.areaButton.setTitle("\(tour.arrivalAddress.split(separator: " ")[0])", for: .normal)
         
         self.nameLabel.text = "\(tour.placeName)"
-        self.addressLabel.text = "\(tour.departureAddress)"
+        self.addressLabel.text = "\(tour.arrivalAddress)"
         
         let tags = tour.tag.split(separator: ",")
         var newTags: String = ""
@@ -285,7 +285,7 @@ extension BasicInfoTableViewCell {
             self.reservationStatusButton.setTitle("예약완료", for: .normal)
             
         } else {
-            self.reservationStatusButton.setTitle("예약확인중", for: .normal)
+            self.reservationStatusButton.setTitle("결제 대기중", for: .normal)
             
         }
         

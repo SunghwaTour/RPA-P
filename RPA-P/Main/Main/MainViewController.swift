@@ -189,6 +189,7 @@ extension MainViewController: EssentialViewMethods {
     func setNotificationCenters() {
         NotificationCenter.default.addObserver(self, selector: #selector(moveEstimateDetail(_:)), name: Notification.Name("MoveEstimateDetail"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(moveEstimate(_:)), name: Notification.Name("MoveEstimate"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(loginDone(_:)), name:  Notification.Name("LoginDone"), object: nil)
         
 //        NotificationCenter.default.addObserver(self, selector: #selector(completedReqeustReservation(_:)), name: Notification.Name("CompletedReqeustReservation"), object: nil)
     }
@@ -198,16 +199,16 @@ extension MainViewController: EssentialViewMethods {
 //            self.imageSlideShow,
             self.contentView,
             self.collectionView,
-            self.completedRequestReservationBaseView,
+//            self.completedRequestReservationBaseView,
         ], to: self.view)
         
-        SupportingMethods.shared.addSubviews([
-            self.guideTitleLabel,
-            self.guideLabel,
-            self.completedRequestReservationGIFImageView,
-            self.moveReservationListButton,
-            self.moveEstimateButton,
-        ], to: self.completedRequestReservationBaseView)
+//        SupportingMethods.shared.addSubviews([
+//            self.guideTitleLabel,
+//            self.guideLabel,
+//            self.completedRequestReservationGIFImageView,
+//            self.moveReservationListButton,
+//            self.moveEstimateButton,
+//        ], to: self.completedRequestReservationBaseView)
         
         addChild(self.pageViewController)
         
@@ -228,53 +229,53 @@ extension MainViewController: EssentialViewMethods {
 //        ])
         
         // completedRequestReservationBaseView
-        NSLayoutConstraint.activate([
-            self.completedRequestReservationBaseView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-            self.completedRequestReservationBaseView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-            self.completedRequestReservationBaseView.topAnchor.constraint(equalTo: self.view.topAnchor),
-            self.completedRequestReservationBaseView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
-        ])
+//        NSLayoutConstraint.activate([
+//            self.completedRequestReservationBaseView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+//            self.completedRequestReservationBaseView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+//            self.completedRequestReservationBaseView.topAnchor.constraint(equalTo: self.view.topAnchor),
+//            self.completedRequestReservationBaseView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+//        ])
         
         // guideTitleLabel
-        NSLayoutConstraint.activate([
-            self.guideTitleLabel.leadingAnchor.constraint(equalTo: self.completedRequestReservationBaseView.leadingAnchor, constant: 30),
-            self.guideTitleLabel.trailingAnchor.constraint(equalTo: self.completedRequestReservationBaseView.trailingAnchor, constant: -20),
-            self.guideTitleLabel.topAnchor.constraint(equalTo: self.completedRequestReservationBaseView.topAnchor, constant: 100),
-        ])
-        
-        // guideLabel
-        NSLayoutConstraint.activate([
-            self.guideLabel.leadingAnchor.constraint(equalTo: self.completedRequestReservationBaseView.leadingAnchor, constant: 30),
-            self.guideLabel.trailingAnchor.constraint(equalTo: self.completedRequestReservationBaseView.trailingAnchor, constant: -20),
-            self.guideLabel.topAnchor.constraint(equalTo: self.guideTitleLabel.bottomAnchor, constant: 10),
-        ])
-        
-        // completedRequestReservationGIFImageView
-        NSLayoutConstraint.activate([
-            self.completedRequestReservationGIFImageView.centerYAnchor.constraint(equalTo: self.completedRequestReservationBaseView.centerYAnchor),
-            self.completedRequestReservationGIFImageView.centerXAnchor.constraint(equalTo: self.completedRequestReservationBaseView.centerXAnchor),
-            self.completedRequestReservationGIFImageView.heightAnchor.constraint(equalToConstant: 300),
-            self.completedRequestReservationGIFImageView.widthAnchor.constraint(equalToConstant: 300),
-        ])
-        
-        // moveReservationListButton
-        NSLayoutConstraint.activate([
-            self.moveReservationListButton.bottomAnchor.constraint(equalTo: self.completedRequestReservationBaseView.bottomAnchor, constant: -90),
-            self.moveReservationListButton.centerXAnchor.constraint(equalTo: self.completedRequestReservationBaseView.centerXAnchor),
-            self.moveReservationListButton.widthAnchor.constraint(equalToConstant: 170),
-            self.moveReservationListButton.heightAnchor.constraint(equalToConstant: 44),
-        ])
-        
-        // moveEstimateButton
-        NSLayoutConstraint.activate([
-            self.moveEstimateButton.centerXAnchor.constraint(equalTo: self.completedRequestReservationBaseView.centerXAnchor),
-            self.moveEstimateButton.topAnchor.constraint(equalTo: self.moveReservationListButton.bottomAnchor, constant: 10),
-        ])
+//        NSLayoutConstraint.activate([
+//            self.guideTitleLabel.leadingAnchor.constraint(equalTo: self.completedRequestReservationBaseView.leadingAnchor, constant: 30),
+//            self.guideTitleLabel.trailingAnchor.constraint(equalTo: self.completedRequestReservationBaseView.trailingAnchor, constant: -20),
+//            self.guideTitleLabel.topAnchor.constraint(equalTo: self.completedRequestReservationBaseView.topAnchor, constant: 100),
+//        ])
+//        
+//        // guideLabel
+//        NSLayoutConstraint.activate([
+//            self.guideLabel.leadingAnchor.constraint(equalTo: self.completedRequestReservationBaseView.leadingAnchor, constant: 30),
+//            self.guideLabel.trailingAnchor.constraint(equalTo: self.completedRequestReservationBaseView.trailingAnchor, constant: -20),
+//            self.guideLabel.topAnchor.constraint(equalTo: self.guideTitleLabel.bottomAnchor, constant: 10),
+//        ])
+//        
+//        // completedRequestReservationGIFImageView
+//        NSLayoutConstraint.activate([
+//            self.completedRequestReservationGIFImageView.centerYAnchor.constraint(equalTo: self.completedRequestReservationBaseView.centerYAnchor),
+//            self.completedRequestReservationGIFImageView.centerXAnchor.constraint(equalTo: self.completedRequestReservationBaseView.centerXAnchor),
+//            self.completedRequestReservationGIFImageView.heightAnchor.constraint(equalToConstant: 300),
+//            self.completedRequestReservationGIFImageView.widthAnchor.constraint(equalToConstant: 300),
+//        ])
+//        
+//        // moveReservationListButton
+//        NSLayoutConstraint.activate([
+//            self.moveReservationListButton.bottomAnchor.constraint(equalTo: self.completedRequestReservationBaseView.bottomAnchor, constant: -90),
+//            self.moveReservationListButton.centerXAnchor.constraint(equalTo: self.completedRequestReservationBaseView.centerXAnchor),
+//            self.moveReservationListButton.widthAnchor.constraint(equalToConstant: 170),
+//            self.moveReservationListButton.heightAnchor.constraint(equalToConstant: 44),
+//        ])
+//        
+//        // moveEstimateButton
+//        NSLayoutConstraint.activate([
+//            self.moveEstimateButton.centerXAnchor.constraint(equalTo: self.completedRequestReservationBaseView.centerXAnchor),
+//            self.moveEstimateButton.topAnchor.constraint(equalTo: self.moveReservationListButton.bottomAnchor, constant: 10),
+//        ])
         
         // contentView
         NSLayoutConstraint.activate([
             self.contentView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-            self.contentView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            self.contentView.topAnchor.constraint(equalTo: safeArea.topAnchor),
             self.contentView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
             self.contentView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
         ])
@@ -462,6 +463,16 @@ extension MainViewController {
         })
     }
     
+    @objc func loginDone(_ notification: Notification) {
+        let leftBarButtonItem = UIBarButtonItem(title: ReferenceValues.phoneNumber == "null" ? "방문자" : "\(ReferenceValues.phoneNumber.suffix(4))님", style: .plain, target: self, action: nil)
+        leftBarButtonItem.setTitleTextAttributes([
+            .foregroundColor: UIColor.black,
+            .font: UIFont.useFont(ofSize: 14, weight: .Medium)
+        ], for: .normal)
+        
+        self.navigationItem.leftBarButtonItem = leftBarButtonItem
+    }
+    
 //    @objc func imageSlideShow(_ gesture: UITapGestureRecognizer) {
 //        self.loadTourDataRequest { tourList in
 //            let tour = tourList[self.tourId - 1]
@@ -512,8 +523,11 @@ extension MainViewController: UIPageViewControllerDataSource, UIPageViewControll
             
             DispatchQueue.main.async {
                 self.collectionView.reloadData()
+                
             }
+            
         }
+        
     }
     
 }
@@ -529,9 +543,12 @@ extension MainViewController: UICollectionViewDelegateFlowLayout, UICollectionVi
         
         if indexPath.row == self.currentIndex {
             cell.indicatorView.backgroundColor = .useRGB(red: 184, green: 0, blue: 0)
+            
         } else {
             cell.indicatorView.backgroundColor = .useRGB(red: 217, green: 217, blue: 217)
+            
         }
+        
         
         return cell
     }

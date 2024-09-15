@@ -31,21 +31,27 @@ final class EstimateViewController: UIViewController {
     }()
     
     lazy var imageSlideShow: ImageSlideshow = {
-        let pageIndicator = UIPageControl()
-        pageIndicator.currentPage = 0
-        pageIndicator.currentPageIndicatorTintColor = .useRGB(red: 184, green: 0, blue: 0)
-        pageIndicator.pageIndicatorTintColor = .useRGB(red: 224, green: 224, blue: 224)
-        pageIndicator.hidesForSinglePage = true
-        pageIndicator.numberOfPages = 4
-        pageIndicator.translatesAutoresizingMaskIntoConstraints = false
+//        let pageIndicator = UIPageControl()
+//        pageIndicator.currentPage = 0
+//        pageIndicator.currentPageIndicatorTintColor = .useRGB(red: 184, green: 0, blue: 0)
+//        pageIndicator.pageIndicatorTintColor = .useRGB(red: 224, green: 224, blue: 224)
+//        pageIndicator.hidesForSinglePage = true
+//        pageIndicator.numberOfPages = 4
+//        pageIndicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        let pageIndicator = LabelPageIndicator()
+        pageIndicator.textColor = .white
+        pageIndicator.font = .useFont(ofSize: 14, weight: .Regular)
         
         let imageSlideShow = ImageSlideshow()
         imageSlideShow.contentScaleMode = .scaleToFill
         imageSlideShow.circular = true
         imageSlideShow.scrollView.bounces = false
         imageSlideShow.slideshowInterval = 3
+//        imageSlideShow.pageIndicator = pageIndicator
+//        imageSlideShow.pageIndicatorPosition = .init(vertical: .bottom)
         imageSlideShow.pageIndicator = pageIndicator
-        imageSlideShow.pageIndicatorPosition = .init(vertical: .bottom)
+        imageSlideShow.pageIndicatorPosition = PageIndicatorPosition(horizontal: .center, vertical: .customBottom(padding: 10))
         imageSlideShow.delegate = self
         imageSlideShow.translatesAutoresizingMaskIntoConstraints = false
         
@@ -1552,11 +1558,6 @@ extension EstimateViewController {
                     busCount = 0
                     
                 } else if Int(peopleCount!)! <= 25 {
-                    guard Int(peopleCount!)! >= 10 else {
-                        SupportingMethods.shared.showAlertNoti(title: "인원은 10명 이상이어야 합니다.")
-                        SupportingMethods.shared.turnCoverView(.off)
-                        return
-                    }
                     busType = .twentyFive
                     busCount = 1
                     
@@ -1634,7 +1635,7 @@ extension EstimateViewController {
             } else {
                 self.getTokenRequest {
                     self.mainModel.loadTourRequest(phone: ReferenceValues.phoneNumber) { myTourList in
-                        let myTour = myTourList.filter({ $0.tourId == self.tourId }).first
+                        let myTour = myTourList.filter({ Int($0.tourId)! == self.tourId }).first
                         let vc = TourDetailViewController(tour: tour, myTour: myTour)
 
                         self.navigationController?.pushViewController(vc, animated: true)

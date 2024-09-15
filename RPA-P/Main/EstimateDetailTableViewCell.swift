@@ -228,6 +228,45 @@ final class EstimateDetailTableViewCell: UITableViewCell {
         return collectionView
     }()
     
+    lazy var accountView: UIView = {
+        let view = UIView()
+        view.isHidden = false
+        view.backgroundColor = .useRGB(red: 255, green: 243, blue: 243)
+        view.layer.cornerRadius = 10
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    lazy var accountTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "성화투어 계좌번호"
+        label.textColor = .useRGB(red: 184, green: 0, blue: 0)
+        label.font = .useFont(ofSize: 14, weight: .Regular)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var accountLabel: UILabel = {
+        let label = UILabel()
+        label.text = "기업은행 331-011771-01-011"
+        label.textColor = .black
+        label.font = .useFont(ofSize: 16, weight: .Medium)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        return label
+    }()
+    
+    lazy var copyButton: UIButton = {
+        let button = UIButton()
+        button.setImage(.useCustomImage("CopyImage"), for: .normal)
+        button.addTarget(self, action: #selector(copyButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
     lazy var infoControlButton: UIButton = {
         let button = UIButton()
 //        button.setTitle("더보기", for: .normal)
@@ -335,7 +374,14 @@ extension EstimateDetailTableViewCell {
         SupportingMethods.shared.addSubviews([
             self.dottedLineImageView,
             self.collectionView,
+            self.accountView,
         ], to: self.moreInfoBaseView)
+        
+        SupportingMethods.shared.addSubviews([
+            self.accountTitleLabel,
+            self.accountLabel,
+            self.copyButton,
+        ], to: self.accountView)
     }
     
     // Set layouts
@@ -452,7 +498,7 @@ extension EstimateDetailTableViewCell {
         
         // moreInfoBaseView
         NSLayoutConstraint.activate([
-            self.moreInfoBaseView.heightAnchor.constraint(equalToConstant: 150),
+            self.moreInfoBaseView.heightAnchor.constraint(equalToConstant: 200),
             
         ])
         
@@ -469,8 +515,38 @@ extension EstimateDetailTableViewCell {
             self.collectionView.leadingAnchor.constraint(equalTo: self.moreInfoBaseView.leadingAnchor, constant: 16),
             self.collectionView.trailingAnchor.constraint(equalTo: self.moreInfoBaseView.trailingAnchor, constant: -16),
             self.collectionView.topAnchor.constraint(equalTo: self.dottedLineImageView.bottomAnchor, constant: 20),
-            self.collectionView.bottomAnchor.constraint(equalTo: self.moreInfoBaseView.bottomAnchor, constant: -5),
         ])
+        
+        // accountStackView
+        NSLayoutConstraint.activate([
+            self.accountView.leadingAnchor.constraint(equalTo: self.moreInfoBaseView.leadingAnchor, constant: 10),
+            self.accountView.trailingAnchor.constraint(equalTo: self.moreInfoBaseView.trailingAnchor, constant: -10),
+            self.accountView.topAnchor.constraint(equalTo: self.collectionView.bottomAnchor, constant: 10),
+            self.accountView.bottomAnchor.constraint(equalTo: self.moreInfoBaseView.bottomAnchor, constant: -5),
+            self.accountView.widthAnchor.constraint(equalToConstant: 251),
+            self.accountView.heightAnchor.constraint(equalToConstant: 68),
+        ])
+        
+        // accountTitleLabel
+        NSLayoutConstraint.activate([
+            self.accountTitleLabel.leadingAnchor.constraint(equalTo: self.accountView.leadingAnchor, constant: 15),
+            self.accountTitleLabel.topAnchor.constraint(equalTo: self.accountView.topAnchor, constant: 11),
+        ])
+        
+        // accountLabel
+        NSLayoutConstraint.activate([
+            self.accountLabel.leadingAnchor.constraint(equalTo: self.accountView.leadingAnchor, constant: 15),
+            self.accountLabel.topAnchor.constraint(equalTo: self.accountTitleLabel.bottomAnchor, constant: 3),
+        ])
+        
+        // copyButton
+        NSLayoutConstraint.activate([
+            self.copyButton.leadingAnchor.constraint(equalTo: self.accountLabel.trailingAnchor, constant: 4),
+            self.copyButton.centerYAnchor.constraint(equalTo: self.accountLabel.centerYAnchor),
+            self.copyButton.widthAnchor.constraint(equalToConstant: 20),
+            self.copyButton.heightAnchor.constraint(equalToConstant: 13),
+        ])
+        
         
         // infoControlButton
         NSLayoutConstraint.activate([
@@ -553,11 +629,11 @@ extension EstimateDetailTableViewCell {
         self.priceLabel.text = "\(Int(estimate.price)!.withCommaString ?? "0") 원"
         
         self.moreInfoList = []
+        self.moreInfoList.append(estimate.number == "미정" ? "미정" : "\(estimate.number)명")
         self.moreInfoList.append("\(estimate.busCount)대")
         self.moreInfoList.append("\(estimate.busType)")
-        self.moreInfoList.append(estimate.number == "미정" ? "미정" : "\(estimate.number)명")
-        self.moreInfoList.append("\(estimate.operationType)")
         self.moreInfoList.append("\(estimate.payWay)")
+        self.moreInfoList.append("\(estimate.operationType)")
         
         if self.estimate!.isHiddenCategory {
             self.moreInfoBaseView.isHidden = true
@@ -591,6 +667,13 @@ extension EstimateDetailTableViewCell {
         print("reservationConfirmButton")
         guard let estimate = self.estimate else { return }
         NotificationCenter.default.post(name: Notification.Name("RservationConfirmation"), object: nil, userInfo: ["estimate": estimate])
+        
+    }
+    
+    @objc func copyButton(_ sender: UIButton) {
+        UIPasteboard.general.string = "기업은행 331-011771-01-011"
+        guard let storedString = UIPasteboard.general.string else { return }
+        SupportingMethods.shared.showAlertNoti(title: "\(storedString) 복사되었습니다.")
         
     }
 }
