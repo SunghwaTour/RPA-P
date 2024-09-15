@@ -30,6 +30,15 @@ final class EstimateTourCollectionViewCell: UICollectionViewCell {
         return imageView
     }()
     
+    lazy var tourDetailButton: UIButton = {
+        let button = UIButton()
+        button.setImage(.useCustomImage("TourDetailButtonImage"), for: .normal)
+        button.addTarget(self, action: #selector(tourDetailButton(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
     lazy var statusLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
@@ -129,6 +138,10 @@ final class EstimateTourCollectionViewCell: UICollectionViewCell {
         return button
     }()
     
+    let mainModel = MainModel()
+    var tourUid: Int?
+    var tour: Tour?
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -147,6 +160,7 @@ final class EstimateTourCollectionViewCell: UICollectionViewCell {
 extension EstimateTourCollectionViewCell: EssentialCellHeaderMethods {
     func setViewFoundation() {
         self.backgroundColor = .white
+        self.layer.cornerRadius = 10
     }
     
     func initializeObjects() {
@@ -158,6 +172,7 @@ extension EstimateTourCollectionViewCell: EssentialCellHeaderMethods {
         
         SupportingMethods.shared.addSubviews([
             self.tourImageView,
+            self.tourDetailButton,
             self.statusLabel,
             self.nameLabel,
             self.departureLabel,
@@ -188,6 +203,14 @@ extension EstimateTourCollectionViewCell: EssentialCellHeaderMethods {
             self.tourImageView.trailingAnchor.constraint(equalTo: self.baseView.trailingAnchor),
             self.tourImageView.topAnchor.constraint(equalTo: self.baseView.topAnchor),
             self.tourImageView.heightAnchor.constraint(equalToConstant: 124)
+        ])
+        
+        // tourDetailButton
+        NSLayoutConstraint.activate([
+            self.tourDetailButton.trailingAnchor.constraint(equalTo: self.tourImageView.trailingAnchor),
+            self.tourDetailButton.bottomAnchor.constraint(equalTo: self.tourImageView.bottomAnchor),
+            self.tourDetailButton.heightAnchor.constraint(equalToConstant: 36),
+            self.tourDetailButton.widthAnchor.constraint(equalToConstant: 77),
         ])
         
         // statusLabel
@@ -266,6 +289,9 @@ extension EstimateTourCollectionViewCell: EssentialCellHeaderMethods {
 // MARK: - Extension for methods added
 extension EstimateTourCollectionViewCell {
     func setCell(tour: Tour, status: Bool) {
+        self.tour = tour
+        self.tourUid = tour.id
+        
         switch tour.id {
         case 1,2,3,4:
             self.tourImageView.image = .useCustomImage("Mureung")
@@ -300,16 +326,11 @@ extension EstimateTourCollectionViewCell {
 // MARK: Extension for selector added
 extension EstimateTourCollectionViewCell {
     @objc func contractButton(_ sender: UIButton) {
-//        SupportingMethods.shared.turnCoverView(.on)
-//        self.getTokenRequest {
-//            self.getContractRequest(estimateId: estimate.documentId) { html in
-//                let vc = ContractViewController(html: html)
-//                
-//                self.navigationController?.pushViewController(vc, animated: true)
-//                SupportingMethods.shared.turnCoverView(.off)
-//            }
-//            
-//        }
+        guard let tourUid = self.tourUid else {
+            SupportingMethods.shared.showAlertNoti(title: "1522-9821로 전화해주세요.")
+            return
+        }
+        NotificationCenter.default.post(name: Notification.Name("SeeContract"), object: nil, userInfo: ["tourUid": tourUid])
         
     }
     
@@ -317,6 +338,11 @@ extension EstimateTourCollectionViewCell {
         UIPasteboard.general.string = "기업은행 331-011771-01-011"
         guard let storedString = UIPasteboard.general.string else { return }
         SupportingMethods.shared.showAlertNoti(title: "\(storedString) 복사되었습니다.")
+        
+    }
+    
+    @objc func tourDetailButton(_ sender: UIButton) {
+        NotificationCenter.default.post(name: Notification.Name("MoveTourDetail"), object: nil, userInfo: ["tour": self.tour!])
         
     }
     

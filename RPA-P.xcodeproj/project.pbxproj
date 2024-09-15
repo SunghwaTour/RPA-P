@@ -64,6 +64,7 @@
 		2DCC4EA42C46672D0035FD24 /* MainModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DCC4EA32C46672D0035FD24 /* MainModel.swift */; };
 		2DCC4EA62C47B01F0035FD24 /* PaymentMethodTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DCC4EA52C47B01F0035FD24 /* PaymentMethodTableViewCell.swift */; };
 		2DCC4EA82C47B84A0035FD24 /* CheckPaymentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DCC4EA72C47B84A0035FD24 /* CheckPaymentViewController.swift */; };
+		2DCE0BC82C974C2800932D54 /* PastHistoryTourTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DCE0BC72C974C2800932D54 /* PastHistoryTourTableViewCell.swift */; };
 		2DDE4B572C4258DD00CA644F /* SelectEstimateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DDE4B562C4258DD00CA644F /* SelectEstimateViewController.swift */; };
 		2DEF5FDD2C718C240089C020 /* ContractViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DEF5FDC2C718C240089C020 /* ContractViewController.swift */; };
 		2DEF5FE02C718D5D0089C020 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DEF5FDF2C718D5D0089C020 /* ProfileViewController.swift */; };
@@ -138,6 +139,7 @@
 		2DCC4EA32C46672D0035FD24 /* MainModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainModel.swift; sourceTree = "<group>"; };
 		2DCC4EA52C47B01F0035FD24 /* PaymentMethodTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentMethodTableViewCell.swift; sourceTree = "<group>"; };
 		2DCC4EA72C47B84A0035FD24 /* CheckPaymentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckPaymentViewController.swift; sourceTree = "<group>"; };
+		2DCE0BC72C974C2800932D54 /* PastHistoryTourTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PastHistoryTourTableViewCell.swift; sourceTree = "<group>"; };
 		2DDE4B562C4258DD00CA644F /* SelectEstimateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectEstimateViewController.swift; sourceTree = "<group>"; };
 		2DEF5FDC2C718C240089C020 /* ContractViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContractViewController.swift; sourceTree = "<group>"; };
 		2DEF5FDF2C718D5D0089C020 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
@@ -343,6 +345,7 @@
 				2DEF5FE72C719D730089C020 /* PastHistoryViewController.swift */,
 				2DEF5FE92C719EB30089C020 /* PastHistoryTableViewCell.swift */,
 				05EDA1372C7D8C5B00966E6F /* PastHistoryMoreInfoCollectionViewCell.swift */,
+				2DCE0BC72C974C2800932D54 /* PastHistoryTourTableViewCell.swift */,
 				2DEF5FE52C719CBD0089C020 /* FAQViewController.swift */,
 				05EDA1392C7D9BFE00966E6F /* FAQTableViewCell.swift */,
 			);
@@ -520,6 +523,7 @@
 				2D0F91FD2C48F4200014A87D /* EstimateDetailTableViewCell.swift in Sources */,
 				2DCC4EA42C46672D0035FD24 /* MainModel.swift in Sources */,
 				2D8EFF022C83221200ACD818 /* ReservationTourTableViewCell.swift in Sources */,
+				2DCE0BC82C974C2800932D54 /* PastHistoryTourTableViewCell.swift in Sources */,
 				2DCC4EA82C47B84A0035FD24 /* CheckPaymentViewController.swift in Sources */,
 				2DEF5FE02C718D5D0089C020 /* ProfileViewController.swift in Sources */,
 				2D46F5AE2C3E536000C711E2 /* PaymentViewController.swift in Sources */,

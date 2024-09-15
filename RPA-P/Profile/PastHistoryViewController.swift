@@ -60,6 +60,7 @@ final class PastHistoryViewController: UIViewController {
         tableView.backgroundColor = .white
         tableView.bounces = false
         tableView.showsVerticalScrollIndicator = false
+        tableView.register(PastHistoryTourTableViewCell.self, forCellReuseIdentifier: "PastHistoryTourTableViewCell")
         tableView.register(PastHistoryTableViewCell.self, forCellReuseIdentifier: "PastHistoryTableViewCell")
         tableView.delegate = self
         tableView.dataSource = self
@@ -71,6 +72,7 @@ final class PastHistoryViewController: UIViewController {
     }()
     
     var estimateList: [Estimate] = []
+    var tourList: [Tour] = []
     let mainModel = MainModel()
     
     override func viewDidLoad() {
@@ -123,6 +125,7 @@ extension PastHistoryViewController: EssentialViewMethods {
     func setNotificationCenters() {
         NotificationCenter.default.addObserver(self, selector: #selector(reload(_:)), name:  Notification.Name("ReloadDataForMoreInfo"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(loginDone(_:)), name:  Notification.Name("LoginDone"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(seeContract(_:)), name:  Notification.Name("SeeContract"), object: nil)
     }
     
     func setSubviews() {
@@ -202,33 +205,114 @@ extension PastHistoryViewController: EssentialViewMethods {
         self.navigationItem.standardAppearance = appearance
         self.navigationItem.compactAppearance = appearance
         
-        self.navigationItem.title = "지난 견적 내역"
+        self.navigationItem.title = "지난 예약 내역"
         
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "backButton")?.withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(leftBarButtonItem(_:)))
     }
     
     func setData() {
         SupportingMethods.shared.turnCoverView(.on)
-        self.mainModel.getEstimateData { estimates in
-            if estimates.isEmpty {
-                self.emptyBaseView.isHidden = false
-                self.emptyButton.isEnabled = false
-                self.emptyButton.setTitle("신청한 견적이 없습니다.\n견적을 추가해보세요!", for: .normal)
-                self.emptyButton.layer.borderWidth = 0.0
-                self.pastNoEstimateImageView.image = .useCustomImage("PastNoEstimateImage")
-                SupportingMethods.shared.turnCoverView(.off)
-                
-            } else {
-                self.emptyBaseView.isHidden = true
-                for estimate in estimates {
-                    if estimate.isCompletedReservation {
-                        self.estimateList.append(estimate)
+        self.loadMyTourListDataRequest {
+            self.mainModel.getEstimateData { estimates in
+                if estimates.isEmpty {
+                    if self.tourList.isEmpty {
+                        self.emptyBaseView.isHidden = false
+                        self.emptyButton.isEnabled = false
+                        self.emptyButton.setTitle("신청한 견적이 없습니다.\n견적을 추가해보세요!", for: .normal)
+                        self.emptyButton.layer.borderWidth = 0.0
+                        self.pastNoEstimateImageView.image = .useCustomImage("PastNoEstimateImage")
+                        SupportingMethods.shared.turnCoverView(.off)
+                        
+                    } else {
+                        DispatchQueue.main.async {
+                            self.tableView.reloadData()
+                            SupportingMethods.shared.turnCoverView(.off)
+                            
+                        }
+                        
+                    }
+                    
+                } else {
+                    self.emptyBaseView.isHidden = true
+                    for estimate in estimates {
+                        if estimate.isCompletedReservation {
+                            self.estimateList.append(estimate)
+                            
+                        }
+                        
+                    }
+                    
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                        SupportingMethods.shared.turnCoverView(.off)
                         
                     }
                     
                 }
                 
-                DispatchQueue.main.async {
+            } failure: { error in
+                if error == "noLogin" {
+                    print("\(error)")
+                    self.emptyBaseView.isHidden = false
+                    self.emptyButton.isEnabled = true
+                    self.emptyButton.setTitle("전화번호 인증이 필요합니다!", for: .normal)
+                    self.emptyButton.layer.borderWidth = 2.0
+                    self.pastNoEstimateImageView.image = .useCustomImage("customerServiceLogo")
+                    
+                    SupportingMethods.shared.turnCoverView(.off)
+                    
+                } else {
+                    print("setData Error: \(error)")
+                    SupportingMethods.shared.turnCoverView(.off)
+                    
+                }
+                
+            }
+            
+        }
+
+
+    }
+}
+
+// MARK: - Extension for methods added
+extension PastHistoryViewController {
+    func getTokenRequest(success: (() -> ())?) {
+        self.mainModel.getTokenRequest {
+            success?()
+            
+        } failure: { message in
+            print("error: \(message)")
+            SupportingMethods.shared.turnCoverView(.off)
+            
+        }
+
+    }
+    
+    func loadMyTourListDataRequest(success: (() -> ())?) {
+        self.loadTourDataRequest { tourList in
+            self.getTokenRequest {
+                self.mainModel.loadTourRequest(phone: ReferenceValues.phoneNumber) { myTourList in
+                    let tourIdList: [(id: Int, status: Bool)] = myTourList.map({ (Int($0.tourId)!, $0.payDatetime == "" ? false : true ) })
+                    for tourId in tourIdList {
+                        for tour in tourList {
+                            if tour.id == tourId.id {
+                                if tourId.status {
+                                    self.tourList.append(tour)
+                                    break
+                                    
+                                }
+                                
+                            }
+                            
+                        }
+                        
+                    }
+                    
+                    success?()
+                    
+                } failure: { message in
+                    print("loadMyTourListDataRequest error: \(message)")
                     self.tableView.reloadData()
                     SupportingMethods.shared.turnCoverView(.off)
                     
@@ -236,30 +320,34 @@ extension PastHistoryViewController: EssentialViewMethods {
                 
             }
             
-        } failure: { error in
-            if error == "noLogin" {
-                print("\(error)")
-                self.emptyBaseView.isHidden = false
-                self.emptyButton.isEnabled = true
-                self.emptyButton.setTitle("전화번호 인증이 필요합니다!", for: .normal)
-                self.emptyButton.layer.borderWidth = 2.0
-                self.pastNoEstimateImageView.image = .useCustomImage("customerServiceLogo")
-                
-                SupportingMethods.shared.turnCoverView(.off)
-                
-            } else {
-                print("setData Error: \(error)")
-                SupportingMethods.shared.turnCoverView(.off)
-                
-            }
+        }
+        
+    }
+    
+    func loadTourDataRequest(success: (([Tour]) -> ())?) {
+        self.mainModel.loadTourDataRequest { tourList in
+            success?(tourList)
+            
+        } failure: { message in
+            print("loadTourDataRequest error: \(message)")
+            SupportingMethods.shared.turnCoverView(.off)
+            
+        }
+        
+
+    }
+    
+    func getTourContractRequest(tourUid: String, success: ((String) -> ())?) {
+        self.mainModel.getTourContractRequest(tourUid: tourUid) { html in
+            success?(html)
+            
+        } failure: { message in
+            print("error: \(message)")
+            SupportingMethods.shared.turnCoverView(.off)
             
         }
 
     }
-}
-
-// MARK: - Extension for methods added
-extension PastHistoryViewController {
     
 }
 
@@ -286,20 +374,59 @@ extension PastHistoryViewController {
         
     }
     
+    @objc func seeContract(_ notification: Notification) {
+        guard let tourUid = notification.userInfo?["tourUid"] as? Int else { return }
+        
+        SupportingMethods.shared.turnCoverView(.on)
+        self.getTokenRequest {
+            self.getTourContractRequest(tourUid: "\(tourUid)") { html in
+                let vc = ContractViewController(html: html)
+                
+                self.navigationController?.pushViewController(vc, animated: true)
+                SupportingMethods.shared.turnCoverView(.off)
+            }
+            
+        }
+        
+    }
+    
 }
 
 extension PastHistoryViewController: UITableViewDelegate, UITableViewDataSource {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+        
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.estimateList.count
+        if section == 0 {
+            return self.tourList.count
+            
+        } else {
+            return self.estimateList.count
+            
+        }
         
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "PastHistoryTableViewCell", for: indexPath) as! PastHistoryTableViewCell
-        let estimate = self.estimateList[indexPath.row]
+        if indexPath.section == 0 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "PastHistoryTourTableViewCell", for: indexPath) as! PastHistoryTourTableViewCell
+            let tour = self.tourList[indexPath.row]
+            
+            cell.setCell(tour: tour)
+            
+            return cell
+            
+        } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "PastHistoryTableViewCell", for: indexPath) as! PastHistoryTableViewCell
+            let estimate = self.estimateList[indexPath.row]
+            
+            cell.setCell(estimate: estimate)
+            
+            return cell
+            
+        }
         
-        cell.setCell(estimate: estimate)
-        
-        return cell
     }
 }

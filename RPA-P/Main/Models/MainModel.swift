@@ -16,6 +16,7 @@ final class MainModel {
     private(set) var sendEstimateDataRequest: DataRequest?
     private(set) var sendConfirmReservationRequest: DataRequest?
     private(set) var getContractRequest: DataRequest?
+    private(set) var getTourContractRequest: DataRequest?
     private(set) var sendTourRequest: DataRequest?
     private(set) var loadTourRequest: DataRequest?
     
@@ -263,6 +264,49 @@ final class MainModel {
                 
             case .failure(let error): // error
                 print("getContractRequest error: \(error.localizedDescription)")
+                failure?(error.localizedDescription)
+            }
+            
+        }
+        
+    }
+    
+    func getTourContractRequest(tourUid: String, success: ((String) -> ())?, failure: ((_ message: String) -> ())?) {
+        let url = Server.server.URL + "/dispatch/tour/contract"
+        
+        let headers: HTTPHeaders = [
+            "accept":"application/json",
+            "Authorization": User.shared.accessToken
+        ]
+        
+        let parameters: Parameters = [
+            "tourUid": tourUid,
+            "phone": ReferenceValues.phoneNumber,
+        ]
+        
+        self.getTourContractRequest = AF.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+        
+        self.getTourContractRequest?.responseString { response in
+            switch response.result {
+            case .success(let data):
+                guard let statusCode = response.response?.statusCode else {
+                    print("getTourContractRequest failure: statusCode nil")
+                    failure?("statusCodeNil")
+                    
+                    return
+                }
+                
+                guard statusCode >= 200 && statusCode < 300 else {
+                    print("getTourContractRequest failure: statusCode(\(statusCode))")
+                    failure?("statusCodeError")
+                    
+                    return
+                }
+                
+                success?(data)
+                
+            case .failure(let error): // error
+                print("getTourContractRequest error: \(error.localizedDescription)")
                 failure?(error.localizedDescription)
             }
             
@@ -831,7 +875,7 @@ struct MyTourItem: Codable {
     let bank: String
     let payDatetime: String
     let paymentStatus: String
-    let tourId: Int
+    let tourId: String
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -841,7 +885,7 @@ struct MyTourItem: Codable {
         case bank
         case payDatetime = "pay_datetime"
         case paymentStatus = "payment_status"
-        case tourId = "tour_id"
+        case tourId = "tour_uid"
     }
 }
 

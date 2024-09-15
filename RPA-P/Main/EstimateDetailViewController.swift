@@ -28,7 +28,7 @@ final class EstimateDetailViewController: UIViewController {
     lazy var emptyImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.isHidden = true
-        imageView.image = .useCustomImage("customerServiceLogo")
+        imageView.image = .useCustomImage("PastNoEstimateImage")
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -41,7 +41,7 @@ final class EstimateDetailViewController: UIViewController {
         label.isHidden = true
         label.text = "견적을 신청해보세요!"
         label.textColor = .useRGB(red: 189, green: 189, blue: 189)
-        label.font = .useFont(ofSize: 14, weight: .Medium)
+        label.font = .useFont(ofSize: 16, weight: .Medium)
         label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -82,6 +82,7 @@ final class EstimateDetailViewController: UIViewController {
     private let mainModel = MainModel()
     var estimateList: [Estimate] = []
     var tourList: [(tour: Tour, status: Bool)] = []
+    var myTourList: [MyTourItem] = []
     var deposit: Double = 0
     
     init() {
@@ -152,6 +153,8 @@ extension EstimateDetailViewController: EssentialViewMethods {
         
         NotificationCenter.default.addObserver(self, selector: #selector(saveEstimateData(_:)), name:  Notification.Name("SaveEstimateData"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(loginDone(_:)), name:  Notification.Name("LoginDone"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(seeContract(_:)), name:  Notification.Name("SeeContract"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(moveTourDetail(_:)), name:  Notification.Name("MoveTourDetail"), object: nil)
         
     }
     
@@ -161,8 +164,8 @@ extension EstimateDetailViewController: EssentialViewMethods {
         ], to: self.view)
         
         SupportingMethods.shared.addSubviews([
-            self.indicatorSizeView,
             self.tableView,
+            self.indicatorSizeView,
             self.emptyImageView,
             self.emptyLabel,
             self.emptyButton,
@@ -200,8 +203,8 @@ extension EstimateDetailViewController: EssentialViewMethods {
         NSLayoutConstraint.activate([
             self.emptyImageView.centerXAnchor.constraint(equalTo: self.tableView.centerXAnchor),
             self.emptyImageView.centerYAnchor.constraint(equalTo: self.tableView.centerYAnchor, constant: -20),
-            self.emptyImageView.widthAnchor.constraint(equalToConstant: 50),
-            self.emptyImageView.heightAnchor.constraint(equalToConstant: 50)
+            self.emptyImageView.widthAnchor.constraint(equalToConstant: 100),
+            self.emptyImageView.heightAnchor.constraint(equalToConstant: 100)
         ])
         
         // emptyLabel
@@ -226,7 +229,7 @@ extension EstimateDetailViewController: EssentialViewMethods {
             if estimates.isEmpty {
                 self.emptyImageView.isHidden = false
                 self.emptyLabel.isHidden = false
-                self.emptyButton.isHidden = false
+                self.emptyButton.isHidden = true
                 self.tableView.isHidden = true
                 
             } else {
@@ -280,11 +283,26 @@ extension EstimateDetailViewController {
 
     }
     
+    func getTourContractRequest(tourUid: String, success: ((String) -> ())?) {
+        self.mainModel.getTourContractRequest(tourUid: tourUid) { html in
+            success?(html)
+            
+        } failure: { message in
+            print("error: \(message)")
+            SupportingMethods.shared.turnCoverView(.off)
+            
+        }
+
+    }
+    
+    
+    
     func loadMyTourListDataRequest(success: (() -> ())?) {
         self.loadTourDataRequest { tourList in
             self.getTokenRequest {
                 self.mainModel.loadTourRequest(phone: ReferenceValues.phoneNumber) { myTourList in
-                    let tourIdList: [(id: Int, status: Bool)] = myTourList.map({ ($0.tourId, $0.payDatetime == "" ? false : true ) })
+                    self.myTourList = myTourList
+                    let tourIdList: [(id: Int, status: Bool)] = myTourList.map({ (Int($0.tourId)!, $0.payDatetime == "" ? false : true ) })
                     for tourId in tourIdList {
                         for tour in tourList {
                             if tour.id == tourId.id {
@@ -452,6 +470,29 @@ extension EstimateDetailViewController {
     @objc func loginDone(_ sender: UIButton) {
         self.setData()
         
+    }
+    
+    @objc func seeContract(_ notification: Notification) {
+        guard let tourUid = notification.userInfo?["tourUid"] as? Int else { return }
+        
+        SupportingMethods.shared.turnCoverView(.on)
+        self.getTokenRequest {
+            self.getTourContractRequest(tourUid: "\(tourUid)") { html in
+                let vc = ContractViewController(html: html)
+                
+                self.navigationController?.pushViewController(vc, animated: true)
+                SupportingMethods.shared.turnCoverView(.off)
+            }
+            
+        }
+    }
+    
+    @objc func moveTourDetail(_ notification: Notification) {
+        guard let tour = notification.userInfo?["tour"] as? Tour else { return }
+        let myTour = self.myTourList.filter({ $0.tourId == "\(tour.id)" }).first
+        let vc = TourDetailViewController(tour: tour, myTour: myTour)
+        
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
 }

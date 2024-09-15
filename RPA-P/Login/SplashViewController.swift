@@ -51,7 +51,7 @@ final class SplashViewController: UIViewController {
     
     lazy var guideLabel: UILabel = {
         let label = UILabel()
-        label.text = "원하시는 견적을 옵션별로 바로 비교할 수 있어요.\nRPA-P로 예약하지 않아도 분명 도움이 될 거에요!"
+        label.text = "원하시는 견적을 옵션별로 바로 비교할 수 있어요.\n킹버스로 예약하지 않아도 분명 도움이 될 거에요!"
         label.numberOfLines = 0
         label.textColor = .useRGB(red: 0, green: 0, blue: 0, alpha: 0.87)
         label.font = .useFont(ofSize: 14, weight: .Medium)
