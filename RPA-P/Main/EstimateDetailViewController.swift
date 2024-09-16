@@ -230,7 +230,6 @@ extension EstimateDetailViewController: EssentialViewMethods {
                 self.emptyImageView.isHidden = false
                 self.emptyLabel.isHidden = false
                 self.emptyButton.isHidden = true
-                self.tableView.isHidden = true
                 
             } else {
                 self.tableView.isHidden = false
@@ -316,7 +315,22 @@ extension EstimateDetailViewController {
                         
                     }
                     
+                    if self.tourList.isEmpty {
+                        self.tableView.isHidden = true
+                        self.emptyImageView.isHidden = false
+                        self.emptyLabel.isHidden = false
+                        self.emptyButton.isHidden = true
+                        
+                    } else {
+                        self.tableView.isHidden = false
+                        self.emptyImageView.isHidden = true
+                        self.emptyLabel.isHidden = true
+                        self.emptyButton.isHidden = true
+                        
+                    }
+                    
                     success?()
+                    
                     
                 } failure: { message in
                     print("loadMyTourListDataRequest error: \(message)")
