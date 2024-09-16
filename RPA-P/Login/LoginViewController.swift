@@ -225,6 +225,7 @@ extension LoginViewController: EssentialViewMethods {
         SupportingMethods.shared.addSubviews([
             self.authenticationGuideLabel,
             self.authenticationStackView,
+            self.failedCertificationImageView,
         ], to: self.view)
         
         SupportingMethods.shared.addSubviews([
@@ -292,6 +293,14 @@ extension LoginViewController: EssentialViewMethods {
             self.numberButton.trailingAnchor.constraint(equalTo: self.numberView.trailingAnchor),
             self.numberButton.bottomAnchor.constraint(equalTo: self.numberView.bottomAnchor),
             self.numberButton.topAnchor.constraint(equalTo: self.numberView.topAnchor),
+        ])
+        
+        // failedCertificationImageView
+        NSLayoutConstraint.activate([
+            self.failedCertificationImageView.leadingAnchor.constraint(equalTo: self.numberView.leadingAnchor, constant: 46),
+            self.failedCertificationImageView.topAnchor.constraint(equalTo: self.numberView.bottomAnchor, constant: 1),
+            self.failedCertificationImageView.widthAnchor.constraint(equalToConstant: 268),
+            self.failedCertificationImageView.heightAnchor.constraint(equalToConstant: 38),
         ])
         
         // authenticationNumberView

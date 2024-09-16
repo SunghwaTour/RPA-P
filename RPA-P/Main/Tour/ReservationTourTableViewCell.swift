@@ -450,6 +450,10 @@ extension ReservationTourTableViewCell {
             SupportingMethods.shared.showAlertNoti(title: "계좌번호를 입력해주세요.")
             return
         }
+        guard self.accountTextField.text?.count ?? 0 >= 7 else {
+            SupportingMethods.shared.showAlertNoti(title: "계좌번호를 7자 이상 입력해주세요.")
+            return
+        }
         guard self.nameTextField.text != "" else {
             SupportingMethods.shared.showAlertNoti(title: "입금자명을 입력해주세요.")
             return
@@ -561,3 +565,4 @@ extension ReservationTourTableViewCell {
 
     }
 }
+

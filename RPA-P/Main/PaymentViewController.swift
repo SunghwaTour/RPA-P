@@ -963,6 +963,7 @@ extension PaymentViewController {
                 ReferenceValues.uid = uid
                 ReferenceValues.phoneNumber = self.numberTextField.text ?? phoneNumber
                 ReferenceValues.name = self.nameTextField.text!
+                NotificationCenter.default.post(name: Notification.Name("LoginDone"), object: nil)
                 
 //                self.mainModel.registerUserData(uid: uid) {
 //                    print("PaymentViewController registerUserData Success")

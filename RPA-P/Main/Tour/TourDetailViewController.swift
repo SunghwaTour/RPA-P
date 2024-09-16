@@ -354,6 +354,7 @@ extension TourDetailViewController {
             print("success sendTourData")
             self.guideBackgroudView.isHidden = true
             self.navigationController?.popViewController(animated: true)
+            NotificationCenter.default.post(name: Notification.Name("LoginDone"), object: nil)
             
             let url = "tel://1522-9821"
             
