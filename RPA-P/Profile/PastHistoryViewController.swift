@@ -233,7 +233,6 @@ extension PastHistoryViewController: EssentialViewMethods {
                     }
                     
                 } else {
-                    self.emptyBaseView.isHidden = true
                     for estimate in estimates {
                         if estimate.isCompletedReservation {
                             self.estimateList.append(estimate)
@@ -242,9 +241,21 @@ extension PastHistoryViewController: EssentialViewMethods {
                         
                     }
                     
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
+                    if self.estimateList.isEmpty {
+                        self.emptyBaseView.isHidden = false
+                        self.emptyButton.isHidden = false
+                        self.emptyButton.setTitle("아직 완료된 견적이 없습니다!", for: .normal)
+                        self.emptyButton.layer.borderWidth = 0.0
+                        self.pastNoEstimateImageView.image = .useCustomImage("customerServiceLogo")
                         SupportingMethods.shared.turnCoverView(.off)
+                        
+                    } else {
+                        self.emptyBaseView.isHidden = true
+                        DispatchQueue.main.async {
+                            self.tableView.reloadData()
+                            SupportingMethods.shared.turnCoverView(.off)
+                            
+                        }
                         
                     }
                     

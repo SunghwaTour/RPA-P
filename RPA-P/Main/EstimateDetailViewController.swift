@@ -242,6 +242,7 @@ extension EstimateDetailViewController: EssentialViewMethods {
             
             self.estimateList = estimates
             
+            self.tourList = []
             self.loadMyTourListDataRequest {
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
@@ -506,7 +507,12 @@ extension EstimateDetailViewController: UITableViewDelegate, UITableViewDataSour
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
-            return 1
+            if self.tourList.count == 0 {
+                return 0
+            } else {
+                return 1
+                
+            }
             
         } else {
             return self.estimateList.count
